@@ -1,0 +1,41 @@
+﻿@model List<(ApexDrive.Models.AppUser user, IList<string> roles)>
+
+@{
+    ViewData["Title"] = "Admin Management";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-brand">👤 Manage Admins</h1>
+    <a asp-action="Create"
+       class="px-4 py-2 bg-brand text-white rounded-lg shadow hover:bg-blue-700 transition">
+        ➕ Add New Admin
+    </a>
+</div>
+
+<table class="min-w-full bg-white rounded-xl shadow-md overflow-hidden">
+    <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
+        <tr>
+            <th class="py-3 px-4 text-left">Email</th>
+            <th class="py-3 px-4 text-left">Roles</th>
+            <th class="py-3 px-4 text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="divide-y">
+        @foreach (var (user, roles) in Model)
+        {
+            <tr class="hover:bg-gray-50">
+                <td class="py-3 px-4">@user.Email</td>
+                <td class="py-3 px-4">@string.Join(", ", roles)</td>
+                <td class="py-3 px-4 text-center space-x-2">
+                    <a asp-action="Details" asp-route-id="@user.Id"
+                       class="text-blue-600 hover:underline">Details</a>
+                    <a asp-action="Edit" asp-route-id="@user.Id"
+                       class="text-green-600 hover:underline">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@user.Id"
+                       class="text-red-600 hover:underline">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

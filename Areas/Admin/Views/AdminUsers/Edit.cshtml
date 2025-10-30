@@ -1,0 +1,30 @@
+﻿@model ApexDrive.Models.ViewModels.EditAdminUserViewModel
+@{
+    ViewData["Title"] = "Edit Admin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">✏️ Edit Admin</h1>
+
+<form asp-action="Edit" method="post" class="bg-white p-6 rounded-xl shadow-md max-w-lg space-y-4">
+    <input type="hidden" asp-for="Id" />
+
+    <div>
+        <label asp-for="Email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input asp-for="Email" class="form-input w-full border-gray-300 rounded-lg mt-1 p-2" />
+        <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+    </div>
+
+    <div>
+        <label asp-for="NewPassword" class="block text-sm font-medium text-gray-700">New Password (optional)</label>
+        <input asp-for="NewPassword" class="form-input w-full border-gray-300 rounded-lg mt-1 p-2" />
+        <span asp-validation-for="NewPassword" class="text-red-500 text-sm"></span>
+    </div>
+
+    <button type="submit"
+            class="px-4 py-2 bg-brand text-white rounded-lg shadow hover:bg-blue-700 transition">
+        Save Changes
+    </button>
+
+    <a asp-action="Index" class="ml-3 text-gray-600 hover:underline">Cancel</a>
+</form>

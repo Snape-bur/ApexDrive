@@ -1,0 +1,162 @@
+﻿@model ApexDrive.Models.ViewModels.DashboardViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">
+    📊 @Model.BranchName Dashboard
+</h1>
+<p class="text-sm text-gray-500 mb-4">🏢 @ViewBag.BranchName</p>
+
+<!-- Overview Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Total Cars -->
+    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+        <p class="text-gray-500 text-sm">Total Cars</p>
+        <h2 class="text-3xl font-bold text-brand mt-2">@Model.TotalCars</h2>
+    </div>
+
+    <!-- Active Bookings -->
+    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+        <p class="text-gray-500 text-sm">Active Bookings</p>
+        <h2 class="text-3xl font-bold text-brand mt-2">@Model.ActiveBookings</h2>
+    </div>
+
+    <!-- Upcoming Reminders -->
+    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+        <p class="text-gray-500 text-sm">Upcoming Reminders (7 Days)</p>
+        <h2 class="text-3xl font-bold text-brand mt-2">@Model.UpcomingReminders</h2>
+    </div>
+
+    <!-- Completed Maintenances -->
+    <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+        <p class="text-gray-500 text-sm">Completed Maintenances</p>
+        <h2 class="text-3xl font-bold text-brand mt-2">@Model.CompletedMaintenances</h2>
+    </div>
+</div>
+
+<!-- Optional Revenue Section -->
+<div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition mb-6">
+    <p class="text-gray-500 text-sm">Total Revenue</p>
+    <h2 class="text-3xl font-bold text-green-600 mt-2">
+        @Model.TotalRevenue.ToString("C")
+    </h2>
+</div>
+
+<!-- Placeholder for Recent Maintenance (future use) -->
+<div class="bg-white p-6 rounded-xl shadow-md">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">🧰 Recent Maintenance</h2>
+
+    @if (Model.CompletedMaintenances == 0)
+    {
+        <p class="text-gray-400 text-center py-4">No maintenance records yet.</p>
+    }
+    else
+    {
+        <p class="text-gray-600 text-sm">
+            Showing last @Model.CompletedMaintenances maintenance records for <b>@Model.BranchName</b>.
+        </p>
+    }
+</div>
+
+<hr class="my-10" />
+
+<h2 class="text-xl font-semibold text-gray-800 mb-4">📈 Analytics Overview</h2>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Monthly Bookings -->
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h3 class="font-semibold text-gray-700 mb-3">📅 Monthly Bookings</h3>
+        <canvas id="bookingsChart" height="200"></canvas>
+    </div>
+
+    <!-- Maintenance Trend -->
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h3 class="font-semibold text-gray-700 mb-3">🧰 Maintenance Frequency</h3>
+        <canvas id="maintenanceChart" height="200"></canvas>
+    </div>
+
+    @if (User.IsInRole("SuperAdmin"))
+    {
+        <!-- Cars Per Branch -->
+        <div class="bg-white p-6 rounded-xl shadow-sm lg:col-span-2">
+            <h3 class="font-semibold text-gray-700 mb-3">🚗 Cars per Branch</h3>
+            <canvas id="carsChart" height="120"></canvas>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        async function loadDashboardCharts() {
+            const response = await fetch('/Admin/Dashboard/GetDashboardData');
+            const data = await response.json();
+
+            // Monthly Bookings
+            const bookingLabels = data.monthlyBookings.map(b => b.Month);
+            const bookingValues = data.monthlyBookings.map(b => b.Count);
+
+            new Chart(document.getElementById('bookingsChart'), {
+                type: 'line',
+                data: {
+                    labels: bookingLabels,
+                    datasets: [{
+                        label: 'Bookings',
+                        data: bookingValues,
+                        borderColor: '#0F62FE',
+                        backgroundColor: 'rgba(15,98,254,0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+
+            // Maintenance
+            const maintLabels = data.maintenanceStats.map(m => m.Month);
+            const maintValues = data.maintenanceStats.map(m => m.Count);
+
+            new Chart(document.getElementById('maintenanceChart'), {
+                type: 'bar',
+                data: {
+                    labels: maintLabels,
+                    datasets: [{
+                        label: 'Services',
+                        data: maintValues,
+                        backgroundColor: '#22C55E'
+                    }]
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+
+            // Cars per Branch (SuperAdmin)
+            if (data.carsPerBranch) {
+                const branchLabels = data.carsPerBranch.map(b => b.BranchName);
+                const carCounts = data.carsPerBranch.map(b => b.CarCount);
+
+                new Chart(document.getElementById('carsChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: branchLabels,
+                        datasets: [{
+                            label: 'Cars',
+                            data: carCounts,
+                            backgroundColor: ['#0F62FE', '#FACC15', '#22C55E', '#EF4444']
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+        }
+
+        loadDashboardCharts();
+    </script>
+}
+

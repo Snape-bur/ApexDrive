@@ -1,0 +1,31 @@
+﻿@model ApexDrive.Models.Branch
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Add/Edit Branch";
+}
+
+<h2 class="text-xl font-semibold mb-4">@ViewData["Title"]</h2>
+
+<form asp-action="@ViewContext.RouteData.Values["action"]" method="post" class="space-y-4">
+    <div>
+        <label class="font-semibold">Branch Name</label>
+        <input asp-for="BranchName" class="form-input w-full" />
+        <span asp-validation-for="BranchName" class="text-red-500 text-sm"></span>
+    </div>
+    <div>
+        <label>Address</label>
+        <input asp-for="Address" class="form-input w-full" />
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label>Phone</label>
+            <input asp-for="Phone" class="form-input w-full" />
+        </div>
+        <div>
+            <label>Email</label>
+            <input asp-for="Email" class="form-input w-full" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-brand mt-4">💾 Save</button>
+</form>

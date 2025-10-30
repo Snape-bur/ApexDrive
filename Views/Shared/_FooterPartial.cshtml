@@ -1,0 +1,41 @@
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> L
+
+<footer class="border-t bg-gray-50 py-8 text-gray-700">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-8 md:grid-cols-3">
+            <!-- Column 1 -->
+            <div>
+                <h3 class="text-lg font-bold text-primary-700">@L["Footer_About_Title", "About ApexDrive"]</h3>
+                <p class="mt-2 text-sm text-gray-600">
+                    @L["Footer_About_Desc", "ApexDrive offers reliable car rentals across Thailand with transparent pricing, new fleets, and 24/7 support."]
+                </p>
+            </div>
+
+            <!-- Column 2 -->
+            <div>
+                <h3 class="text-lg font-bold text-primary-700">@L["Footer_Links_Title", "Quick Links"]</h3>
+                <ul class="mt-2 space-y-2 text-sm">
+                    <li><a href="#fleet" class="hover:text-primary-600">@L["Footer_Link_Fleet", "Fleet"]</a></li>
+                    <li><a href="#locations" class="hover:text-primary-600">@L["Footer_Link_Locations", "Locations"]</a></li>
+                    <li><a href="#faq" class="hover:text-primary-600">@L["Footer_Link_FAQ", "FAQ"]</a></li>
+                    <li><a href="#contact" class="hover:text-primary-600">@L["Footer_Link_Contact", "Contact Us"]</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3 -->
+            <div>
+                <h3 class="text-lg font-bold text-primary-700">@L["Footer_Contact_Title", "Contact"]</h3>
+                <p class="mt-2 text-sm text-gray-600">
+                    📍 @L["Footer_Contact_Address", "Bangkok, Thailand"]<br />
+                    📞 +66 123 456 789<br />
+                    ✉️ info@apexdrive.com
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-8 border-t pt-4 text-center text-sm text-gray-500">
+            &copy; 2025 ApexDrive — @L["Footer_Rights", "All rights reserved."]
+        </div>
+    </div>
+</footer>

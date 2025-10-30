@@ -1,0 +1,134 @@
+﻿@model ApexDrive.Models.Booking
+@{
+    ViewData["Title"] = $"Booking #{Model.BookingId} Details";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">📄 Booking Details — #@Model.BookingId</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Booking Overview -->
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">🧾 Booking Information</h2>
+        <div class="space-y-2 text-sm text-gray-700">
+            <p>
+                <strong>Status:</strong>
+                @{
+                    string badgeClass = Model.Status switch
+                    {
+                        ApexDrive.Models.BookingStatus.Pending => "bg-yellow-100 text-yellow-700",
+                        ApexDrive.Models.BookingStatus.Confirmed => "bg-blue-100 text-blue-700",
+                        ApexDrive.Models.BookingStatus.Active => "bg-emerald-100 text-emerald-700",
+                        ApexDrive.Models.BookingStatus.Completed => "bg-green-100 text-green-700",
+                        ApexDrive.Models.BookingStatus.Cancelled => "bg-red-100 text-red-700",
+                        _ => "bg-gray-100 text-gray-700"
+                    };
+                }
+                <span class="px-2 py-1 rounded-lg text-xs font-semibold @badgeClass">@Model.Status</span>
+            </p>
+            <p><strong>Start Date:</strong> @Model.StartDate.ToString("dd MMM yyyy")</p>
+            <p><strong>End Date:</strong> @Model.EndDate.ToString("dd MMM yyyy")</p>
+            <p><strong>Pickup Branch:</strong> @Model.PickupBranch?.BranchName</p>
+            <p><strong>Drop-off Branch:</strong> @Model.DropoffBranch?.BranchName</p>
+            <p><strong>Created At:</strong> @Model.CreatedAt.ToString("dd MMM yyyy hh:mm tt")</p>
+        </div>
+
+        <div class="mt-6 border-t pt-4">
+            <p class="font-semibold text-gray-800 mb-2">💰 Cost Summary</p>
+            <p class="text-sm"><strong>Base Cost:</strong> @Model.BaseCost.ToString("C")</p>
+            <p class="text-sm"><strong>Total Cost:</strong> @Model.TotalCost.ToString("C")</p>
+        </div>
+    </div>
+
+    <!-- Car Information -->
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">🚘 Car Information</h2>
+        <div class="space-y-2 text-sm text-gray-700">
+            <p><strong>Plate Number:</strong> @Model.Car?.PlateNumber</p>
+            <p><strong>Brand:</strong> @Model.Car?.Brand</p>
+            <p><strong>Model:</strong> @Model.Car?.Model</p>
+            <p><strong>Branch:</strong> @Model.Car?.Branch?.BranchName</p>
+            <p><strong>Daily Rate:</strong> @Model.Car?.DailyRate.ToString("C")</p>
+            <p><strong>Mileage:</strong> @Model.Car?.Mileage km</p>
+        </div>
+    </div>
+</div>
+
+<!-- Customer + Payment Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <!-- Customer Info -->
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">👤 Customer Details</h2>
+        <div class="space-y-2 text-sm text-gray-700">
+            <p><strong>Full Name:</strong> @Model.Customer?.FullName</p>
+            <p><strong>Email:</strong> @Model.Customer?.Email</p>
+            <p><strong>Phone:</strong> @Model.Customer?.PhoneNumber</p>
+            <p><strong>Address:</strong> @Model.Customer?.Address</p>
+        </div>
+    </div>
+
+    <!-- Payment Info -->
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">💳 Payment Information</h2>
+        @if (Model.Payment != null)
+        {
+            <div class="space-y-2 text-sm text-gray-700">
+                <p>
+                    <strong>Status:</strong>
+                    <span class="font-medium @(Model.Payment.Status == "Paid" ? "text-green-600" : "text-red-600")">
+                        @Model.Payment.Status
+                    </span>
+                </p>
+                <p><strong>Method:</strong> @Model.Payment.Method</p>
+                <p><strong>Amount:</strong> @Model.Payment.Amount.ToString("C")</p>
+                @if (!string.IsNullOrEmpty(Model.Payment.TransactionRef))
+                {
+                    <p><strong>Transaction Ref:</strong> @Model.Payment.TransactionRef</p>
+                }
+                <p><strong>Created At:</strong> @Model.Payment.CreatedAt.ToString("dd MMM yyyy hh:mm tt")</p>
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-500 italic">No payment record available.</p>
+        }
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="flex justify-end mt-8 space-x-3">
+    <a asp-action="Index"
+       class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">⬅ Back to List</a>
+
+    @if (Model.Status == ApexDrive.Models.BookingStatus.Pending)
+    {
+        <form asp-action="Confirm" method="post" class="inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.BookingId" />
+            <button type="submit"
+                    class="px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg font-medium">
+                ✅ Confirm
+            </button>
+        </form>
+
+        <form asp-action="Cancel" method="post" class="inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.BookingId" />
+            <button type="submit"
+                    class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-medium">
+                ❌ Cancel
+            </button>
+        </form>
+    }
+    else if (Model.Status == ApexDrive.Models.BookingStatus.Confirmed)
+    {
+        <form asp-action="Complete" method="post" class="inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.BookingId" />
+            <button type="submit"
+                    class="px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium">
+                ✅ Complete
+            </button>
+        </form>
+    }
+</div>

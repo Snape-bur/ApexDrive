@@ -1,0 +1,66 @@
+﻿
+<!-- ===========================
+     HEADER (shared navigation)
+=========================== -->
+<header class="absolute inset-x-0 top-6 z-50">
+    <div class="mx-auto max-w-6xl px-4">
+        <div class="flex h-16 items-center justify-between rounded-full bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-lg ring-1 ring-black/5">
+            <!-- Logo -->
+            <a asp-controller="Home" asp-action="Index" class="flex items-center">
+                <span class="text-2xl font-extrabold tracking-tight">
+                    <span class="text-blue-600">Apex</span><span class="text-gray-900">Drive</span>
+                </span>
+            </a>
+
+            <!-- Navigation -->
+            <nav class="hidden md:flex items-center gap-10 text-sm font-medium text-gray-700">
+                <a asp-controller="Home" asp-action="Index" class="hover:text-gray-900">Home</a>
+                <a asp-controller="Fleet" asp-action="Index" class="hover:text-gray-900">Fleet</a>
+                <a asp-controller="Home" asp-action="FAQ" class="hover:text-gray-900">FAQ</a>
+                <a asp-controller="Home" asp-action="Contact" class="hover:text-gray-900">Contact</a>
+            </nav>
+
+            <!-- Profile -->
+            <div class="hidden md:flex items-center gap-3">
+                <div class="relative">
+                    <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                        <svg class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="11" cy="11" r="7" stroke-width="2"></circle>
+                            <path d="M20 20l-3.5-3.5" stroke-width="2" stroke-linecap="round"></path>
+                        </svg>
+                    </span>
+                    <input type="text"
+                           placeholder="Search…"
+                           class="h-9 w-48 rounded-full border border-gray-300 bg-white/70 pl-9 pr-4 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300" />
+                </div>
+                <a asp-area="Identity" asp-page="/Account/Manage/Index"
+                   class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black text-white ring-2 ring-white"
+                   title="Profile">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 12a4 4 0 100-8 4 4 0 000 8zM6 20a6 6 0 1112 0v1H6v-1z" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Mobile Button -->
+            <button id="menuBtn" class="md:hidden inline-flex items-center justify-center rounded-full p-2 hover:bg-gray-100">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="md:hidden hidden">
+        <div class="mx-auto mt-3 max-w-6xl px-4">
+            <div class="rounded-2xl bg-white/95 p-4 shadow-lg ring-1 ring-black/5">
+                <a asp-controller="Home" asp-action="Index" class="block py-2">Home</a>
+                <a asp-controller="Fleet" asp-action="Index" class="block py-2">Fleet</a>
+                <a asp-controller="Home" asp-action="FAQ" class="block py-2">FAQ</a>
+                <a asp-controller="Home" asp-action="Contact" class="block py-2">Contact</a>
+            </div>
+        </div>
+    </div>
+</header>

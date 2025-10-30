@@ -1,0 +1,50 @@
+﻿@model ApexDrive.Models.CarMaintenanceHistory
+@{
+    ViewData["Title"] = "Add Maintenance";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<h1 class="text-2xl font-bold text-brand mb-6">➕ Add Maintenance Record</h1>
+
+<form asp-action="Create" method="post" class="space-y-6 bg-white p-6 rounded-xl shadow-sm max-w-3xl">
+    <div asp-validation-summary="ModelOnly" class="bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-2"></div>
+
+    <div>
+        <label class="block font-medium text-gray-700">Car</label>
+        <select asp-for="CarId" class="form-select ..." asp-items="ViewBag.Cars">
+            <option value="">-- Select Car --</option>
+        </select>
+        <span asp-validation-for="CarId" class="text-red-500 text-sm"></span>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label asp-for="ServiceDate" class="block font-medium text-gray-700">Service Date</label>
+            <input asp-for="ServiceDate" type="date" class="form-input w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand" />
+            <span asp-validation-for="ServiceDate" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label asp-for="Mileage" class="block font-medium text-gray-700">Mileage (km)</label>
+            <input asp-for="Mileage" class="form-input w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand" />
+        </div>
+    </div>
+
+    <div>
+        <label asp-for="ServiceType" class="block font-medium text-gray-700">Service Type</label>
+        <input asp-for="ServiceType" class="form-input w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand" placeholder="Oil change, tires, brake, etc." />
+    </div>
+
+    <div>
+        <label asp-for="Notes" class="block font-medium text-gray-700">Notes</label>
+        <textarea asp-for="Notes" class="form-input w-full h-24 border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand"></textarea>
+    </div>
+
+    <div class="flex justify-end gap-2">
+        <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">Cancel</a>
+        <button class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700">Save</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

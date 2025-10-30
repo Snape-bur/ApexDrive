@@ -1,0 +1,159 @@
+﻿@model IEnumerable<ApexDrive.Models.Booking>
+@{
+    ViewData["Title"] = "Booking Management";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">📅 Booking Management</h1>
+
+<!-- ✅ Search and Filter Section -->
+<form method="get" class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-4 rounded-xl shadow-sm">
+    <div class="flex items-center space-x-2 flex-1">
+        <input type="text" name="search" value="@Context.Request.Query["search"]"
+               class="w-full md:w-80 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand"
+               placeholder="🔍 Search by customer, car, or plate..." />
+        <button type="submit"
+                class="px-4 py-2 bg-brand text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+            Search
+        </button>
+    </div>
+
+    <div class="flex items-center space-x-3">
+        <select name="status"
+                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
+            <option value="">All Status</option>
+            @foreach (var value in Enum.GetValues(typeof(ApexDrive.Models.BookingStatus)))
+            {
+                <option value="@value" selected="@(Context.Request.Query["status"] == value.ToString())">@value</option>
+            }
+        </select>
+
+        @if (User.IsInRole("SuperAdmin"))
+        {
+            <select name="branchId"
+                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
+                <option value="">All Branches</option>
+                @foreach (var branch in ViewBag.Branches as List<ApexDrive.Models.Branch>)
+                {
+                    <option value="@branch.BranchId" selected="@(Context.Request.Query["branchId"] == branch.BranchId.ToString())">
+                        @branch.BranchName
+                    </option>
+                }
+            </select>
+        }
+
+        <button type="submit"
+                class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
+            Filter
+        </button>
+    </div>
+</form>
+
+<!-- ✅ Booking Table -->
+<table class="min-w-full bg-white rounded-lg shadow-sm">
+    <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
+        <tr>
+            <th class="py-3 px-4 text-left">Booking #</th>
+            <th class="py-3 px-4 text-left">Customer</th>
+            <th class="py-3 px-4 text-left">Car</th>
+            <th class="py-3 px-4 text-left">Pickup / Drop-off</th>
+            <th class="py-3 px-4 text-left">Dates</th>
+            <th class="py-3 px-4 text-left">Status</th>
+            <th class="py-3 px-4 text-left">Payment</th>
+            <th class="py-3 px-4 text-right">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="8" class="text-center py-6 text-gray-400">No bookings found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var b in Model)
+            {
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-3 px-4 font-semibold text-gray-700">#@b.BookingId</td>
+                    <td class="py-3 px-4">
+                        <div class="text-sm text-gray-700">@b.Customer?.FullName ?? b.Customer?.Email</div>
+                        <div class="text-xs text-gray-500">@b.Customer?.Email</div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="text-sm">@b.Car?.PlateNumber</div>
+                        <div class="text-xs text-gray-500">@b.Car?.Brand @b.Car?.Model</div>
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                        <span class="font-semibold">@b.PickupBranch?.BranchName</span>
+                        <span class="text-gray-400"> → </span>
+                        <span>@b.DropoffBranch?.BranchName</span>
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                        @b.StartDate.ToString("dd MMM") - @b.EndDate.ToString("dd MMM yyyy")
+                    </td>
+                    <td class="py-3 px-4">
+                        @{
+                            string badgeClass = b.Status switch
+                            {
+                                ApexDrive.Models.BookingStatus.Pending => "bg-yellow-100 text-yellow-700",
+                                ApexDrive.Models.BookingStatus.Confirmed => "bg-blue-100 text-blue-700",
+                                ApexDrive.Models.BookingStatus.Active => "bg-emerald-100 text-emerald-700",
+                                ApexDrive.Models.BookingStatus.Completed => "bg-green-100 text-green-700",
+                                ApexDrive.Models.BookingStatus.Cancelled => "bg-red-100 text-red-700",
+                                _ => "bg-gray-100 text-gray-700"
+                            };
+                        }
+                        <span class="px-2 py-1 rounded-lg text-xs font-semibold @badgeClass">@b.Status</span>
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                        @if (b.Payment != null)
+                        {
+                            <span class="text-green-700 font-medium">@b.Payment.Status</span>
+                        }
+                        else
+                        {
+                            <span class="text-gray-400 italic">N/A</span>
+                        }
+                    </td>
+                    <td class="py-3 px-4 text-right space-x-2">
+                        <a asp-action="Details" asp-route-id="@b.BookingId"
+                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">🔍 View</a>
+
+                        @if (b.Status == ApexDrive.Models.BookingStatus.Pending)
+                        {
+                            <form asp-action="Confirm" method="post" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@b.BookingId" />
+                                <button type="submit"
+                                        class="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg text-sm font-medium">
+                                    ✅ Confirm
+                                </button>
+                            </form>
+
+                            <form asp-action="Cancel" method="post" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@b.BookingId" />
+                                <button type="submit"
+                                        class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium">
+                                    ❌ Cancel
+                                </button>
+                            </form>
+                        }
+                        else if (b.Status == ApexDrive.Models.BookingStatus.Confirmed)
+                        {
+                            <form asp-action="Complete" method="post" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@b.BookingId" />
+                                <button type="submit"
+                                        class="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm font-medium">
+                                    ✅ Complete
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

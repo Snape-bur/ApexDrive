@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ApexDrive.Models.Branch>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Branch Management";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">🏢 Branch Management</h1>
+
+<a asp-action="Create" class="btn btn-brand mb-4">➕ Add Branch</a>
+
+<table class="min-w-full bg-white rounded-lg shadow-sm">
+    <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
+        <tr>
+            <th class="py-3 px-4 text-left">Branch</th>
+            <th class="py-3 px-4 text-left">Manager (Account Email)</th>
+            <th class="py-3 px-4 text-left">Branch Email</th>
+            <th class="py-3 px-4 text-left">Phone</th>
+            <th class="py-3 px-4 text-right">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="text-sm text-gray-700">
+        @foreach (var b in Model)
+        {
+            <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-4 font-medium">@b.BranchName</td>
+                <td class="py-3 px-4">
+                    @if (!string.IsNullOrEmpty(b.Manager?.Email))
+                    {
+                        @b.Manager.Email
+                    }
+                    else
+                    {
+                        <span class="text-gray-400">—</span>
+                    }
+                </td>
+                <td class="py-3 px-4">@b.Email</td>
+                <td class="py-3 px-4">@b.Phone</td>
+                <td class="py-3 px-4 text-right space-x-2">
+                    <a asp-action="Edit" asp-route-id="@b.BranchId"
+                       class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition">
+                        ✏️ Edit
+                    </a>
+                    <a asp-action="AssignManager" asp-route-id="@b.BranchId"
+                       class="px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-blue-600 font-medium transition">
+                        👤 Manager
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

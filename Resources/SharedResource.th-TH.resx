@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<data name="Home" xml:space="preserve"><value>หน้าแรก</value></data>
+	<data name="Services" xml:space="preserve"><value>บริการ</value></data>
+	<data name="Fleet" xml:space="preserve"><value>รถให้เช่า</value></data>
+	<data name="FAQ" xml:space="preserve"><value>คำถามที่พบบ่อย</value></data>
+	<data name="Contact" xml:space="preserve"><value>ติดต่อเรา</value></data>
+
+
+	<data name="Hero_Title" xml:space="preserve"><value>เช่ารถในประเทศไทย – รวดเร็ว ง่าย ปลอดภัย</value></data>
+	<data name="Hero_Subtitle" xml:space="preserve"><value>รถใหม่ทุกคัน ไม่มีค่าธรรมเนียมแอบแฝง รับรถที่สนามบิน และบริการช่วยเหลือฉุกเฉินตลอด 24 ชั่วโมงทั่วประเทศไทย</value></data>
+	<data name="Hero_Benefit_FreeCancel" xml:space="preserve"><value>ยกเลิกฟรี</value></data>
+	<data name="Hero_Benefit_PayCounter" xml:space="preserve"><value>ชำระที่เคาน์เตอร์</value></data>
+	<data name="Hero_Benefit_NoCardFees" xml:space="preserve"><value>ไม่มีค่าธรรมเนียมบัตรเครดิต</value></data>
+
+	<data name="Pickup_Location_Label" xml:space="preserve"><value>สถานที่รับรถ</value></data>
+	<data name="Pickup_Location_Placeholder" xml:space="preserve"><value>สนามบินสุวรรณภูมิ (BKK)</value></data>
+	<data name="Return_Location_Label" xml:space="preserve"><value>สถานที่คืนรถ</value></data>
+	<data name="Return_Location_Placeholder" xml:space="preserve"><value>คืนที่เดิม</value></data>
+	<data name="Pickup_Date_Label" xml:space="preserve"><value>วันที่รับรถ</value></data>
+	<data name="Return_Date_Label" xml:space="preserve"><value>วันที่คืนรถ</value></data>
+	<data name="Btn_SearchCars" xml:space="preserve"><value>ค้นหารถ</value></data>
+
+	<data name="Badge_Unlimited" xml:space="preserve"><value>ไม่จำกัดระยะทาง</value></data>
+	<data name="Badge_CDW" xml:space="preserve"><value>ประกันความเสียหายจากอุบัติเหตุ</value></data>
+	<data name="Badge_Roadside" xml:space="preserve"><value>บริการช่วยเหลือฉุกเฉิน 24 ชม.</value></data>
+
+	<data name="Benefit_247_Title" xml:space="preserve"><value>บริการ 24 ชั่วโมง</value></data>
+	<data name="Benefit_247_Desc" xml:space="preserve"><value>เราพร้อมให้บริการคุณทุกที่ ทุกเวลาในประเทศไทย</value></data>
+	<data name="Benefit_NewFleet_Title" xml:space="preserve"><value>รถใหม่ล่าสุด</value></data>
+	<data name="Benefit_NewFleet_Desc" xml:space="preserve"><value>ขับรถยอดนิยมจาก Toyota, Honda และอีกมากมาย</value></data>
+	<data name="Benefit_TopRated_Title" xml:space="preserve"><value>รีวิวดีที่สุด</value></data>
+	<data name="Benefit_TopRated_Desc" xml:space="preserve"><value>รีวิวระดับ 5 ดาวจากผู้เช่าทั่วประเทศ</value></data>
+
+	<data name="Fleet_Title" xml:space="preserve"><value>รถยอดนิยม</value></data>
+	<data name="Fleet_Subtitle" xml:space="preserve"><value>รถสะอาด ปลอดภัย และประหยัดน้ำมันสำหรับทุกงบประมาณ</value></data>
+	<data name="Fleet_ViewAll" xml:space="preserve"><value>ดูทั้งหมด</value></data>
+
+	<data name="Seats" xml:space="preserve"><value>ที่นั่ง</value></data>
+	<data name="Automatic" xml:space="preserve"><value>เกียร์อัตโนมัติ</value></data>
+	<data name="Bags" xml:space="preserve"><value>กระเป๋า</value></data>
+	<data name="Per_Day" xml:space="preserve"><value>วัน</value></data>
+	<data name="Btn_Select" xml:space="preserve"><value>เลือก</value></data>
+
+	<data name="Trust_FreeCancel_24h" xml:space="preserve"><value>ยกเลิกฟรีก่อนรับรถ 24 ชั่วโมง</value></data>
+	<data name="Trust_Rating" xml:space="preserve"><value>คะแนนเฉลี่ย 4.8/5 จากผู้เช่ากว่า 10,000 ราย</value></data>
+	<data name="Trust_Transparent" xml:space="preserve"><value>ไม่มีค่าธรรมเนียมบัตรเครดิต • ราคาชัดเจน</value></data>
+
+	<data name="Locations_Title" xml:space="preserve"><value>รับรถได้มากกว่า 30 สาขา</value></data>
+	<data name="Locations_Subtitle" xml:space="preserve"><value>สนามบินและสาขาใจกลางเมืองทั่วประเทศ</value></data>
+	<data name="Loc_BKK_Tag" xml:space="preserve"><value>กรุงเทพฯ (BKK/DMK)</value></data>
+	<data name="Loc_BKK_Desc" xml:space="preserve"><value>เปิดบริการ 07:00–22:00 • สนามบิน &amp; เมือง • คืนต่างสาขาได้</value></data>
+	<data name="Loc_HKT_Tag" xml:space="preserve"><value>ภูเก็ต (HKT)</value></data>
+	<data name="Loc_HKT_Desc" xml:space="preserve"><value>เหมาะกับทริปทะเล • รถ SUV และ MPV ยอดนิยม</value></data>
+	<data name="Loc_CNX_Tag" xml:space="preserve"><value>เชียงใหม่ (CNX)</value></data>
+	<data name="Loc_CNX_Desc" xml:space="preserve"><value>เส้นทางภูเขาและวิวสวย • รถขนาดเล็กยอดนิยม</value></data>
+
+	<data name="Testi_Title" xml:space="preserve"><value>เสียงจากผู้ใช้จริง</value></data>
+	<data name="Testi_Subtitle" xml:space="preserve"><value>รีวิวจากนักเดินทางทั่วประเทศไทย</value></data>
+	<data name="Testi_1" xml:space="preserve"><value>รับรถที่สนามบิน BKK รวดเร็ว รถใหม่และสะอาด จะใช้บริการอีกแน่นอน!</value></data>
+	<data name="Testi_1_Author" xml:space="preserve"><value>ณภัทร, กรุงเทพฯ</value></data>
+	<data name="Testi_2" xml:space="preserve"><value>ราคาดีที่สุด ไม่มีค่าซ่อนเร้น คืนเงินมัดจำเร็ว</value></data>
+	<data name="Testi_2_Author" xml:space="preserve"><value>มาเรีย, สเปน</value></data>
+	<data name="Testi_3" xml:space="preserve"><value>รถ SUV เยี่ยมมากสำหรับทริปภูเก็ต บริการลูกค้าดีเยี่ยม</value></data>
+	<data name="Testi_3_Author" xml:space="preserve"><value>เอก, ภูเก็ต</value></data>
+
+	<data name="FAQ_Title" xml:space="preserve"><value>คำถามที่พบบ่อย</value></data>
+	<data name="FAQ_Q1" xml:space="preserve"><value>ต้องใช้เอกสารอะไรบ้าง?</value></data>
+	<data name="FAQ_A1" xml:space="preserve"><value>หนังสือเดินทางหรือบัตรประชาชน ใบขับขี่ที่ยังไม่หมดอายุ (ถ้ามีใบขับขี่สากลให้แนบด้วย) และบัตรเครดิตสำหรับวางมัดจำ</value></data>
+	<data name="FAQ_Q2" xml:space="preserve"><value>รับรถที่กรุงเทพฯ แล้วคืนที่ภูเก็ตได้ไหม?</value></data>
+	<data name="FAQ_A2" xml:space="preserve"><value>ได้ สามารถคืนต่างสาขาได้ในบางพื้นที่ โดยอาจมีค่าบริการเพิ่มเติม</value></data>
+	<data name="FAQ_Q3" xml:space="preserve"><value>มีประกันรวมอยู่ไหม?</value></data>
+	<data name="FAQ_A3" xml:space="preserve"><value>มีความคุ้มครองพื้นฐานรวมอยู่แล้ว และสามารถซื้อประกันเพิ่มเติมเพื่อลดความเสียหายส่วนเกินได้</value></data>
+
+	<data name="CTA_Title" xml:space="preserve"><value>พร้อมออกเดินทางหรือยัง?</value></data>
+	<data name="CTA_Sub" xml:space="preserve"><value>จองรถของคุณภายในไม่กี่นาที รับรถได้ที่สนามบินหรือในเมือง ไม่มีค่าธรรมเนียมแอบแฝง</value></data>
+	<data name="CTA_Button" xml:space="preserve"><value>ตรวจสอบรถว่าง</value></data>
+
+	<data name="Footer_About_Title" xml:space="preserve"><value>เกี่ยวกับ ApexDrive</value></data>
+	<data name="Footer_About_Desc" xml:space="preserve"><value>ApexDrive ให้บริการเช่ารถที่เชื่อถือได้ทั่วประเทศไทย ราคาชัดเจน รถใหม่ และบริการ 24 ชั่วโมง</value></data>
+	<data name="Footer_Links_Title" xml:space="preserve"><value>ลิงก์ด่วน</value></data>
+	<data name="Footer_Link_Fleet" xml:space="preserve"><value>รถให้เช่า</value></data>
+	<data name="Footer_Link_Locations" xml:space="preserve"><value>สาขา</value></data>
+	<data name="Footer_Link_FAQ" xml:space="preserve"><value>คำถามที่พบบ่อย</value></data>
+	<data name="Footer_Link_Contact" xml:space="preserve"><value>ติดต่อเรา</value></data>
+	<data name="Footer_Contact_Title" xml:space="preserve"><value>ติดต่อ</value></data>
+	<data name="Footer_Contact_Address" xml:space="preserve"><value>กรุงเทพฯ ประเทศไทย</value></data>
+	<data name="Footer_Rights" xml:space="preserve"><value>สงวนลิขสิทธิ์ ทั้งหมด</value></data>
+
+</root>

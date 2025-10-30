@@ -1,0 +1,53 @@
+﻿@{
+    Layout = null;
+    var title = (string?)ViewData["Title"] ?? "ApexDrive";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@title – ApexDrive</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                brand: {
+                  50: '#eaf3ff',
+                  100: '#d4e6ff',
+                  500: '#2563eb',     // main blue
+                  600: '#1e4ed8',
+                  700: '#1a3fa6'
+                },
+                dark: {
+                  900: '#0b0b0b',
+                  800: '#111111',
+                  700: '#1a1a1a'
+                }
+              },
+              boxShadow: {
+                glow: '0 0 20px rgba(37,99,235,0.25)'
+              }
+            }
+          }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-700 text-gray-100">
+    <div class="pointer-events-none fixed inset-0 [background:radial-gradient(60%_50%_at_50%_20%,rgba(37,99,235,0.08),transparent_70%)]"></div>
+
+    <main class="relative flex min-h-screen items-center justify-center p-4">
+        @RenderBody()
+    </main>
+
+    @if (IsSectionDefined("Scripts"))
+    {
+        @RenderSection("Scripts", required: false)
+    }
+</body>
+</html>

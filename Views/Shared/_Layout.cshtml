@@ -1,0 +1,170 @@
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> L
+<!DOCTYPE html>
+<html lang="@System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ApexDrive</title>
+    <meta name="description" content="Rent a car in Thailand with ApexDrive. Best prices, new cars, airport pickup, 24/7 support." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui"] },
+                    colors: {
+                        primary: {
+                            50: "#eef6ff",
+                            100: "#d9ebff",
+                            200: "#b3d7ff",
+                            300: "#86beff",
+                            400: "#5aa3ff",
+                            500: "#2d87ff",
+                            600: "#176de6",
+                            700: "#1256b4",
+                            800: "#0f4691",
+                            900: "#0d3b79",
+                        },
+                    },
+                    boxShadow: {
+                        brand: "0 10px 30px -10px rgb(17 24 39 / 0.25)",
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        :root {
+            color-scheme: light;
+        }
+
+        html, body {
+            scroll-behavior: smooth;
+        }
+
+        .backdrop-blur-12 {
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-800 antialiased bg-white">
+    <!-- HEADER -->
+    <header class="absolute inset-x-0 top-6 z-50">
+        <div class="mx-auto max-w-6xl px-4">
+            <div class="flex h-16 items-center justify-between rounded-full bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-lg ring-1 ring-black/5">
+                <a asp-controller="Home" asp-action="Index" class="flex items-center">
+                    <span class="text-2xl font-extrabold tracking-tight">
+                        <span class="text-blue-600">Apex</span><span class="text-gray-900">Drive</span>
+                    </span>
+                </a>
+
+                <nav class="hidden md:flex items-center gap-10 text-sm font-medium text-gray-700">
+                    <a href="#home">@L["Home", "Home"]</a>
+                    <a href="#services">@L["Services", "Services"]</a>
+                    <a href="#fleet">@L["Fleet", "Fleet"]</a>
+                    <a href="#faq">@L["FAQ", "FAQ"]</a>
+                    <a href="#contact">@L["Contact", "Contact"]</a>
+                </nav>
+
+
+                <div class="hidden md:flex items-center gap-3">
+                    <select id="cultureSelect"
+                            class="h-9 rounded-full border border-gray-300 bg-white/80 px-3 text-sm"
+                            aria-label="Language">
+                        @{
+                            var ui = System.Globalization.CultureInfo.CurrentUICulture.Name;
+                        }
+                        <option value="en-US" selected="@(ui == "en-US")">English</option>
+                        <option value="th-TH" selected="@(ui == "th-TH")">ไทย</option>
+                        <option value="my-MM" selected="@(ui == "my-MM")">မြန်မာ</option>
+                    </select>
+
+                    <!-- Auth Buttons -->
+                    <div class="flex items-center gap-2">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <!-- When logged in -->
+                            <a asp-area="Identity" asp-page="/Account/Manage/Index"
+                               class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black text-white ring-2 ring-white"
+                               aria-label="Profile">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 12a4 4 0 100-8 4 4 0 000 8zM6 20a6 6 0 1112 0v1H6v-1z" />
+                                </svg>
+                            </a>
+                        }
+                        else
+                        {
+                            <!-- When not logged in -->
+                            <a asp-area="Identity" asp-page="/Account/Login"
+                               class="rounded-full border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100">
+                                Log In
+                            </a>
+                            <a asp-area="Identity" asp-page="/Account/Register"
+                               class="rounded-full bg-primary-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-primary-700">
+                                Sign Up
+                            </a>
+                        }
+                    </div>
+
+                </div>
+
+                <button id="menuBtn" class="md:hidden inline-flex items-center justify-center rounded-full p-2 hover:bg-gray-100">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden hidden">
+            <div class="mx-auto mt-3 max-w-6xl px-4">
+                <div class="rounded-2xl bg-white/95 p-4 shadow-lg ring-1 ring-black/5">
+                    <a href="#home" class="block py-2">@L["Nav_Home", "Home"]</a>
+                    <a href="#services" class="block py-2">@L["Nav_Services", "Services"]</a>
+                    <a href="#fleet" class="block py-2">@L["Nav_Fleet", "Fleet"]</a>
+                    <a href="#faq" class="block py-2">@L["Nav_FAQ", "FAQ"]</a>
+                    <a href="#contact" class="block py-2">@L["Nav_Contact", "Contact"]</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t bg-white py-12">
+        <div class="text-center text-sm text-gray-500">
+            © @DateTime.Now.Year ApexDrive Co., Ltd. — All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Mobile toggle
+        const menuBtn = document.getElementById("menuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+        menuBtn?.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
+
+        // Language change cookie
+        function setCultureCookie(culture) {
+            document.cookie = `.AspNetCore.Culture=c=${culture}|uic=${culture}; path=/; max-age=31536000`;
+            location.reload();
+        }
+        document.getElementById("cultureSelect")?.addEventListener("change", e => setCultureCookie(e.target.value));
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

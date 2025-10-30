@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<data name="Home" xml:space="preserve"><value>မူလစာမျက်နှာ</value></data>
+	<data name="Services" xml:space="preserve"><value>ဝန်ဆောင်မှုများ</value></data>
+	<data name="Fleet" xml:space="preserve"><value>ကားများ</value></data>
+	<data name="FAQ" xml:space="preserve"><value>မေးလေ့ရှိသောမေးခွန်းများ</value></data>
+	<data name="Contact" xml:space="preserve"><value>ဆက်သွယ်ရန်</value></data>
+
+
+	<data name="Hero_Title" xml:space="preserve"><value>ထိုင်းနိုင်ငံတွင်ကားအငှား – လွယ်ကူမြန်ဆန်၊ ယုံကြည်နိုင်သည်</value></data>
+	<data name="Hero_Subtitle" xml:space="preserve"><value>ကားအသစ်များ၊ အခကြေးငွေသျှူးလျှင်မရှိ၊ လေဆိပ်တွင်ကောက်ယူနိုင်ပြီး 24/7 အကူအညီပေးပါသည်။</value></data>
+	<data name="Hero_Benefit_FreeCancel" xml:space="preserve"><value>အခမဲ့ပယ်ဖျက်နိုင်</value></data>
+	<data name="Hero_Benefit_PayCounter" xml:space="preserve"><value>ကောင်တာတွင်ပေးချေပါ</value></data>
+	<data name="Hero_Benefit_NoCardFees" xml:space="preserve"><value>ဘဏ်ကတ်အခကြေးငွေမရှိ</value></data>
+
+	<data name="Pickup_Location_Label" xml:space="preserve"><value>ကားယူရာနေရာ</value></data>
+	<data name="Pickup_Location_Placeholder" xml:space="preserve"><value>ဘန်ကောက် ဆွာန်နာဖူမ်မီ (BKK)</value></data>
+	<data name="Return_Location_Label" xml:space="preserve"><value>ကားပြန်အပ်ရာနေရာ</value></data>
+	<data name="Return_Location_Placeholder" xml:space="preserve"><value>တစ်နေရာတည်းတွင်ပြန်အပ်ပါ</value></data>
+	<data name="Pickup_Date_Label" xml:space="preserve"><value>ကားယူသည့်နေ့</value></data>
+	<data name="Return_Date_Label" xml:space="preserve"><value>ကားပြန်အပ်သည့်နေ့</value></data>
+	<data name="Btn_SearchCars" xml:space="preserve"><value>ကားရှာဖွေရန်</value></data>
+
+	<data name="Badge_Unlimited" xml:space="preserve"><value>အကန့်အသတ်မရှိသောမိုင်</value></data>
+	<data name="Badge_CDW" xml:space="preserve"><value>ထိခိုက်ပျက်စီးမှုအာမခံ</value></data>
+	<data name="Badge_Roadside" xml:space="preserve"><value>လမ်းဘေးအကူအညီ 24/7</value></data>
+
+	<data name="Benefit_247_Title" xml:space="preserve"><value>၂၄ နာရီဝန်ဆောင်မှု</value></data>
+	<data name="Benefit_247_Desc" xml:space="preserve"><value>ထိုင်းနိုင်ငံအနှံ့ မည်သည့်အချိန်မဆို ဝန်ဆောင်မှုရှိပါသည်။</value></data>
+	<data name="Benefit_NewFleet_Title" xml:space="preserve"><value>ကားအသစ်များ</value></data>
+	<data name="Benefit_NewFleet_Desc" xml:space="preserve"><value>Toyota၊ Honda စသောနာမည်ကြီးမော်ဒယ်များနှင့်အတူစီးနိုင်သည်။</value></data>
+	<data name="Benefit_TopRated_Title" xml:space="preserve"><value>အမြင့်ဆုံးအဆင့်သတ်မှတ်ချက်</value></data>
+	<data name="Benefit_TopRated_Desc" xml:space="preserve"><value>သုံးစွဲသူများထံမှ ၅ ကြယ်အဆင့်သုံးသပ်ချက်များအများအပြားရှိသည်။</value></data>
+
+	<data name="Fleet_Title" xml:space="preserve"><value>ကျော်ကြားသောကားများ</value></data>
+	<data name="Fleet_Subtitle" xml:space="preserve"><value>သန့်ရှင်းလုံခြုံပြီး ဆီစားသက်သာသောကားများ</value></data>
+	<data name="Fleet_ViewAll" xml:space="preserve"><value>အားလုံးကြည့်ရန်</value></data>
+
+	<data name="Seats" xml:space="preserve"><value>ခုံ</value></data>
+	<data name="Automatic" xml:space="preserve"><value>အော်တိုဂီယာ</value></data>
+	<data name="Bags" xml:space="preserve"><value>အိတ်</value></data>
+	<data name="Per_Day" xml:space="preserve"><value>တစ်နေ့</value></data>
+	<data name="Btn_Select" xml:space="preserve"><value>ရွေးချယ်ရန်</value></data>
+
+	<data name="Trust_FreeCancel_24h" xml:space="preserve"><value>ကားယူရန် ၂၄ နာရီအကြိုအခမဲ့ပယ်ဖျက်နိုင်သည်</value></data>
+	<data name="Trust_Rating" xml:space="preserve"><value>စနစ်သုံးသူ ၁၀,၀၀၀ ကျော်မှ အမှတ် ၄.၈/၅</value></data>
+	<data name="Trust_Transparent" xml:space="preserve"><value>ဘဏ်ကတ်အခမရှိ • ဈေးနှုန်းသိသာအောင်ဖော်ပြထားသည်</value></data>
+
+	<data name="Locations_Title" xml:space="preserve"><value>နေရာ ၃၀ ကျော်တွင် ယူနိုင်ပါသည်</value></data>
+	<data name="Locations_Subtitle" xml:space="preserve"><value>လေဆိပ်နှင့်မြို့တော်အတွင်းရှိရုံးများတွင်ရနိုင်ပါသည်</value></data>
+	<data name="Loc_BKK_Tag" xml:space="preserve"><value>ဘန်ကောက် (BKK/DMK)</value></data>
+	<data name="Loc_BKK_Desc" xml:space="preserve"><value>ဖွင့်ချိန် 07:00–22:00 • လေဆိပ် &amp; မြို့ • တစ်နေရာကတစ်နေရာပြန်အပ်နိုင်သည်</value></data>
+	<data name="Loc_HKT_Tag" xml:space="preserve"><value>ဖူခက် (HKT)</value></data>
+	<data name="Loc_HKT_Desc" xml:space="preserve"><value>ကမ်းခြေခရီးအတွက်အထူးသင့်တော် • SUV &amp; MPV ကားများလူကြိုက်များ</value></data>
+	<data name="Loc_CNX_Tag" xml:space="preserve"><value>ချယ်မိုင် (CNX)</value></data>
+	<data name="Loc_CNX_Desc" xml:space="preserve"><value>တောင်တန်းလမ်းများ • စီးနိုင်သော compact ကားများ</value></data>
+
+	<data name="Testi_Title" xml:space="preserve"><value>သုံးစွဲသူအတွေ့အကြုံများ</value></data>
+	<data name="Testi_Subtitle" xml:space="preserve"><value>ထိုင်းနိုင်ငံအနှံ့မှ ငှားသူများ၏သုံးသပ်ချက်များ</value></data>
+	<data name="Testi_1" xml:space="preserve"><value>BKK လေဆိပ်တွင်ကားယူရာအချိန်မြန်၊ ကားသန့်ရှင်းအသစ်။ ထပ်မံအသုံးပြုမည်။</value></data>
+	<data name="Testi_1_Author" xml:space="preserve"><value>နပတ်၊ ဘန်ကောက်</value></data>
+	<data name="Testi_2" xml:space="preserve"><value>ဈေးနှုန်းသက်သာပြီး အပိုအခကြေးငွေမရှိ၊ ငွေမူန့်အမြန်ပြန်အမ်း</value></data>
+	<data name="Testi_2_Author" xml:space="preserve"><value>မာရီယာ၊ စပိန်</value></data>
+	<data name="Testi_3" xml:space="preserve"><value>ဖူခက်ခရီးအတွက် SUV ကားကောင်း၊ ဝန်ဆောင်မှုအလွန်ပြေပြစ်</value></data>
+	<data name="Testi_3_Author" xml:space="preserve"><value>အိတ်၊ ဖူခက်</value></data>
+
+	<data name="FAQ_Title" xml:space="preserve"><value>မေးလေ့ရှိသောမေးခွန်းများ</value></data>
+	<data name="FAQ_Q1" xml:space="preserve"><value>ဘာစာရွက်စာတမ်းလိုအပ်ပါသလဲ?</value></data>
+	<data name="FAQ_A1" xml:space="preserve"><value>နိုင်ငံကူးလက်မှတ် (သို့မဟုတ်) ထိုင်းအိုင်ဒီကတ်၊ သက်တမ်းမကုန်သေးသောမော်တော်ယာဉ်လိုင်စင်၊ ငွေသွင်းကတ်တစ်စောင်လိုအပ်သည်။</value></data>
+	<data name="FAQ_Q2" xml:space="preserve"><value>ဘန်ကောက်တွင်ယူပြီး ဖူခက်တွင်ပြန်အပ်နိုင်ပါသလား?</value></data>
+	<data name="FAQ_A2" xml:space="preserve"><value>နိုင်သည်။ အဓိကရုံးများအကြား တစ်နေရာကတစ်နေရာပြန်အပ်နိုင်ပြီး အပိုအခသတ်မှတ်ထားနိုင်သည်။</value></data>
+	<data name="FAQ_Q3" xml:space="preserve"><value>အာမခံပါဝင်ပါသလား?</value></data>
+	<data name="FAQ_A3" xml:space="preserve"><value>အခြေခံအာမခံပါဝင်ပြီးဖြစ်သည်။ စိတ်ချချင်ပါက အပိုအာမခံဝယ်ယူနိုင်သည်။</value></data>
+
+	<data name="CTA_Title" xml:space="preserve"><value>ခရီးစတင်ရန်အဆင်သင့်လား?</value></data>
+	<data name="CTA_Sub" xml:space="preserve"><value>အနည်းဆုံးအချိန်အတွင်းမှာကားဘောက်ချာပြီး လေဆိပ်သို့မဟုတ်မြို့တွင်းတွင်ယူနိုင်ပါသည်။ အပိုအခမရှိ။</value></data>
+	<data name="CTA_Button" xml:space="preserve"><value>ကားရရှိနိုင်မှုစစ်ပါ</value></data>
+
+	<data name="Footer_About_Title" xml:space="preserve"><value>ApexDrive အကြောင်း</value></data>
+	<data name="Footer_About_Desc" xml:space="preserve"><value>ApexDrive သည် ထိုင်းနိုင်ငံအနှံ့ ယုံကြည်ရသောကားအငှားဝန်ဆောင်မှုများကို ဈေးနှုန်းသိသာပြီး ၂၄ နာရီဝန်ဆောင်မှုဖြင့် ပေးပါသည်။</value></data>
+	<data name="Footer_Links_Title" xml:space="preserve"><value>လင့်ခ်များ</value></data>
+	<data name="Footer_Link_Fleet" xml:space="preserve"><value>ကားများ</value></data>
+	<data name="Footer_Link_Locations" xml:space="preserve"><value>နေရာများ</value></data>
+	<data name="Footer_Link_FAQ" xml:space="preserve"><value>မေးလေ့ရှိသောမေးခွန်းများ</value></data>
+	<data name="Footer_Link_Contact" xml:space="preserve"><value>ဆက်သွယ်ရန်</value></data>
+	<data name="Footer_Contact_Title" xml:space="preserve"><value>ဆက်သွယ်ရန်</value></data>
+	<data name="Footer_Contact_Address" xml:space="preserve"><value>ဘန်ကောက်၊ ထိုင်းနိုင်ငံ</value></data>
+	<data name="Footer_Rights" xml:space="preserve"><value>မူပိုင်ခွင့်အားလုံးရှိသည်။</value></data>
+
+</root>

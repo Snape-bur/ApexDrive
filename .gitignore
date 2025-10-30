@@ -1,0 +1,48 @@
+## Ignore Visual Studio temporary files, build results, and personal settings
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Ignore build folders
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+[Bb]uild/
+[Ll]ogs/
+
+## Ignore packages
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+*.vsix
+
+## Ignore test results
+TestResults/
+*.coverage
+*.coveragexml
+
+## Ignore local database files
+*.mdf
+*.ldf
+
+## Ignore secrets and configuration
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+## Ignore publish and temp files
+*.Publish.xml
+publish/
+*.tmp
+
+## Ignore OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db

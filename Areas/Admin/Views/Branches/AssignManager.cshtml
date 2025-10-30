@@ -1,0 +1,21 @@
+﻿@model ApexDrive.Models.Branch
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Assign Branch Manager";
+}
+
+<h2 class="text-xl font-semibold mb-4">Assign Manager – @Model.BranchName</h2>
+
+<form asp-action="AssignManager" method="post">
+    <input type="hidden" name="id" value="@Model.BranchId" />
+    <select name="managerId" class="form-input w-full mb-4">
+        <option value="">-- Select Admin --</option>
+        @foreach (var admin in ViewBag.Admins)
+        {
+            <option value="@admin.Id" selected="@(admin.Id == Model.ManagerId)">
+                @admin.FullName (@admin.Email)
+            </option>
+        }
+    </select>
+    <button type="submit" class="btn btn-accent">✅ Assign</button>
+</form>

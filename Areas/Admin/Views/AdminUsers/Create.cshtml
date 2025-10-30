@@ -1,0 +1,28 @@
+﻿@model ApexDrive.Models.ViewModels.AddAdminUserViewModel
+@{
+    ViewData["Title"] = "Add New Admin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">➕ Add New Admin</h1>
+
+<form asp-action="Create" method="post" class="bg-white p-6 rounded-xl shadow-md max-w-lg space-y-4">
+    <div>
+        <label asp-for="Email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input asp-for="Email" class="form-input w-full border-gray-300 rounded-lg mt-1 p-2" />
+        <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input asp-for="Password" class="form-input w-full border-gray-300 rounded-lg mt-1 p-2" />
+        <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+    </div>
+
+    <button type="submit"
+            class="px-4 py-2 bg-brand text-white rounded-lg shadow hover:bg-blue-700 transition">
+        Create Admin
+    </button>
+
+    <a asp-action="Index" class="ml-3 text-gray-600 hover:underline">Cancel</a>
+</form>

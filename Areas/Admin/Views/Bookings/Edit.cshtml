@@ -1,0 +1,85 @@
+﻿@model ApexDrive.Models.Booking
+@{
+    ViewData["Title"] = $"Edit Booking #{Model.BookingId}";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">✏️ Edit Booking — #@Model.BookingId</h1>
+
+<form asp-action="Edit" method="post" class="space-y-6 bg-white p-6 rounded-xl shadow-sm max-w-3xl">
+    <input type="hidden" asp-for="BookingId" />
+    <div asp-validation-summary="ModelOnly" class="bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-4"></div>
+
+    <!-- Booking Dates -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label asp-for="StartDate" class="block font-medium text-gray-700">Start Date</label>
+            <input asp-for="StartDate" type="date"
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+            <span asp-validation-for="StartDate" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="EndDate" class="block font-medium text-gray-700">End Date</label>
+            <input asp-for="EndDate" type="date"
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+            <span asp-validation-for="EndDate" class="text-red-500 text-sm"></span>
+        </div>
+    </div>
+
+    <!-- Branch Selection -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label asp-for="PickupBranchId" class="block font-medium text-gray-700">Pickup Branch</label>
+            <select asp-for="PickupBranchId"
+                    class="form-select w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2"
+                    asp-items="@(new SelectList(ViewBag.Branches, "BranchId", "BranchName", Model.PickupBranchId))">
+                <option value="">-- Select Pickup Branch --</option>
+            </select>
+            <span asp-validation-for="PickupBranchId" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="DropoffBranchId" class="block font-medium text-gray-700">Drop-off Branch</label>
+            <select asp-for="DropoffBranchId"
+                    class="form-select w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2"
+                    asp-items="@(new SelectList(ViewBag.Branches, "BranchId", "BranchName", Model.DropoffBranchId))">
+                <option value="">-- Select Drop-off Branch --</option>
+            </select>
+            <span asp-validation-for="DropoffBranchId" class="text-red-500 text-sm"></span>
+        </div>
+    </div>
+
+    <!-- Cost and Status -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label asp-for="BaseCost" class="block font-medium text-gray-700">Base Cost</label>
+            <input asp-for="BaseCost" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+            <span asp-validation-for="BaseCost" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="TotalCost" class="block font-medium text-gray-700">Total Cost</label>
+            <input asp-for="TotalCost" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+            <span asp-validation-for="TotalCost" class="text-red-500 text-sm"></span>
+        </div>
+    </div>
+
+    <div>
+        <label asp-for="Status" class="block font-medium text-gray-700">Status</label>
+        <select asp-for="Status"
+                class="form-select w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2"
+                asp-items="Html.GetEnumSelectList<ApexDrive.Models.BookingStatus>()">
+        </select>
+        <span asp-validation-for="Status" class="text-red-500 text-sm"></span>
+    </div>
+
+    <div class="flex justify-end space-x-3">
+        <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">Cancel</a>
+        <button type="submit" class="px-4 py-2 bg-brand hover:bg-blue-700 text-white rounded-lg font-medium">💾 Save Changes</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

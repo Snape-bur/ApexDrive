@@ -1,0 +1,165 @@
+﻿@model IEnumerable<ApexDrive.Models.CarReminder>
+@{
+    ViewData["Title"] = "Reminders";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">🔔 Reminders</h1>
+
+<form method="get" class="mb-6 bg-white p-4 rounded-xl shadow-sm space-y-3">
+    <!-- 🔹 Top Row: Search + Type + Date Range -->
+    <div class="flex flex-wrap gap-3">
+        <!-- Search -->
+        <div class="flex-1 min-w-[220px]">
+            <input name="search" value="@Context.Request.Query["search"]"
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand"
+                   placeholder="🔍 Plate / Brand / Model" />
+        </div>
+
+        <!-- Type -->
+        <div class="min-w-[150px]">
+            <select name="type" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
+                <option value="">All Types</option>
+                <option value="Insurance" selected="@(Context.Request.Query["type"] == "Insurance")">Insurance</option>
+                <option value="Service" selected="@(Context.Request.Query["type"] == "Service")">Service</option>
+            </select>
+        </div>
+
+        <!-- From / To Dates -->
+        <div class="flex items-center gap-2 min-w-[260px]">
+            <input type="date" name="from" value="@Context.Request.Query["from"]"
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand" />
+            <span class="text-gray-400 text-sm">–</span>
+            <input type="date" name="to" value="@Context.Request.Query["to"]"
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand" />
+        </div>
+    </div>
+
+    <!-- 🔹 Bottom Row: Overdue, Branch, Buttons -->
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-4">
+            <label class="flex items-center gap-2 text-sm text-gray-700 whitespace-nowrap">
+                <input type="checkbox" name="onlyOverdue" value="true"
+                       @(Context.Request.Query["onlyOverdue"] == "true" ? "checked" : null) />
+                Overdue only
+            </label>
+
+            @if (User.IsInRole("SuperAdmin"))
+            {
+                <select name="branchId"
+                        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
+                    <option value="">All Branches</option>
+                    @foreach (var br in ViewBag.Branches as List<ApexDrive.Models.Branch>)
+                    {
+                        <option value="@br.BranchId"
+                                selected="@(Context.Request.Query["branchId"] == br.BranchId.ToString())">
+                            @br.BranchName
+                        </option>
+                    }
+                </select>
+            }
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+            <button class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">
+                Filter
+            </button>
+            <a asp-action="Create" class="px-4 py-2 bg-brand hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
+                ➕ New
+            </a>
+        </div>
+    </div>
+</form>
+
+<div class="bg-white rounded-xl shadow-sm mt-4 overflow-hidden">
+    <table class="min-w-full text-sm text-gray-700 border-collapse">
+        <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
+            <tr>
+                <th class="px-6 py-3 text-left w-[12%]">When</th>
+                <th class="px-6 py-3 text-left w-[14%]">Type</th>
+                <th class="px-6 py-3 text-left w-[20%]">Car</th>
+                <th class="px-6 py-3 text-left w-[18%]">Branch</th>
+                <th class="px-6 py-3 text-left w-[12%]">Status</th>
+                <th class="px-6 py-3 text-center w-[14%]">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-200 text-sm">
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center py-6 text-gray-400">
+                        No reminders.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var r in Model)
+                {
+                    var overdue = !r.IsCompleted && r.ReminderDate.Date < DateTime.UtcNow.Date;
+                    <tr class="hover:bg-gray-50 transition">
+                        <!-- WHEN -->
+                        <td class="px-6 py-3">@r.ReminderDate.ToString("dd MMM yyyy")</td>
+
+                        <!-- TYPE -->
+                        <td class="px-6 py-3">
+                            <span class="px-2 py-1 text-xs rounded-lg font-medium @(r.Type == "Insurance" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700")">
+                                @r.Type
+                            </span>
+                        </td>
+
+                        <!-- CAR -->
+                        <td class="px-6 py-3">
+                            <div class="text-sm font-medium text-gray-800">@r.Car?.PlateNumber</div>
+                            <div class="text-xs text-gray-500">@r.Car?.Brand @r.Car?.Model</div>
+                        </td>
+
+                        <!-- BRANCH -->
+                        <td class="px-6 py-3">@r.Branch?.BranchName</td>
+
+                        <!-- STATUS -->
+                        <td class="px-6 py-3">
+                            @if (r.IsCompleted)
+                            {
+                                <span class="px-2 py-1 text-xs rounded-lg bg-green-100 text-green-700 font-medium">Completed</span>
+                            }
+                            else if (overdue)
+                            {
+                                <span class="px-2 py-1 text-xs rounded-lg bg-red-100 text-red-700 font-medium">Overdue</span>
+                            }
+                            else
+                            {
+                                <span class="px-2 py-1 text-xs rounded-lg bg-yellow-100 text-yellow-700 font-medium">Upcoming</span>
+                            }
+                        </td>
+
+                        <!-- ACTIONS -->
+                        <td class="px-6 py-3 text-center">
+                            <div class="flex justify-center gap-2">
+                                <form asp-action="ToggleComplete" method="post" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@r.ReminderId" />
+                                    <button class="px-3 py-1 text-xs rounded-lg border hover:bg-gray-100">
+                                        @(r.IsCompleted ? "↩ Reopen" : "✅ Complete")
+                                    </button>
+                                </form>
+
+                                <a asp-action="Edit" asp-route-id="@r.ReminderId"
+                                   class="px-3 py-1 text-xs rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete" asp-route-id="@r.ReminderId"
+                                   class="px-3 py-1 text-xs rounded-lg bg-red-500 text-white hover:bg-red-600 transition">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

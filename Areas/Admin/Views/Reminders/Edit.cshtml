@@ -1,0 +1,59 @@
+﻿@model ApexDrive.Models.CarReminder
+@{
+    ViewData["Title"] = "Edit Reminder";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<h1 class="text-2xl font-bold text-brand mb-6">✏️ Edit Reminder</h1>
+
+<form asp-action="Edit" method="post" class="space-y-6 bg-white p-6 rounded-xl shadow-sm max-w-3xl">
+    <input type="hidden" asp-for="ReminderId" />
+
+    <div asp-validation-summary="ModelOnly" class="bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-2"></div>
+
+    <div>
+        <label asp-for="Type" class="block font-medium text-gray-700">Type</label>
+        <select asp-for="Type" class="form-select w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand">
+            <option value="Insurance">Insurance</option>
+            <option value="Service">Service</option>
+        </select>
+        <span asp-validation-for="Type" class="text-red-500 text-sm"></span>
+    </div>
+
+    <div>
+        <label asp-for="CarId" class="block font-medium text-gray-700">Car</label>
+        <select asp-for="CarId"
+                class="form-select w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand"
+                asp-items="@(new SelectList(ViewBag.Cars, "CarId", "PlateNumber", Model.CarId))">
+            <option value="">-- Select Car --</option>
+        </select>
+        <span class="text-xs text-gray-500">Brand/Model shown on list page.</span>
+        <span asp-validation-for="CarId" class="text-red-500 text-sm"></span>
+    </div>
+
+    <div>
+        <label asp-for="ReminderDate" class="block font-medium text-gray-700">Reminder Date</label>
+        <input asp-for="ReminderDate" type="date" class="form-input w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand" />
+        <span asp-validation-for="ReminderDate" class="text-red-500 text-sm"></span>
+    </div>
+
+    <div>
+        <label asp-for="Notes" class="block font-medium text-gray-700">Notes</label>
+        <textarea asp-for="Notes" class="form-input w-full h-24 border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand"></textarea>
+    </div>
+
+    <div class="flex items-center gap-2">
+        <label class="flex items-center gap-2 text-sm text-gray-700">
+            <input type="checkbox" asp-for="IsCompleted" class="rounded border-gray-300 focus:ring-brand" />
+            Mark as completed
+        </label>
+    </div>
+
+    <div class="flex justify-end gap-2">
+        <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">Cancel</a>
+        <button class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700">💾 Save Changes</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
