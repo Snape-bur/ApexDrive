@@ -1,0 +1,58 @@
+﻿@model ApexDrive.Models.Payment
+@{
+    ViewData["Title"] = "Edit Payment";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-2xl font-bold text-brand mb-6">🛠 Edit Payment</h1>
+
+<div class="bg-white p-6 rounded-xl shadow-md max-w-lg">
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="PaymentId" />
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Booking ID</label>
+            <input type="text" value="@Model.BookingId" readonly
+                   class="w-full rounded-lg border-gray-300 bg-gray-100 px-3 py-2" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Amount</label>
+            <input type="text" value="@Model.Amount.ToString("C")" readonly
+                   class="w-full rounded-lg border-gray-300 bg-gray-100 px-3 py-2" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Method</label>
+            <select asp-for="Method" class="w-full rounded-lg border-gray-300 px-3 py-2 focus:ring-primary-500">
+                <option>Cash</option>
+                <option>Card</option>
+                <option>Bank Transfer</option>
+                <option>QR Payment</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
+            <select asp-for="Status" class="w-full rounded-lg border-gray-300 px-3 py-2 focus:ring-primary-500">
+                <option>Pending</option>
+                <option>Paid</option>
+            </select>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Transaction Reference</label>
+            <input asp-for="TransactionRef" class="w-full rounded-lg border-gray-300 px-3 py-2 focus:ring-primary-500" />
+        </div>
+
+        <div class="flex justify-between">
+            <a asp-action="Index"
+               class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">⬅ Back</a>
+            <button type="submit"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+                💾 Save Changes
+            </button>
+        </div>
+    </form>
+</div>

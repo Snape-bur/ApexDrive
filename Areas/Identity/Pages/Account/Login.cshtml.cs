@@ -88,14 +88,17 @@ namespace ApexDrive.Areas.Identity.Pages.Account
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     var roles = await _userManager.GetRolesAsync(user);
 
-                    // ✅ Redirect by role
+                    // ✅ Redirect based on role
                     if (roles.Contains("SuperAdmin") || roles.Contains("Admin"))
                     {
+                        // Admins → Admin Dashboard
                         return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                     }
-
-                    // Default redirect for normal users
-                    return LocalRedirect(returnUrl);
+                    else
+                    {
+                        // ✅ Customers and normal users → main homepage (not /Customer)
+                        return RedirectToAction("Index", "Home", new { area = "" });
+                    }
                 }
 
                 if (result.RequiresTwoFactor)
@@ -117,5 +120,6 @@ namespace ApexDrive.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
     }
 }

@@ -7,22 +7,43 @@
 <h1 class="text-2xl font-bold text-red-600 mb-6">🗑️ Delete Car</h1>
 
 <div class="bg-white p-6 rounded-xl shadow-sm max-w-2xl">
+    <!-- Warning banner -->
     <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-4">
-        <strong>Warning:</strong> This action cannot be undone.
+        <p class="font-medium">
+            ⚠️ Are you sure you want to permanently delete this car? This action cannot be undone.
+        </p>
     </div>
 
+    <!-- Car details -->
     <div class="border rounded-lg p-4 bg-gray-50 mb-6">
         <p><strong>Plate:</strong> @Model.PlateNumber</p>
         <p><strong>Brand:</strong> @Model.Brand</p>
         <p><strong>Model:</strong> @Model.Model</p>
+        <p><strong>Daily Rate:</strong> ฿@Model.DailyRate</p>
         <p><strong>Branch:</strong> @Model.Branch?.BranchName</p>
+
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="mt-4">
+                <p class="font-medium text-gray-700">Car Image:</p>
+                <img src="@Model.ImageUrl" alt="Car Image"
+                     class="w-56 h-36 object-cover rounded-lg border mt-2 shadow-sm" />
+            </div>
+        }
     </div>
 
+    <!-- Buttons -->
     <form asp-action="DeleteConfirmed" method="post">
         <input type="hidden" asp-for="CarId" />
         <div class="flex justify-end space-x-3">
-            <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">Cancel</a>
-            <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium">Delete</button>
+            <a asp-action="Index"
+               class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">
+                Cancel
+            </a>
+            <button type="submit"
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium">
+                Delete
+            </button>
         </div>
     </form>
 </div>

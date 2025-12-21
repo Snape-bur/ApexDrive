@@ -47,60 +47,106 @@
     <!-- Booking Card -->
     <div id="search" class="relative -mt-16 pb-8">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <form class="rounded-2xl bg-white p-4 sm:p-6 shadow-2xl ring-1 ring-black/5">
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                    <!-- Pickup Location -->
-                    <label class="block">
-                        <span class="mb-1 block text-sm font-medium text-gray-700">
-                            @L["Pickup_Location_Label", "Pickup Location"]
-                        </span>
-                        <input type="text"
-                               placeholder="@L["Pickup_Location_Placeholder", "Bangkok Suvarnabhumi (BKK)"]"
-                               class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
-                               required />
-                    </label>
+            <form asp-area="Customer" asp-controller="Booking" asp-action="Search" method="post"
+                  class="rounded-2xl bg-white p-4 sm:p-6 shadow-2xl ring-1 ring-black/5">
 
-                    <!-- Return Location -->
-                    <label class="block">
-                        <span class="mb-1 block text-sm font-medium text-gray-700">
-                            @L["Return_Location_Label", "Return Location"]
-                        </span>
-                        <input type="text"
-                               placeholder="@L["Return_Location_Placeholder", "Return to same location"]"
-                               class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-200" />
-                    </label>
+
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 items-end">
+
+                    <!-- Pickup & Drop-off Branches (Aligned ThaiRent style) -->
+                    <div class="flex flex-col lg:flex-row lg:items-end gap-4 lg:col-span-2">
+
+                        <!-- Pickup -->
+                        <div class="flex-1">
+                            <label for="pickupBranch" class="flex items-center justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-700">@L["Pickup_Location_Label", "Pickup Location"]</span>
+                            </label>
+                            <select id="pickupBranch"
+                                    name="PickupBranchId"
+                                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900
+                                       focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
+                                    required>
+                                <option value="">@L["Select_Pickup_Branch", "Select Pickup Branch"]</option>
+                                @if (ViewBag.Branches != null && ((IEnumerable<dynamic>)ViewBag.Branches).Any())
+                                {
+                                    foreach (var branch in ViewBag.Branches)
+                                    {
+                                        <option value="@branch.BranchId">@branch.BranchName</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option disabled>@L["No_Branches_Found", "No branches available"]</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Drop-off -->
+                        <div class="flex-1">
+                            <label for="dropoffBranch" class="flex items-center justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-700">@L["Return_Location_Label", "Return Location"]</span>
+                                <div class="flex items-center gap-1 text-xs sm:text-sm">
+                                    <input id="sameBranch" type="checkbox"
+                                           class="text-primary-600 rounded border-gray-300 focus:ring-primary-500 align-middle" />
+                                    <label for="sameBranch" class="text-gray-600 cursor-pointer select-none leading-tight">
+                                        @L["Same_Branch_Label", "Same location"]
+                                    </label>
+                                </div>
+                            </label>
+                            <select id="dropoffBranch"
+                                    name="DropoffBranchId"
+                                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900
+                                       focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-opacity duration-300"
+                                    required>
+                                <option value="">@L["Select_Dropoff_Branch", "Select Drop-off Branch"]</option>
+                                @if (ViewBag.Branches != null && ((IEnumerable<dynamic>)ViewBag.Branches).Any())
+                                {
+                                    foreach (var branch in ViewBag.Branches)
+                                    {
+                                        <option value="@branch.BranchId">@branch.BranchName</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option disabled>@L["No_Branches_Found", "No branches available"]</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
 
                     <!-- Pickup Date -->
                     <label class="block">
-                        <span class="mb-1 block text-sm font-medium text-gray-700">
-                            @L["Pickup_Date_Label", "Pickup Date"]
-                        </span>
+                        <span class="mb-1 block text-sm font-medium text-gray-700">@L["Pickup_Date_Label", "Pickup Date"]</span>
                         <input id="pickupDate"
+                               name="StartDate"
                                type="date"
-                               class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
+                               class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900
+                                  focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
                                required />
                     </label>
 
                     <!-- Return Date -->
                     <label class="block">
-                        <span class="mb-1 block text-sm font-medium text-gray-700">
-                            @L["Return_Date_Label", "Return Date"]
-                        </span>
+                        <span class="mb-1 block text-sm font-medium text-gray-700">@L["Return_Date_Label", "Return Date"]</span>
                         <input id="returnDate"
+                               name="EndDate"
                                type="date"
-                               class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
+                               class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900
+                                  focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
                                required />
                     </label>
 
-                    <!-- Button -->
+                    <!-- Search Button -->
                     <div class="flex items-end">
                         <button type="submit"
-                                class="w-full rounded-xl bg-primary-600 px-6 py-3 font-semibold text-white shadow-brand hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-300">
+                                class="w-full rounded-xl bg-primary-600 px-6 py-3 font-semibold text-white shadow-brand
+                                   hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-300">
                             @L["Btn_SearchCars", "Search Cars"]
                         </button>
                     </div>
                 </div>
 
+                <!-- Info badges -->
                 <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-gray-500">
                     <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1">
                         @L["Badge_Unlimited", "Unlimited Mileage"]
@@ -115,7 +161,7 @@
             </form>
         </div>
     </div>
-</section>
+
 
 <!-- ===========================
      FLEET
@@ -466,24 +512,71 @@
 </section>
 
 @section Scripts {
-    <script>
-        // Dates: set min today and ensure return >= pickup
-        const pickup = document.getElementById('pickupDate');
-        const ret = document.getElementById('returnDate');
-        const today = new Date();
-        const iso = d => new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().split('T')[0];
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
 
-        if (pickup && ret) {
-            pickup.min = iso(today);
-            ret.min   = iso(today);
+                // === DATE LOGIC ===
+                const pickup = document.getElementById("pickupDate");
+                const ret = document.getElementById("returnDate");
+                const today = new Date();
+                const iso = d =>
+                    new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+                        .toISOString()
+                        .split("T")[0];
 
-            pickup.addEventListener('change', () => {
-                if (!pickup.value) return;
-                const p = new Date(pickup.value);
-                const next = new Date(p.getTime() + 24 * 60 * 60 * 1000);
-                if (!ret.value || ret.value < pickup.value) ret.value = iso(next);
-                ret.min = pickup.value;
+                if (pickup && ret) {
+                    pickup.min = iso(today);
+                    ret.min = iso(today);
+
+                    pickup.addEventListener("change", () => {
+                        if (!pickup.value) return;
+
+                        const p = new Date(pickup.value);
+                        const next = new Date(p.getTime() + 24 * 60 * 60 * 1000);
+
+                        if (!ret.value || ret.value < pickup.value)
+                            ret.value = iso(next);
+
+                        ret.min = pickup.value;
+                    });
+                }
+
+                // === SAME BRANCH LOGIC (Fixed for Submission) ===
+                const sameBranch = document.getElementById("sameBranch");
+                const pickupBranch = document.getElementById("pickupBranch");
+                const dropoffBranch = document.getElementById("dropoffBranch");
+
+                if (sameBranch && pickupBranch && dropoffBranch) {
+
+                    const syncBranches = () => {
+                        if (sameBranch.checked) {
+                            // ✅ Copy pickup → dropoff and visually disable but still submit value
+                            dropoffBranch.value = pickupBranch.value;
+                            dropoffBranch.setAttribute("data-locked", "true");
+                            dropoffBranch.classList.add("opacity-50", "cursor-not-allowed");
+                            dropoffBranch.style.pointerEvents = "none"; // keep in form post
+                        } else {
+                            // ✅ Re-enable dropoff selection
+                            dropoffBranch.removeAttribute("data-locked");
+                            dropoffBranch.classList.remove("opacity-50", "cursor-not-allowed");
+                            dropoffBranch.style.pointerEvents = "auto";
+                            dropoffBranch.value = ""; // optional reset
+                        }
+                    };
+
+                    // ✅ Run immediately on load
+                    syncBranches();
+
+                    // ✅ React to changes
+                    sameBranch.addEventListener("change", syncBranches);
+                    pickupBranch.addEventListener("change", () => {
+                        if (sameBranch.checked) {
+                            dropoffBranch.value = pickupBranch.value;
+                        }
+                    });
+                }
             });
-        }
-    </script>
+        </script>
 }
+
+

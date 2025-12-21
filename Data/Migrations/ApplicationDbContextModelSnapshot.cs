@@ -118,6 +118,9 @@ namespace ApexDrive.Data.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("ChildSeatCost")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -131,6 +134,24 @@ namespace ApexDrive.Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("ExtrasCost")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<bool>("HasChildSeat")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("InsuranceCost")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("InsuranceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
                     b.Property<int>("PickupBranchId")
                         .HasColumnType("int");
 
@@ -142,6 +163,9 @@ namespace ApexDrive.Data.Migrations
 
                     b.Property<decimal>("TotalCost")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("BookingId");
 
@@ -218,6 +242,14 @@ namespace ApexDrive.Data.Migrations
                     b.Property<decimal>("DailyRate")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<string>("FuelType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
                     b.Property<DateTime?>("InsuranceExpiry")
                         .HasColumnType("datetime2");
 
@@ -239,6 +271,14 @@ namespace ApexDrive.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Transmission")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("CarId");
 
@@ -368,6 +408,35 @@ namespace ApexDrive.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("ApexDrive.Models.PricingRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Multiplier")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PricingRules");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

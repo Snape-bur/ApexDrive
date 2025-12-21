@@ -23,10 +23,24 @@ namespace ApexDrive.Models
         [Range(1, 1000000, ErrorMessage = "Daily rate must be greater than zero.")]
         public decimal DailyRate { get; set; }
 
+        [MaxLength(250)]
+        public string? ImageUrl { get; set; }
+
+
         [Range(0, 1000000, ErrorMessage = "Mileage must be a valid number.")]
         public int Mileage { get; set; }
 
         public bool IsAvailable { get; set; } = true;
+
+        [StringLength(50)]
+        public string? Type { get; set; } // Sedan, SUV, etc.
+
+        [StringLength(50)]
+        public string? FuelType { get; set; } // Petrol, Diesel, Hybrid
+
+        [StringLength(50)]
+        public string? Transmission { get; set; } // Automatic, Manual
+
 
         public DateTime? InsuranceExpiry { get; set; }
 

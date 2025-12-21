@@ -1,0 +1,45 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Booking Confirmed";
+      Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="max-w-3xl mx-auto bg-white shadow-md rounded-2xl p-8 mt-20 text-gray-800">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-blue-600 mb-2">✅ Booking Confirmed!</h1>
+        <p class="text-gray-500">Your booking has been successfully completed.</p>
+    </div>
+
+    <div class="border-t border-gray-200 pt-6 space-y-3 text-sm">
+        <p><strong>Booking ID:</strong> #@Model.BookingId</p>
+        <p><strong>Status:</strong> @Model.Status</p>
+        <p><strong>Car:</strong> @Model.CarName</p>
+        <p><strong>Pickup Branch:</strong> @Model.PickupBranch</p>
+        <p><strong>Drop-off Branch:</strong> @Model.DropoffBranch</p>
+        <p><strong>Rental Period:</strong> @Model.StartDate – @Model.EndDate</p>
+    </div>
+
+    <div class="mt-6 border-t border-gray-200 pt-6 space-y-2">
+        <h3 class="text-lg font-semibold text-gray-800">💰 Payment Summary</h3>
+        <p><strong>Base Cost:</strong> @Model.BaseCost.ToString("C")</p>
+        <p><strong>Extras Cost:</strong> @Model.ExtrasCost.ToString("C")</p>
+        <p class="text-lg font-bold text-gray-900">
+            Total Cost: @Model.TotalCost.ToString("C")
+        </p>
+        <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
+        <p>
+            <strong>Payment Status:</strong>
+            <span class="@(Model.PaymentStatus == "Paid" ? "text-green-600" : "text-yellow-600")">
+                @Model.PaymentStatus
+            </span>
+        </p>
+    </div>
+
+    <div class="text-center mt-10">
+        <a asp-area="Customer" asp-controller="Dashboard" asp-action="Index"
+           class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+            Go to Dashboard
+        </a>
+    </div>
+</div>

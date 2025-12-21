@@ -123,6 +123,12 @@
                             🏢 <span class="sidebar-text">Branch Management</span>
                         </a>
                     </li>
+                    <li>
+                        <a asp-area="Admin" asp-controller="PricingRules" asp-action="Index"
+                           class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "PricingRules" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
+                            🏷️ <span class="sidebar-text">Pricing Rules</span>
+                        </a>
+                    </li>
 
                     <li>
                         <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Index"
@@ -148,10 +154,17 @@
 
                 <li>
                     <a asp-area="Admin" asp-controller="Reminders" asp-action="Index"
-                       class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "Reminders" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
-                        🔔 <span class="sidebar-text">Reminders</span>
+                       class="flex items-center justify-between px-4 py-2 rounded-lg @(currentController == "Reminders" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50") transition">
+
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">🔔</span>
+                            <span class="sidebar-text">Reminders</span>
+                        </div>
+
+                        @await Component.InvokeAsync("ReminderBadge")
                     </a>
                 </li>
+
 
                 <li>
                     <a asp-area="Admin" asp-controller="Maintenance" asp-action="Index"

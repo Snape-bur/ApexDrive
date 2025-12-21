@@ -1,7 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using ApexDrive.Models; // make sure this namespace matches where CarReminder exists
 
 namespace ApexDrive.Models.ViewModels
 {
+    public class ReminderSummary
+    {
+        public int OverdueCount { get; set; }
+        public int DueTodayCount { get; set; }
+        public int UpcomingCount { get; set; }
+        public List<CarReminder>? UpcomingReminders { get; set; }
+    }
+
     public class DashboardViewModel
     {
         // 🏢 Branch Info
@@ -18,5 +28,8 @@ namespace ApexDrive.Models.ViewModels
 
         // 🧰 Maintenance Records (for recent 5 items)
         public List<CarMaintenanceHistory> RecentMaintenanceRecords { get; set; } = new();
+
+        // 🔔 Reminder Banner Summary
+        public ReminderSummary ReminderSummary { get; set; } = new();
     }
 }

@@ -1,5 +1,10 @@
 ﻿@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Identity
+@using ApexDrive.Models
 @inject IStringLocalizer<SharedResource> L
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
 <!DOCTYPE html>
 <html lang="@System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
@@ -60,12 +65,14 @@
     <header class="absolute inset-x-0 top-6 z-50">
         <div class="mx-auto max-w-6xl px-4">
             <div class="flex h-16 items-center justify-between rounded-full bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-lg ring-1 ring-black/5">
+                <!-- ✅ Logo -->
                 <a asp-controller="Home" asp-action="Index" class="flex items-center">
                     <span class="text-2xl font-extrabold tracking-tight">
                         <span class="text-blue-600">Apex</span><span class="text-gray-900">Drive</span>
                     </span>
                 </a>
 
+                <!-- ✅ Nav Links -->
                 <nav class="hidden md:flex items-center gap-10 text-sm font-medium text-gray-700">
                     <a href="#home">@L["Home", "Home"]</a>
                     <a href="#services">@L["Services", "Services"]</a>
@@ -74,7 +81,7 @@
                     <a href="#contact">@L["Contact", "Contact"]</a>
                 </nav>
 
-
+                <!-- ✅ Right Side Buttons -->
                 <div class="hidden md:flex items-center gap-3">
                     <select id="cultureSelect"
                             class="h-9 rounded-full border border-gray-300 bg-white/80 px-3 text-sm"
@@ -87,12 +94,17 @@
                         <option value="my-MM" selected="@(ui == "my-MM")">မြန်မာ</option>
                     </select>
 
-                    <!-- Auth Buttons -->
+                    <!-- ✅ Auth Buttons -->
                     <div class="flex items-center gap-2">
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        @if (SignInManager.IsSignedIn(User))
                         {
-                            <!-- When logged in -->
-                            <a asp-area="Identity" asp-page="/Account/Manage/Index"
+                            <!-- Logged-in user -->
+                            <a asp-area="Customer" asp-controller="Booking" asp-action="MyBookings"
+                               class="hidden sm:inline-flex rounded-full border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100">
+                                My Bookings
+                            </a>
+
+                            <a asp-area="Customer" asp-controller="Profile" asp-action="Index"
                                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black text-white ring-2 ring-white"
                                aria-label="Profile">
                                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -100,10 +112,17 @@
                                           d="M12 12a4 4 0 100-8 4 4 0 000 8zM6 20a6 6 0 1112 0v1H6v-1z" />
                                 </svg>
                             </a>
+
+                            <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="inline">
+                                <button type="submit"
+                                        class="hidden sm:inline-flex rounded-full border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100">
+                                    Logout
+                                </button>
+                            </form>
                         }
                         else
                         {
-                            <!-- When not logged in -->
+                            <!-- Guest -->
                             <a asp-area="Identity" asp-page="/Account/Login"
                                class="rounded-full border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100">
                                 Log In
@@ -114,9 +133,9 @@
                             </a>
                         }
                     </div>
-
                 </div>
 
+                <!-- ✅ Mobile Toggle -->
                 <button id="menuBtn" class="md:hidden inline-flex items-center justify-center rounded-full p-2 hover:bg-gray-100">
                     <svg class="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -125,7 +144,7 @@
             </div>
         </div>
 
-        <!-- Mobile Menu -->
+        <!-- ✅ Mobile Menu -->
         <div id="mobileMenu" class="md:hidden hidden">
             <div class="mx-auto mt-3 max-w-6xl px-4">
                 <div class="rounded-2xl bg-white/95 p-4 shadow-lg ring-1 ring-black/5">
@@ -134,6 +153,25 @@
                     <a href="#fleet" class="block py-2">@L["Nav_Fleet", "Fleet"]</a>
                     <a href="#faq" class="block py-2">@L["Nav_FAQ", "FAQ"]</a>
                     <a href="#contact" class="block py-2">@L["Nav_Contact", "Contact"]</a>
+
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <a asp-area="Customer" asp-controller="Booking" asp-action="Index" class="block py-2">My Bookings</a>
+                        <form asp-area="Identity"
+                              asp-page="/Account/Logout"
+                              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                              method="post">
+                            <button type="submit" class="block w-full text-left py-2">
+                                Logout
+                            </button>
+                        </form>
+
+                    }
+                    else
+                    {
+                        <a asp-area="Identity" asp-page="/Account/Login" class="block py-2">Login</a>
+                        <a asp-area="Identity" asp-page="/Account/Register" class="block py-2">Sign Up</a>
+                    }
                 </div>
             </div>
         </div>

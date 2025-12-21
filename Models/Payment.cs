@@ -9,16 +9,20 @@ namespace ApexDrive.Models
         [Key]
         public int PaymentId { get; set; }
 
+        // FK → Booking
         [Required]
         public int BookingId { get; set; }
+
         [ForeignKey(nameof(BookingId))]
         public Booking Booking { get; set; }
 
+        // Payment Details
         [Column(TypeName = "decimal(10,2)")]
+        [Range(0, 1000000)]
         public decimal Amount { get; set; }
 
         [Required, StringLength(30)]
-        public string Method { get; set; } = "Cash";
+        public string Method { get; set; } = "Credit Card";
 
         [Required, StringLength(30)]
         public string Status { get; set; } = "Pending";
@@ -26,6 +30,8 @@ namespace ApexDrive.Models
         [StringLength(100)]
         public string? TransactionRef { get; set; }
 
+        // Track payment date/time
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     }
 }

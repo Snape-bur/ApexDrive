@@ -1,0 +1,173 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ApexDrive.Models
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ApexDrive Car Rental</title>
+
+    <!-- ✅ Tailwind + Font Config (same as original homepage) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui"] },
+                    colors: {
+                        primary: {
+                            50: "#eef6ff",
+                            100: "#d9ebff",
+                            200: "#b3d7ff",
+                            300: "#86beff",
+                            400: "#5aa3ff",
+                            500: "#2d87ff",
+                            600: "#176de6",
+                            700: "#1256b4",
+                            800: "#0f4691",
+                            900: "#0d3b79",
+                        },
+                    },
+                    boxShadow: {
+                        brand: "0 10px 30px -10px rgb(17 24 39 / 0.25)",
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-gray-50 text-gray-800">
+
+    <!-- ✅ Shared Header -->
+    <header class="absolute inset-x-0 top-6 z-50">
+        <div class="mx-auto max-w-6xl px-4">
+            <div class="flex h-16 items-center justify-between rounded-full bg-white/95 px-4 sm:px-6 backdrop-blur-md shadow-lg ring-1 ring-black/5">
+
+                <!-- Logo -->
+                <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="flex items-center">
+                    <span class="text-2xl font-extrabold tracking-tight">
+                        <span class="text-blue-600">Apex</span><span class="text-gray-900">Drive</span>
+                    </span>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center gap-10 text-sm font-medium text-gray-700">
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="hover:text-gray-900">Home</a>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step1_Form" class="hover:text-gray-900">Booking</a>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step2_SelectCar" class="hover:text-gray-900">Fleet</a>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step3_Extras" class="hover:text-gray-900">Extras</a>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step4_Payment" class="hover:text-gray-900">Payment</a>
+
+                    @* ✅ My Bookings for logged-in customers *@
+                    @if (User?.Identity?.IsAuthenticated ?? false && User.IsInRole("Customer"))
+                    {
+                        <a asp-area="Customer" asp-controller="Booking" asp-action="MyBookings"
+                           class="hover:text-blue-700 font-semibold">My Bookings</a>
+                    }
+                </nav>
+
+                <!-- ✅ Profile + Auth Buttons -->
+                <div class="hidden md:flex items-center gap-4">
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <!-- Logout -->
+                        <form action="/Identity/Account/Logout" method="post" class="inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit"
+                                    class="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-700">
+                                Logout
+                            </button>
+                        </form>
+
+                        <!-- Profile Icon -->
+                        <a asp-area="Customer" asp-controller="Profile" asp-action="Index"
+                           class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black text-white ring-2 ring-white hover:bg-gray-800 transition"
+                           aria-label="Profile">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 12a4 4 0 100-8 4 4 0 000 8zM6 20a6 6 0 1112 0v1H6v-1z" />
+                            </svg>
+                        </a>
+                    }
+                    else
+                    {
+                        <!-- Guest Buttons -->
+                        <a asp-area="Identity" asp-page="/Account/Login"
+                           class="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-700">Login</a>
+                        <a asp-area="Identity" asp-page="/Account/Register"
+                           class="rounded-full bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-brand hover:bg-primary-700 transition">
+                            Sign Up
+                        </a>
+                    }
+                </div>
+
+                <!-- Mobile Menu Btn -->
+                <button id="menuBtn" class="md:hidden inline-flex items-center justify-center rounded-full p-2 hover:bg-gray-100">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav -->
+        <div id="mobileMenu" class="md:hidden hidden">
+            <div class="mx-auto mt-3 max-w-6xl px-4">
+                <div class="rounded-2xl bg-white/95 p-4 shadow-lg ring-1 ring-black/5 space-y-2">
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="block py-2">Home</a>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step1_Form" class="block py-2">Booking</a>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step2_SelectCar" class="block py-2">Fleet</a>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step3_Extras" class="block py-2">Extras</a>
+                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step4_Payment" class="block py-2">Payment</a>
+
+                    @if (User?.Identity?.IsAuthenticated ?? false && User.IsInRole("Customer"))
+                    {
+                        <a asp-area="Customer" asp-controller="Booking" asp-action="MyBookings" class="block py-2">My Bookings</a>
+                    }
+
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <form asp-area="Identity" asp-page="/Account/Logout"
+                              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "Customer" })"
+                              method="post" class="block py-2">
+                            <button type="submit" class="text-left w-full text-gray-700 hover:text-blue-700">Logout</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ✅ Page Body -->
+    <main class="pt-24 pb-10 min-h-screen">
+        @RenderBody()
+    </main>
+
+    <!-- ✅ Scripts -->
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,11 +1,14 @@
-﻿using ApexDrive.Data;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using ApexDrive.Data;
 using ApexDrive.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ApexDrive.Areas.Admin.Controllers
 {
@@ -15,6 +18,7 @@ namespace ApexDrive.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly string _imageFolderPath = Path.Combine("wwwroot", "images", "cars");
 
         public CarsController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
@@ -39,7 +43,6 @@ namespace ApexDrive.Areas.Admin.Controllers
             if (User.IsInRole("SuperAdmin"))
                 ViewBag.Branches = await _context.Branches.ToListAsync();
 
-            // 🔍 Apply search filter
             if (!string.IsNullOrEmpty(search))
             {
                 search = search.ToLower();
@@ -49,7 +52,6 @@ namespace ApexDrive.Areas.Admin.Controllers
                     c.Model.ToLower().Contains(search));
             }
 
-            // 🏢 Filter by branch (SuperAdmin only)
             if (branchId.HasValue && branchId.Value > 0)
                 query = query.Where(c => c.BranchId == branchId);
 
@@ -65,19 +67,21 @@ namespace ApexDrive.Areas.Admin.Controllers
 
             return View();
         }
-        // ✅ CREATE (POST)
+
+        // ✅ CREATE (POST) – with Image Upload
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Car car)
+        public async Task<IActionResult> Create(Car car, IFormFile imageFile)
         {
-            // Determine branch based on role
+            // Ensure directory exists
+            if (!Directory.Exists(_imageFolderPath))
+                Directory.CreateDirectory(_imageFolderPath);
+
+            // Assign branch based on role
             if (User.IsInRole("Admin"))
             {
                 var user = await _userManager.GetUserAsync(User);
                 car.BranchId = user?.BranchId ?? 0;
-
-                // Debugging admin branch assignment
-                Console.WriteLine($"[DEBUG] Admin creating car → BranchId set to {car.BranchId}");
             }
             else if (User.IsInRole("SuperAdmin"))
             {
@@ -85,27 +89,29 @@ namespace ApexDrive.Areas.Admin.Controllers
                     ModelState.AddModelError("BranchId", "Please select a branch.");
             }
 
-            // Validate state before saving
+            // Handle image upload
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                var filePath = Path.Combine(_imageFolderPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+
+                // Save relative path
+                car.ImageUrl = "/images/cars/" + fileName;
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(car);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "✅ Car added successfully.";
-                Console.WriteLine("✅ Car successfully added.");
                 return RedirectToAction(nameof(Index));
             }
 
-            // Debug ModelState errors
-            Console.WriteLine("❌ ModelState Invalid — Debug Output:");
-            foreach (var entry in ModelState)
-            {
-                var key = entry.Key;
-                var errors = string.Join(", ", entry.Value.Errors.Select(e => e.ErrorMessage));
-                if (!string.IsNullOrEmpty(errors))
-                    Console.WriteLine($"   • {key}: {errors}");
-            }
-
-            // Repopulate dropdown if validation fails
             if (User.IsInRole("SuperAdmin"))
                 ViewBag.Branches = await _context.Branches.ToListAsync();
 
@@ -113,12 +119,15 @@ namespace ApexDrive.Areas.Admin.Controllers
         }
 
 
+
         // ✅ EDIT (GET)
         public async Task<IActionResult> Edit(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
-            if (car == null) return NotFound();
+            var car = await _context.Cars.Include(c => c.Branch).FirstOrDefaultAsync(c => c.CarId == id);
+            if (car == null)
+                return NotFound();
 
+            // For Admin, restrict to their own branch
             if (User.IsInRole("Admin"))
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -135,31 +144,77 @@ namespace ApexDrive.Areas.Admin.Controllers
         // ✅ EDIT (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Car car)
+        public async Task<IActionResult> Edit(int id, Car formCar, IFormFile? newImageFile)
         {
-            if (id != car.CarId) return NotFound();
+            Console.WriteLine($"🧠 ENTERING POST Edit for CarId={id}");
 
+            if (id != formCar.CarId)
+                return BadRequest();
+
+            var existingCar = await _context.Cars.FindAsync(id);
+            if (existingCar == null)
+                return NotFound();
+
+            // Update editable fields
+            existingCar.PlateNumber = formCar.PlateNumber;
+            existingCar.Brand = formCar.Brand;
+            existingCar.Model = formCar.Model;
+            existingCar.DailyRate = formCar.DailyRate;
+            existingCar.Mileage = formCar.Mileage;
+            existingCar.Type = formCar.Type;
+            existingCar.FuelType = formCar.FuelType;
+            existingCar.Transmission = formCar.Transmission;
+            existingCar.BranchId = formCar.BranchId;
+
+            // ✅ Handle image replacement only if a new one is uploaded
+            if (newImageFile != null && newImageFile.Length > 0)
+            {
+                if (!Directory.Exists(_imageFolderPath))
+                    Directory.CreateDirectory(_imageFolderPath);
+
+                // Delete old image if exists
+                if (!string.IsNullOrEmpty(existingCar.ImageUrl))
+                {
+                    var oldPath = Path.Combine("wwwroot", existingCar.ImageUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath))
+                        System.IO.File.Delete(oldPath);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(newImageFile.FileName);
+                var filePath = Path.Combine(_imageFolderPath, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                    await newImageFile.CopyToAsync(stream);
+
+                existingCar.ImageUrl = "/images/cars/" + fileName;
+                TempData["Success"] = "✅ Image updated successfully.";
+            }
+
+            // ✅ Keep existing image if no new one uploaded
+            if (newImageFile == null || newImageFile.Length == 0)
+                Console.WriteLine("ℹ️ Keeping existing image (no upload detected).");
+
+            // ✅ Save
             if (ModelState.IsValid)
             {
-                _context.Update(car);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "✅ Car updated successfully.";
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Update(existingCar);
+                    await _context.SaveChangesAsync();
+                    TempData["Success"] = "✅ Car updated successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ Error while saving: {ex.Message}");
+                    TempData["Error"] = "⚠️ Could not save changes. Try again.";
+                }
             }
 
-            Console.WriteLine("❌ ModelState Invalid on Edit:");
-            foreach (var entry in ModelState)
-            {
-                var key = entry.Key;
-                var errors = string.Join(", ", entry.Value.Errors.Select(e => e.ErrorMessage));
-                if (!string.IsNullOrEmpty(errors))
-                    Console.WriteLine($"   • {key}: {errors}");
-            }
-
+            // Refill branch list if SuperAdmin
             if (User.IsInRole("SuperAdmin"))
                 ViewBag.Branches = await _context.Branches.ToListAsync();
 
-            return View(car);
+            return View(formCar);
         }
 
         // ✅ DELETE (GET)
@@ -170,7 +225,6 @@ namespace ApexDrive.Areas.Admin.Controllers
                 .FirstOrDefaultAsync(c => c.CarId == id);
 
             if (car == null) return NotFound();
-
             return View(car);
         }
 
@@ -182,6 +236,14 @@ namespace ApexDrive.Areas.Admin.Controllers
             var car = await _context.Cars.FindAsync(id);
             if (car != null)
             {
+                // Delete image file if exists
+                if (!string.IsNullOrEmpty(car.ImageUrl))
+                {
+                    var filePath = Path.Combine("wwwroot", car.ImageUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(filePath))
+                        System.IO.File.Delete(filePath);
+                }
+
                 _context.Cars.Remove(car);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "🗑️ Car deleted successfully.";
@@ -189,7 +251,7 @@ namespace ApexDrive.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ✅ Toggle Availability
+        // ✅ TOGGLE AVAILABILITY
         [HttpPost]
         [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<IActionResult> ToggleAvailability(int id)
@@ -198,6 +260,15 @@ namespace ApexDrive.Areas.Admin.Controllers
             if (car == null)
                 return NotFound();
 
+            // 🔒 Restrict Admin to their own branch
+            if (User.IsInRole("Admin"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (car.BranchId != user?.BranchId)
+                    return Forbid(); // Prevent cross-branch toggle
+            }
+
+            // ✅ Toggle availability
             car.IsAvailable = !car.IsAvailable;
             await _context.SaveChangesAsync();
 
@@ -207,5 +278,6 @@ namespace ApexDrive.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

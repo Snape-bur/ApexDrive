@@ -217,27 +217,63 @@ namespace ApexDrive.Areas.Admin.Controllers
             TempData["Success"] = "Reminder updated.";
             return RedirectToAction(nameof(Index));
         }
-
-        // TOGGLE COMPLETE
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleComplete(int id)
         {
-            var m = await _context.CarReminders.FindAsync(id);
-            if (m == null) return NotFound();
+            var m = await _context.CarReminders
+                .Include(r => r.Car)
+                .FirstOrDefaultAsync(r => r.ReminderId == id);
 
+            if (m == null)
+                return NotFound();
+
+            // 🔒 Restrict branch admins to their own branch
             if (User.IsInRole("Admin"))
             {
                 var me = await _userManager.GetUserAsync(User);
-                if (m.BranchId != me?.BranchId) return Forbid();
+                if (m.BranchId != me?.BranchId)
+                    return Forbid();
             }
 
+            // ✅ Toggle completion status
             m.IsCompleted = !m.IsCompleted;
             m.CompletedAt = m.IsCompleted ? DateTime.UtcNow : null;
 
+            // ✅ If reminder marked complete AND it's a "Service" type → add maintenance record
+            if (m.IsCompleted && m.Type.Equals("Service", StringComparison.OrdinalIgnoreCase))
+            {
+                // Check for duplicates — same car & same service date
+                bool alreadyExists = await _context.CarMaintenanceHistories
+                    .AnyAsync(h =>
+                        h.CarId == m.CarId &&
+                        h.ServiceDate.Date == DateTime.UtcNow.Date);
+
+                if (!alreadyExists)
+                {
+                    var maintenance = new CarMaintenanceHistory
+                    {
+                        CarId = m.CarId,
+                        BranchId = m.BranchId!.Value,
+                        ServiceType = m.Type,
+                        ServiceDate = DateTime.UtcNow,
+                        Notes = "Auto-added from completed reminder.",
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+
+                    _context.CarMaintenanceHistories.Add(maintenance);
+                }
+            }
+
             await _context.SaveChangesAsync();
-            TempData["Success"] = m.IsCompleted ? "Reminder marked complete." : "Reminder re-opened.";
+
+            TempData["Success"] = m.IsCompleted
+                ? "Reminder marked complete and maintenance record created (if applicable)."
+                : "Reminder re-opened.";
+
             return RedirectToAction(nameof(Index));
         }
+
 
         // DELETE (GET)
         public async Task<IActionResult> Delete(int id)

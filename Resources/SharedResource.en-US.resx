@@ -21,6 +21,23 @@
 	<data name="Return_Date_Label" xml:space="preserve"><value>Return Date</value></data>
 	<data name="Btn_SearchCars" xml:space="preserve"><value>Search Cars</value></data>
 
+	<data name="Select_Pickup_Branch" xml:space="preserve">
+  <value>Select Pickup Branch</value>
+</data>
+
+	<data name="Select_Dropoff_Branch" xml:space="preserve">
+  <value>Select Drop-off Branch</value>
+</data>
+
+	<data name="Same_Branch_Label" xml:space="preserve">
+  <value>Same location</value>
+</data>
+
+	<data name="No_Branches_Found" xml:space="preserve">
+  <value>No branches available</value>
+</data>
+
+
 	<data name="Badge_Unlimited" xml:space="preserve"><value>Unlimited Mileage</value></data>
 	<data name="Badge_CDW" xml:space="preserve"><value>Collision Damage Waiver</value></data>
 	<data name="Badge_Roadside" xml:space="preserve"><value>24/7 Roadside Assistance</value></data>

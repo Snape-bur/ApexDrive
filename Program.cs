@@ -35,6 +35,7 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<BranchScopeService>();
+builder.Services.AddScoped<PricingService>();
 
 //  Configure Supported Cultures (English, Thai, Burmese)
 var supportedCultures = new[]
@@ -78,15 +79,16 @@ app.UseRequestLocalization(localizationOptions);
 app.UseAuthentication();
 app.UseAuthorization();
 
-//  Map Routes (Areas + Default)
+
+//  Must be first (areas route)
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
+//  Default route (for non-area controllers)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.MapRazorPages();
 
 //  Run Role + SuperAdmin Seeder at Startup

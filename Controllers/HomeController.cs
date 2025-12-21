@@ -1,6 +1,8 @@
+using ApexDrive.Data;
 using ApexDrive.Models;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace ApexDrive.Controllers
@@ -8,14 +10,22 @@ namespace ApexDrive.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        //  Homepage with booking form
+        public async Task<IActionResult> Index()
         {
+            // Load available branches for the booking form dropdown
+            ViewBag.Branches = await _context.Branches
+                .OrderBy(b => b.BranchName)
+                .ToListAsync();
+
             return View();
         }
 

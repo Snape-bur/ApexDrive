@@ -7,6 +7,10 @@ namespace ApexDrive.Models.ViewModels
         [Required]
         public string Id { get; set; }
 
+        [Required, StringLength(100)]
+        public string FullName { get; set; }
+
+
         [Required, EmailAddress]
         [Display(Name = "Email Address")]
         public string Email { get; set; }
@@ -14,5 +18,8 @@ namespace ApexDrive.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "New Password (optional)")]
         public string? NewPassword { get; set; }
+
+        [Required]
+        public int BranchId { get; set; }
     }
 }

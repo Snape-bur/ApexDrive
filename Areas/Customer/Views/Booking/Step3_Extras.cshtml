@@ -1,0 +1,126 @@
+﻿@model ApexDrive.Areas.Customer.Controllers.BookingController.BookingExtrasViewModel
+@{
+    ViewData["Title"] = "Insurance & Accessories";
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Progress Steps -->
+<div class="max-w-6xl mx-auto px-4 mt-10">
+    <div class="flex justify-between text-sm font-medium">
+
+        <!-- Step 1 -->
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">
+                ✓
+            </span>
+            Booking Form
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">
+                ✓
+            </span>
+            Vehicle Selection
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex-1 text-center border-b-2 border-blue-600 text-blue-600 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">
+                3
+            </span>
+            Insurance & Accessories
+        </div>
+
+        <!-- Step 4 -->
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-gray-300 text-white text-xs font-bold">
+                4
+            </span>
+            Payment
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Main Section -->
+<div class="max-w-6xl mx-auto px-4 mt-10">
+    <div class="bg-white rounded-2xl shadow p-8 space-y-8">
+
+        <!-- Booking summary -->
+        <div class="grid sm:grid-cols-2 gap-6">
+            <div class="p-4 rounded-lg border bg-gray-50">
+                <h3 class="text-sm font-semibold text-gray-700 mb-1">Selected Car</h3>
+                <p class="text-gray-800">@Model.CarDisplayName</p>
+                <p class="text-sm text-gray-500">Rate: @Model.CarDailyRate.ToString("C") / day</p>
+            </div>
+
+            <div class="p-4 rounded-lg border bg-gray-50">
+                <h3 class="text-sm font-semibold text-gray-700 mb-1">Rental Window</h3>
+                <p class="text-gray-800">@Model.StartDate.ToString("dd MMM yyyy") → @Model.EndDate.ToString("dd MMM yyyy")</p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form asp-action="Step3_Extras" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="CarId" />
+
+            <!-- Insurance -->
+            <div>
+                <h2 class="text-lg font-semibold mb-3 text-gray-800">Insurance Options</h2>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="InsuranceType" value="Basic" @(Model.InsuranceType == "Basic" ? "checked" : "") class="text-blue-600" />
+                        <div>
+                            <p class="font-medium">Basic Coverage (included)</p>
+                            <p class="text-sm text-gray-500">Covers damages up to a limit. No theft coverage.</p>
+                        </div>
+                        <span class="ml-auto font-semibold">$0/day</span>
+                    </label>
+
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="InsuranceType" value="Standard" @(Model.InsuranceType == "Standard" ? "checked" : "") class="text-blue-600" />
+                        <div>
+                            <p class="font-medium">Standard Coverage</p>
+                            <p class="text-sm text-gray-500">Damage + theft protection.</p>
+                        </div>
+                        <span class="ml-auto font-semibold">$10/day</span>
+                    </label>
+
+                    <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="InsuranceType" value="Premium" @(Model.InsuranceType == "Premium" ? "checked" : "") class="text-blue-600" />
+                        <div>
+                            <p class="font-medium">Premium Coverage</p>
+                            <p class="text-sm text-gray-500">Full protection, zero liability, roadside assistance.</p>
+                        </div>
+                        <span class="ml-auto font-semibold">$20/day</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Accessories -->
+            <div>
+                <h2 class="text-lg font-semibold mb-3 text-gray-800">Accessories</h2>
+                <label class="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50">
+                    <input type="checkbox" asp-for="HasChildSeat" class="text-blue-600" />
+                    <span>Child Seat (+$7/day)</span>
+                </label>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex items-center justify-end gap-3 pt-4">
+                <a asp-area="Customer" asp-controller="Booking" asp-action="Step2_SelectCar"
+                   class="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
+                    ← Back
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+                    Continue to Payment →
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

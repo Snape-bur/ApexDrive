@@ -13,13 +13,42 @@
 	<data name="Hero_Benefit_PayCounter" xml:space="preserve"><value>ကောင်တာတွင်ပေးချေပါ</value></data>
 	<data name="Hero_Benefit_NoCardFees" xml:space="preserve"><value>ဘဏ်ကတ်အခကြေးငွေမရှိ</value></data>
 
-	<data name="Pickup_Location_Label" xml:space="preserve"><value>ကားယူရာနေရာ</value></data>
-	<data name="Pickup_Location_Placeholder" xml:space="preserve"><value>ဘန်ကောက် ဆွာန်နာဖူမ်မီ (BKK)</value></data>
-	<data name="Return_Location_Label" xml:space="preserve"><value>ကားပြန်အပ်ရာနေရာ</value></data>
-	<data name="Return_Location_Placeholder" xml:space="preserve"><value>တစ်နေရာတည်းတွင်ပြန်အပ်ပါ</value></data>
-	<data name="Pickup_Date_Label" xml:space="preserve"><value>ကားယူသည့်နေ့</value></data>
-	<data name="Return_Date_Label" xml:space="preserve"><value>ကားပြန်အပ်သည့်နေ့</value></data>
-	<data name="Btn_SearchCars" xml:space="preserve"><value>ကားရှာဖွေရန်</value></data>
+	<data name="Pickup_Location_Label" xml:space="preserve">
+  <value>ကားယူရာနေရာ</value>
+</data>
+
+	<data name="Select_Pickup_Branch" xml:space="preserve">
+  <value>ကားယူရာနေရာကိုရွေးပါ</value>
+</data>
+
+	<data name="Return_Location_Label" xml:space="preserve">
+  <value>ကားပြန်အပ်ရာနေရာ</value>
+</data>
+
+	<data name="Select_Dropoff_Branch" xml:space="preserve">
+  <value>ကားပြန်အပ်ရာနေရာကိုရွေးပါ</value>
+</data>
+
+	<data name="Same_Branch_Label" xml:space="preserve">
+  <value>တစ်နေရာတည်းတွင်ပြန်အပ်ပါ</value>
+</data>
+
+	<data name="Pickup_Date_Label" xml:space="preserve">
+  <value>ကားယူသည့်နေ့</value>
+</data>
+
+	<data name="Return_Date_Label" xml:space="preserve">
+  <value>ကားပြန်အပ်သည့်နေ့</value>
+</data>
+
+	<data name="Btn_SearchCars" xml:space="preserve">
+  <value>ကားရှာဖွေရန်</value>
+</data>
+
+	<data name="No_Branches_Found" xml:space="preserve">
+  <value>ရရှိနိုင်သောရုံးခွဲမရှိပါ</value>
+</data>
+
 
 	<data name="Badge_Unlimited" xml:space="preserve"><value>အကန့်အသတ်မရှိသောမိုင်</value></data>
 	<data name="Badge_CDW" xml:space="preserve"><value>ထိခိုက်ပျက်စီးမှုအာမခံ</value></data>

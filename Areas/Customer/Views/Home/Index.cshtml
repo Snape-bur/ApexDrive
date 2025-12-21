@@ -1,0 +1,608 @@
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> L
+@{
+    ViewData["Title"] = "ApexDrive – Car Rental in Thailand";
+}
+
+<!-- ===========================
+     HERO
+=========================== -->
+<section id="home" class="relative">
+    <div class="absolute inset-0 -z-10">
+        <img src="https://images.unsplash.com/photo-1583573181567-d4736e51f61d?q=80&w=1600&auto=format&fit=crop"
+             alt="Highway in Thailand"
+             class="h-[80vh] w-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-white/10"></div>
+    </div>
+
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex min-h-[80vh] items-center">
+            <div class="max-w-2xl text-white">
+                <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight">
+                    @L["Hero_Title", "Rent a Car in Thailand – Easy, Fast, Reliable"]
+                </h1>
+
+                <p class="mt-4 text-lg text-white/90">
+                    @L["Hero_Subtitle", "Brand new fleet, no hidden fees, airport pickup, and 24/7 roadside support across Thailand."]
+                </p>
+
+                <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-white/90">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block h-2 w-2 rounded-full bg-green-400"></span>
+                        @L["Hero_Benefit_FreeCancel", "Free Cancellation"]
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block h-2 w-2 rounded-full bg-green-400"></span>
+                        @L["Hero_Benefit_PayCounter", "Pay at Counter"]
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block h-2 w-2 rounded-full bg-green-400"></span>
+                        @L["Hero_Benefit_NoCardFees", "No Credit Card Fees"]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Card -->
+    <div id="search" class="relative -mt-16 pb-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <form asp-area="Customer" asp-controller="Booking" asp-action="Search" method="post"
+                  class="rounded-2xl bg-white p-4 sm:p-6 shadow-2xl ring-1 ring-black/5">
+
+
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 items-end">
+                    <!-- Pickup & Drop-off Branches -->
+                    <div class="flex flex-col lg:flex-row lg:items-end gap-4 lg:col-span-2">
+
+                        <!-- Pickup -->
+                        <div class="flex-1">
+                            <label for="pickupBranch" class="flex items-center justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-700">
+                                    @L["Pickup_Location_Label"]
+                                </span>
+                            </label>
+
+                            <select id="pickupBranch"
+                                    name="PickupBranchId"
+                                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900
+                       focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
+                                    required>
+
+                                <option value="">
+                                    @L["Select_Pickup_Branch", "Select Pickup Branch"]
+                                </option>
+
+                                @if (ViewBag.Branches != null && ((IEnumerable<dynamic>)ViewBag.Branches).Any())
+                                {
+                                    foreach (var branch in ViewBag.Branches)
+                                    {
+                                        <option value="@branch.BranchId">
+                                            @branch.BranchName
+                                        </option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option disabled>
+                                        @L["No_Branches_Found"]
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Drop-off -->
+                        <div class="flex-1">
+                            <label for="dropoffBranch" class="flex items-center justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-700">
+                                    @L["Return_Location_Label"]
+                                </span>
+
+                                <div class="flex items-center gap-1 text-xs sm:text-sm">
+                                    <input id="sameBranch"
+                                           type="checkbox"
+                                           class="text-primary-600 rounded border-gray-300 focus:ring-primary-500 align-middle" />
+
+                                    <label for="sameBranch"
+                                           class="text-gray-600 cursor-pointer select-none leading-tight">
+                                        @L["Same_Branch_Label", "Same location"]
+                                    </label>
+                                </div>
+                            </label>
+
+                            <select id="dropoffBranch"
+                                    name="DropoffBranchId"
+                                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900
+                       focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-opacity duration-300"
+                                    required>
+
+                                <option value="">
+                                    @L["Select_Dropoff_Branch", "Select Drop-off Branch"]
+                                </option>
+
+                                @if (ViewBag.Branches != null && ((IEnumerable<dynamic>)ViewBag.Branches).Any())
+                                {
+                                    foreach (var branch in ViewBag.Branches)
+                                    {
+                                        <option value="@branch.BranchId">
+                                            @branch.BranchName
+                                        </option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option disabled>
+                                        @L["No_Branches_Found"]
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Pickup Date -->
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-medium text-gray-700">@L["Pickup_Date_Label", "Pickup Date"]</span>
+                        <input id="pickupDate"
+                               name="StartDate"
+                               type="date"
+                               class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900
+                                  focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
+                               required />
+                    </label>
+
+                    <!-- Return Date -->
+                    <label class="block">
+                        <span class="mb-1 block text-sm font-medium text-gray-700">@L["Return_Date_Label", "Return Date"]</span>
+                        <input id="returnDate"
+                               name="EndDate"
+                               type="date"
+                               class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900
+                                  focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
+                               required />
+                    </label>
+
+                    <!-- Search Button -->
+                    <div class="flex items-end">
+                        <button type="submit"
+                                class="w-full rounded-xl bg-primary-600 px-6 py-3 font-semibold text-white shadow-brand
+                                   hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-300">
+                            @L["Btn_SearchCars", "Search Cars"]
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info badges -->
+                <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1">
+                        @L["Badge_Unlimited", "Unlimited Mileage"]
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1">
+                        @L["Badge_CDW", "Collision Damage Waiver"]
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1">
+                        @L["Badge_Roadside", "24/7 Roadside Assistance"]
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ===========================
+         FLEET
+    =========================== -->
+    <section id="fleet" class="bg-gray-50 py-16 sm:py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-8 flex items-end justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold">@L["Fleet_Title", "Popular Cars"]</h2>
+                    <p class="mt-2 text-gray-600">@L["Fleet_Subtitle", "Clean, safe, and fuel-efficient options for every budget."]</p>
+                </div>
+                <a href="#" class="hidden sm:inline-flex rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-white">
+                    @L["Fleet_ViewAll", "View All"]
+                </a>
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                @* Card 1 *@
+                <article class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    <div class="relative h-48 overflow-hidden">
+                        <img class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                             src="@Url.Content("~/images/ALTIS.png")"
+                             alt="Toyota Altis" />
+
+                        <span class="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">Eco</span>
+                    </div>
+                    <div class="space-y-3 p-5">
+                        <h3 class="text-lg font-bold">Toyota Altis</h3>
+                        <p class="text-sm text-gray-600">
+                            5 @L["Seats", "seats"] • @L["Automatic", "Automatic"] • 2 @L["Bags", "bags"] • A/C
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-extrabold">
+                                ฿1,250
+                                <span class="text-sm font-semibold text-gray-500">/@L["Per_Day", "day"]</span>
+                            </span>
+                            <button class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">
+                                @L["Btn_Select", "Select"]
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                @* Card 2 *@
+                <article class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    <div class="relative h-48 overflow-hidden">
+                        <img class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                             src="@Url.Content("~/images/Black_Fortuner.png")"
+                             alt="Toyota Fortuner" />
+                        <span class="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">SUV</span>
+                    </div>
+                    <div class="space-y-3 p-5">
+                        <h3 class="text-lg font-bold">Toyota Fortuner</h3>
+                        <p class="text-sm text-gray-600">7 @L["Seats", "seats"] • @L["Automatic", "Automatic"] • 4 @L["Bags", "bags"] • A/C</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-extrabold">฿2,500<span class="text-sm font-semibold text-gray-500">/@L["Per_Day", "day"]</span></span>
+                            <button class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">@L["Btn_Select", "Select"]</button>
+                        </div>
+                    </div>
+                </article>
+
+                @* Card 3 *@
+                <article class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    <div class="relative h-48 overflow-hidden">
+                        <img class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                             src="@Url.Content("~/images/Toyota-Crown-Crossover-Type-1-removebg-preview.png")"
+                             alt="Toyota Crown" />
+                        <span class="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">Sedan</span>
+                    </div>
+                    <div class="space-y-3 p-5">
+                        <h3 class="text-lg font-bold">Toyota Crown</h3>
+                        <p class="text-sm text-gray-600">4 @L["Seats", "seats"] • @L["Automatic", "Automatic"] • 3 @L["Bags", "bags"] • A/C</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-extrabold">฿7,500<span class="text-sm font-semibold text-gray-500">/@L["Per_Day", "day"]</span></span>
+                            <button class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">@L["Btn_Select", "Select"]</button>
+                        </div>
+                    </div>
+                </article>
+
+                @* Card 4 *@
+                <article class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    <div class="relative h-48 overflow-hidden">
+                        <img class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                             src="@Url.Content("~/images/unnamed-removebg-preview.png")"
+                             alt="Toyota Alphard" />
+                        <span class="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">MPV</span>
+                    </div>
+                    <div class="space-y-3 p-5">
+                        <h3 class="text-lg font-bold">Toyota Alphard</h3>
+                        <p class="text-sm text-gray-600">6 @L["Seats", "seats"] • @L["Automatic", "Automatic"] • 4 @L["Bags", "bags"] • A/C</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-extrabold">฿4,500<span class="text-sm font-semibold text-gray-500">/@L["Per_Day", "day"]</span></span>
+                            <button class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">@L["Btn_Select", "Select"]</button>
+                        </div>
+                    </div>
+                </article>
+
+                @* Card 5 *@
+                <article class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    <div class="relative h-48 overflow-hidden">
+                        <img class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                             src="@Url.Content("~/images/cls300d_exterior_001-removebg-preview.png")"
+                             alt="Mercedes Cls 300d" />
+                        <span class="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">Luxury</span>
+                    </div>
+                    <div class="space-y-3 p-5">
+                        <h3 class="text-lg font-bold">Mercedes Cls 300d</h3>
+                        <p class="text-sm text-gray-600">4 @L["Seats", "seats"] • @L["Automatic", "Automatic"] • 3 @L["Bags", "bags"] • A/C</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-extrabold">฿9,900<span class="text-sm font-semibold text-gray-500">/@L["Per_Day", "day"]</span></span>
+                            <button class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">@L["Btn_Select", "Select"]</button>
+                        </div>
+                    </div>
+                </article>
+
+                @* Card 6 *@
+                <article class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    <div class="relative h-48 overflow-hidden">
+                        <img class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                             src="@Url.Content("~/images/117-removebg-preview.png")"
+                             alt="Zeekr X" />
+                        <span class="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">EV</span>
+                    </div>
+                    <div class="space-y-3 p-5">
+                        <h3 class="text-lg font-bold">Zeekr X</h3>
+                        <p class="text-sm text-gray-600">4 @L["Seats", "seats"] • @L["Automatic", "Automatic"] • 3 @L["Bags", "bags"] • A/C</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-extrabold">฿6,900<span class="text-sm font-semibold text-gray-500">/@L["Per_Day", "day"]</span></span>
+                            <button class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">@L["Btn_Select", "Select"]</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Trust badges -->
+            <div class="mt-10 grid items-center gap-6 rounded-2xl border border-gray-200 bg-white p-6 sm:grid-cols-3">
+                <div class="flex items-center gap-3">
+                    <svg class="h-6 w-6 text-primary-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l7 4v6c0 5-3.5 9.5-7 10-3.5-.5-7-5-7-10V6l7-4z" /></svg>
+                    <p class="text-sm">@L["Trust_FreeCancel_24h", "Free cancellation up to 24h before pickup"]</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg class="h-6 w-6 text-primary-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6 .9-4.5 4.4 1 6-5.5-3-5.5 3 1-6L3 7.9 9 7z" /></svg>
+                    <p class="text-sm">@L["Trust_Rating", "4.8/5 average rating from 10k+ renters"]</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg class="h-6 w-6 text-primary-600" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z" /></svg>
+                    <p class="text-sm">@L["Trust_Transparent", "No credit-card fees • Transparent pricing"]</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================
+         LOCATIONS
+    =========================== -->
+    <section id="locations" class="py-16 sm:py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl sm:text-3xl font-extrabold">
+                    @L["Locations_Title", "Pick Up at 30+ Locations"]
+                </h2>
+                <p class="mt-2 text-gray-600">
+                    @L["Locations_Subtitle", "Airports and downtown branches across Thailand"]
+                </p>
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <!-- Bangkok -->
+                <div class="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                    <div class="relative h-40 overflow-hidden">
+                        <img class="h-full w-full object-cover transition group-hover:scale-105"
+                             src="https://cdn-imgix.headout.com/media/images/6cb0b59e577eeab02d8fbdadc31ddbdc-4543-bangkok-don-mueang-international-airport-01.jpg?auto=format&w=1222&h=688&q=90&ar=16:9&crop=faces&fit=crop"
+                             alt="Bangkok" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40"></div>
+                        <span class="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">
+                            @L["Loc_BKK_Tag", "Bangkok (BKK/DMK)"]
+                        </span>
+                    </div>
+                    <div class="p-5 text-sm text-gray-600">
+                        @L["Loc_BKK_Desc", "Open 07:00–22:00 • Airport & City • One-way rentals"]
+                    </div>
+                </div>
+
+                <!-- Phuket -->
+                <div class="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                    <div class="relative h-40 overflow-hidden">
+                        <img class="h-full w-full object-cover transition group-hover:scale-105"
+                             src="https://plus.unsplash.com/premium_photo-1680339680335-7e3b8572fc00?q=80&w=1375&auto=format&fit=crop"
+                             alt="Phuket" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40"></div>
+                        <span class="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">
+                            @L["Loc_HKT_Tag", "Phuket (HKT)"]
+                        </span>
+                    </div>
+                    <div class="p-5 text-sm text-gray-600">
+                        @L["Loc_HKT_Desc", "Beach trips • SUVs & MPVs popular"]
+                    </div>
+                </div>
+
+                <!-- Chiang Mai -->
+                <div class="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                    <div class="relative h-40 overflow-hidden">
+                        <img class="h-full w-full object-cover transition group-hover:scale-105"
+                             src="https://images.unsplash.com/photo-1578157695179-d7b7ddeb2f53?q=80&w=1631&auto=format&fit=crop"
+                             alt="Chiang Mai" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40"></div>
+                        <span class="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold">
+                            @L["Loc_CNX_Tag", "Chiang Mai (CNX)"]
+                        </span>
+                    </div>
+                    <div class="p-5 text-sm text-gray-600">
+                        @L["Loc_CNX_Desc", "Mountains & scenic routes • Compact cars"]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===========================
+         BENEFITS
+    =========================== -->
+    <section id="services" class="py-16 sm:py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid gap-8 md:grid-cols-3">
+                <div class="group rounded-2xl border border-gray-100 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                    <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7v4l-2 2v1h18v-1l-2-2V9a7 7 0 0 0-7-7zm0 20a3 3 0 0 0 3-3H9a3 3 0 0 0 3 3z" /></svg>
+                    </div>
+                    <h3 class="text-lg font-bold">@L["Benefit_247_Title", "24/7 Support"]</h3>
+                    <p class="mt-2 text-gray-600">@L["Benefit_247_Desc", "We’re here for you anytime, anywhere in Thailand."]</p>
+                </div>
+
+                <div class="group rounded-2xl border border-gray-100 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                    <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2l1-2h12l1 2h2l-2-6H5l-2 6zm3 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm12 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" /></svg>
+                    </div>
+                    <h3 class="text-lg font-bold">@L["Benefit_NewFleet_Title", "New Car Fleet"]</h3>
+                    <p class="mt-2 text-gray-600">@L["Benefit_NewFleet_Desc", "Drive popular models from Toyota, Honda, and more."]</p>
+                </div>
+
+                <div class="group rounded-2xl border border-gray-100 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                    <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3 6 6 .9-4.5 4.4 1 6-5.5-3-5.5 3 1-6L3 7.9 9 7z" /></svg>
+                    </div>
+                    <h3 class="text-lg font-bold">@L["Benefit_TopRated_Title", "Top Rated"]</h3>
+                    <p class="mt-2 text-gray-600">@L["Benefit_TopRated_Desc", "Thousands of 5-star reviews from happy travelers."]</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===========================
+         TESTIMONIALS
+    =========================== -->
+    <section class="bg-gray-50 py-16 sm:py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl sm:text-3xl font-extrabold">@L["Testi_Title", "What Drivers Say"]</h2>
+                <p class="mt-2 text-gray-600">@L["Testi_Subtitle", "Real reviews from travelers across Thailand"]</p>
+            </div>
+
+            <div class="grid gap-6 md:grid-cols-3">
+                <figure class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                    <blockquote class="text-gray-700">“@L["Testi_1", "Super smooth pickup at BKK. Car was new and clean. Will rent again!"]”</blockquote>
+                    <figcaption class="mt-4 text-sm text-gray-500">— @L["Testi_1_Author", "Napat, Bangkok"]</figcaption>
+                </figure>
+
+                <figure class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                    <blockquote class="text-gray-700">“@L["Testi_2", "Best price I found. No hidden fees and fast deposit return."]”</blockquote>
+                    <figcaption class="mt-4 text-sm text-gray-500">— @L["Testi_2_Author", "Maria, Spain"]</figcaption>
+                </figure>
+
+                <figure class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                    <blockquote class="text-gray-700">“@L["Testi_3", "Great SUV for Phuket trip. Customer service was excellent."]”</blockquote>
+                    <figcaption class="mt-4 text-sm text-gray-500">— @L["Testi_3_Author", "Ake, Phuket"]</figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================
+         FAQ
+    =========================== -->
+    <section id="faq" class="py-16 sm:py-20">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-center">
+                @L["FAQ_Title", "Frequently Asked Questions"]
+            </h2>
+
+            <div class="mt-8 divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white">
+                <details class="group p-6">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                        <h3 class="font-semibold">@L["FAQ_Q1", "What documents do I need?"]</h3>
+                        <svg class="h-5 w-5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z" /></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600">
+                        @L["FAQ_A1", "Passport (or Thai ID), valid driver’s license (International Permit if required), and a credit card for deposit."]
+                    </p>
+                </details>
+
+                <details class="group p-6">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                        <h3 class="font-semibold">@L["FAQ_Q2", "Can I pick up in Bangkok and return in Phuket?"]</h3>
+                        <svg class="h-5 w-5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z" /></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600">
+                        @L["FAQ_A2", "Yes, one-way rentals are available between major branches for an additional fee."]
+                    </p>
+                </details>
+
+                <details class="group p-6">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4">
+                        <h3 class="font-semibold">@L["FAQ_Q3", "Is insurance included?"]</h3>
+                        <svg class="h-5 w-5 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z" /></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600">
+                        @L["FAQ_A3", "Standard coverage is included. You can add extra protection at checkout to reduce excess."]
+                    </p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================
+         CTA
+    =========================== -->
+    <section id="contact" class="relative overflow-hidden py-16 sm:py-20">
+        <div class="absolute inset-0 -z-10">
+            <svg aria-hidden="true" class="absolute -left-20 -top-20 h-96 w-96 text-primary-50" viewBox="0 0 200 200" fill="currentColor"><circle cx="100" cy="100" r="100" /></svg>
+            <svg aria-hidden="true" class="absolute -right-20 -bottom-20 h-96 w-96 text-primary-50" viewBox="0 0 200 200" fill="currentColor"><circle cx="100" cy="100" r="100" /></svg>
+        </div>
+
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid items-center gap-8 rounded-3xl bg-white p-8 shadow-xl ring-1 ring-gray-100 md:grid-cols-2">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold">@L["CTA_Title", "Ready to hit the road?"]</h2>
+                    <p class="mt-2 text-gray-600">@L["CTA_Sub", "Book your car in minutes and pick up at the airport or downtown. No hidden fees."]</p>
+                </div>
+                <div class="flex justify-end">
+                    <a href="#search" class="inline-flex items-center rounded-2xl bg-primary-600 px-6 py-3 font-semibold text-white shadow-brand hover:bg-primary-700">
+                        @L["CTA_Button", "Check Availability"]
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+@section Scripts {
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+
+                // === DATE LOGIC ===
+                const pickup = document.getElementById("pickupDate");
+                const ret = document.getElementById("returnDate");
+                const today = new Date();
+                const iso = d =>
+                    new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+                        .toISOString()
+                        .split("T")[0];
+
+                if (pickup && ret) {
+                    pickup.min = iso(today);
+                    ret.min = iso(today);
+
+                    pickup.addEventListener("change", () => {
+                        if (!pickup.value) return;
+
+                        const p = new Date(pickup.value);
+                        const next = new Date(p.getTime() + 24 * 60 * 60 * 1000);
+
+                        if (!ret.value || ret.value < pickup.value)
+                            ret.value = iso(next);
+
+                        ret.min = pickup.value;
+                    });
+                }
+
+                // === SAME BRANCH LOGIC (Fixed for Submission) ===
+                const sameBranch = document.getElementById("sameBranch");
+                const pickupBranch = document.getElementById("pickupBranch");
+                const dropoffBranch = document.getElementById("dropoffBranch");
+
+                if (sameBranch && pickupBranch && dropoffBranch) {
+
+                    const syncBranches = () => {
+                        if (sameBranch.checked) {
+                            // ✅ Copy pickup → dropoff and visually disable but still submit value
+                            dropoffBranch.value = pickupBranch.value;
+                            dropoffBranch.setAttribute("data-locked", "true");
+                            dropoffBranch.classList.add("opacity-50", "cursor-not-allowed");
+                            dropoffBranch.style.pointerEvents = "none"; // keep in form post
+                        } else {
+                            // ✅ Re-enable dropoff selection
+                            dropoffBranch.removeAttribute("data-locked");
+                            dropoffBranch.classList.remove("opacity-50", "cursor-not-allowed");
+                            dropoffBranch.style.pointerEvents = "auto";
+                            dropoffBranch.value = ""; // optional reset
+                        }
+                    };
+
+                    // ✅ Run immediately on load
+                    syncBranches();
+
+                    // ✅ React to changes
+                    sameBranch.addEventListener("change", syncBranches);
+                    pickupBranch.addEventListener("change", () => {
+                        if (sameBranch.checked) {
+                            dropoffBranch.value = pickupBranch.value;
+                        }
+                    });
+                }
+            });
+        </script>
+}
+
+

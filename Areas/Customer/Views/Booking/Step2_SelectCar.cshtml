@@ -1,0 +1,131 @@
+﻿@model IEnumerable<ApexDrive.Models.Car>
+
+@{
+    ViewData["Title"] = "Vehicle Selection";
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Progress Steps -->
+<div class="max-w-6xl mx-auto px-4 mt-10">
+    <div class="flex justify-between text-sm font-medium">
+
+        <!-- Step 1 -->
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">
+                ✓
+            </span>
+            Booking Form
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex-1 text-center border-b-2 border-blue-600 text-blue-600 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">
+                2
+            </span>
+            Vehicle Selection
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-gray-300 text-white text-xs font-bold">
+                3
+            </span>
+            Insurance & Accessories
+        </div>
+
+        <!-- Step 4 -->
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-gray-300 text-white text-xs font-bold">
+                4
+            </span>
+            Payment
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Main Section -->
+<div class="max-w-6xl mx-auto px-4 mt-10 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    <!-- Sidebar Filters -->
+    <aside class="bg-white rounded-2xl shadow p-6 md:col-span-1">
+        <h5 class="font-semibold mb-4 text-gray-800">Sort & Filter</h5>
+
+        <div class="mb-6">
+            <h6 class="text-gray-700 font-medium mb-2">Sort By</h6>
+            <div class="space-y-2 text-sm">
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="sort" checked class="text-blue-600" /> Price: Low to High
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="sort" class="text-blue-600" /> Price: High to Low
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="sort" class="text-blue-600" /> Popularity
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="sort" class="text-blue-600" /> Fuel Efficiency
+                </label>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h6 class="text-gray-700 font-medium mb-2">Price Range (per day)</h6>
+            <div class="flex flex-col gap-2">
+                <input type="number" placeholder="$0" class="rounded-lg border-gray-300 focus:ring-blue-500" />
+                <input type="number" placeholder="$500" class="rounded-lg border-gray-300 focus:ring-blue-500" />
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h6 class="text-gray-700 font-medium mb-2">Gear</h6>
+            <label class="flex items-center gap-2"><input type="checkbox" class="text-blue-600" /> Automatic</label>
+            <label class="flex items-center gap-2"><input type="checkbox" class="text-blue-600" /> Manual</label>
+        </div>
+    </aside>
+
+    <!-- Car Listing -->
+    <main class="md:col-span-3">
+        <h4 class="text-lg font-semibold mb-6 text-gray-800">Featured Vehicles</h4>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                @foreach (var car in Model)
+                {
+                    <div class="bg-white rounded-2xl shadow hover:shadow-lg transition p-4 flex flex-col">
+                        <img src="@car.ImageUrl" alt="@car.Brand @car.Model" class="rounded-xl mb-3 w-full h-40 object-contain" />
+                        <h5 class="font-semibold text-gray-900">@car.Brand @car.Model</h5>
+                        <p class="text-sm text-gray-600">Mileage: @car.Mileage km</p>
+                        <p class="text-blue-600 font-semibold mt-2">
+                            @(((decimal)ViewBag.CarPrices[car.CarId]).ToString("C")) total
+                        </p>
+
+                        <small class="text-xs text-gray-500">
+                            Price varies based on selected dates
+                        </small>
+
+
+                        <form asp-area="Customer" asp-controller="Booking" asp-action="SelectCar" method="post" class="mt-auto pt-3">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="carId" value="@car.CarId" />
+                            <input type="hidden" name="pickupBranchId" value="@ViewBag.PickupBranchId" />
+                            <input type="hidden" name="dropoffBranchId" value="@ViewBag.DropoffBranchId" />
+                            <input type="hidden" name="startDate" value="@(((DateTime)ViewBag.StartDate).ToString("o"))" />
+                            <input type="hidden" name="endDate" value="@(((DateTime)ViewBag.EndDate).ToString("o"))" />
+                            <button type="submit"
+                                    class="w-full py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
+                                Select
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-center text-gray-500 mt-10">No vehicles available for this selection.</p>
+        }
+    </main>
+</div>

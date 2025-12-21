@@ -1,0 +1,48 @@
+﻿@model ApexDrive.ViewModels.EditProfileViewModel
+@{
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+}
+
+<section class="max-w-xl mx-auto mt-16 bg-white rounded-2xl shadow-lg p-8">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">My Profile</h2>
+
+    @if (ViewData["Success"] != null)
+    {
+        <div class="mb-4 p-3 rounded-md bg-green-100 text-green-800">
+            @ViewData["Success"]
+        </div>
+    }
+    @if (ViewData["Error"] != null)
+    {
+        <div class="mb-4 p-3 rounded-md bg-red-100 text-red-800">
+            @ViewData["Error"]
+        </div>
+    }
+
+    <form asp-action="Index" method="post" class="space-y-5">
+        <div>
+            <label asp-for="FullName" class="block text-sm font-semibold text-gray-700"></label>
+            <input asp-for="FullName" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200" />
+            <span asp-validation-for="FullName" class="text-red-600 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="PhoneNumber" class="block text-sm font-semibold text-gray-700"></label>
+            <input asp-for="PhoneNumber" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200" />
+            <span asp-validation-for="PhoneNumber" class="text-red-600 text-sm"></span>
+        </div>
+
+        <div>
+            <label asp-for="Email" class="block text-sm font-semibold text-gray-700"></label>
+            <input asp-for="Email" class="w-full rounded-lg bg-gray-100 border-gray-200 cursor-not-allowed" readonly />
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg hover:bg-blue-700 transition">
+            Save Changes
+        </button>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

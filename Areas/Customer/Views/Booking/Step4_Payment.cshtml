@@ -1,0 +1,208 @@
+﻿@model ApexDrive.Models.Booking
+@{
+    ViewData["Title"] = "Secure Payment";
+    Layout = "~/Areas/Customer/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Progress Steps -->
+<div class="max-w-6xl mx-auto px-4 mt-10">
+    <div class="flex justify-between text-sm font-medium">
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">✓</span>
+            Booking Form
+        </div>
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">✓</span>
+            Vehicle Selection
+        </div>
+        <div class="flex-1 text-center border-b-2 border-gray-200 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">✓</span>
+            Insurance & Accessories
+        </div>
+        <div class="flex-1 text-center border-b-2 border-blue-600 text-blue-600 pb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-blue-600 text-white text-xs font-bold">4</span>
+            Payment Information
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-8">
+
+    <!-- Left: Form -->
+    <div class="lg:flex-1 space-y-6">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-2">Secure Checkout</h2>
+            <p class="text-gray-600">Please confirm your details and choose a payment method to complete your booking.</p>
+        </div>
+
+        <div class="bg-white shadow-sm rounded-2xl p-6 border border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Your Information</h2>
+            <form asp-area="Customer" asp-controller="Booking" asp-action="Step4_PaymentConfirm" method="post" class="space-y-6">
+
+                @Html.AntiForgeryToken()
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- Full Name -->
+                    <input type="text"
+                           value="@Model.Customer?.FullName"
+                           placeholder="Full Name"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-50
+                  focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" />
+
+                    <input type="email"
+                           value="@Model.Customer?.Email"
+                           placeholder="Email Address"
+                           readonly
+                           tabindex="-1"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-100 text-gray-500 cursor-not-allowed
+              focus:outline-none transition" />
+
+                    <!-- Phone Number -->
+                    <input type="tel"
+                           value="@Model.Customer?.PhoneNumber"
+                           placeholder="Phone Number"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-50
+                  focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" />
+
+                    <!-- Driver’s License -->
+                    <input type="text"
+                           placeholder="Driver’s License Number"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-50
+                  focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" />
+                </div>
+
+
+                <label class="flex items-center gap-3 text-sm text-gray-600">
+                    <input type="checkbox" class="h-5 w-5 rounded text-blue-600 border-gray-300 focus:ring-blue-500">
+                    <span>I would like to receive a tax invoice for this booking</span>
+                </label>
+
+                <!-- Payment Methods -->
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-3">Payment Method</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3 bg-gray-50 rounded-xl p-4 border border-gray-300 cursor-pointer hover:border-blue-500 transition">
+                            <input type="radio" name="PaymentMethod" value="Card" class="h-5 w-5 text-blue-600" checked />
+                            <div>
+                                <span class="font-medium text-gray-800">Credit / Debit Card</span>
+                                <p class="text-xs text-gray-500 mt-1">Pay securely with your card.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 bg-gray-50 rounded-xl p-4 border border-gray-300 cursor-pointer hover:border-blue-500 transition">
+                            <input type="radio" name="PaymentMethod" value="Transfer" class="h-5 w-5 text-blue-600" />
+                            <div>
+                                <span class="font-medium text-gray-800">Bank Transfer</span>
+                                <p class="text-xs text-gray-500 mt-1">Complete payment via your bank.</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 bg-gray-50 rounded-xl p-4 border border-gray-300 cursor-pointer hover:border-blue-500 transition">
+                            <input type="radio" name="PaymentMethod" value="Cash" class="h-5 w-5 text-blue-600" />
+                            <div>
+                                <span class="font-medium text-gray-800">Cash on Pick-up</span>
+                                <p class="text-xs text-gray-500 mt-1">Pay at the counter upon vehicle collection.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <label class="flex items-start gap-3 text-sm text-gray-600">
+                    <input type="checkbox" class="h-5 w-5 mt-1 rounded text-blue-600 border-gray-300 focus:ring-blue-500" required />
+                    <span>I accept the terms and confirm that all information is correct.</span>
+                </label>
+
+                <div class="mt-8">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-lg transition focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Confirm and Pay Now →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <aside class="lg:w-96 lg:sticky lg:top-24 space-y-6 h-fit">
+        <div class="bg-white shadow-sm rounded-2xl p-6 border border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
+
+            <img src="@Model.Car.ImageUrl" alt="@Model.Car.Brand" class="rounded-xl w-full h-40 object-cover shadow-sm mb-4" />
+
+            <div>
+                <h3 class="text-lg font-bold text-gray-900">@Model.Car.Brand @Model.Car.Model</h3>
+                <p class="text-sm text-gray-600 mt-1">@Model.Car.Type, @Model.Car.FuelType, @Model.Car.Transmission</p>
+            </div>
+
+            <div class="border-t pt-4 mt-4 text-sm text-gray-600 space-y-2">
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-900">Pick-up:</span>
+                    <span class="text-right">@Model.PickupBranch.BranchName<br>@Model.StartDate.ToString("dd MMM yyyy, HH:mm")</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-900">Drop-off:</span>
+                    <span class="text-right">@Model.DropoffBranch.BranchName<br>@Model.EndDate.ToString("dd MMM yyyy, HH:mm")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white shadow-sm rounded-2xl p-6 border border-gray-200 space-y-3">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Price Details</h3>
+
+            <div class="flex justify-between items-start py-2 border-b border-dashed">
+                <span class="text-gray-600">Base Rental</span>
+                <div class="text-right">
+                    <div class="font-bold text-gray-900">@Model.BaseCost.ToString("C")</div>
+
+                    @{
+                        var totalDays = (Model.EndDate.Date - Model.StartDate.Date).Days;
+                        // Standard cost calculation to determine if multipliers were applied
+                        var standardCost = Model.Car.DailyRate * totalDays;
+                    }
+
+                    <div class="flex flex-col items-end gap-1 mt-1">
+                        @if (Model.BaseCost > standardCost || (totalDays < 7 && Model.BaseCost != standardCost))
+                        {
+                            <span class="text-[10px] font-semibold text-orange-500 bg-orange-50 px-2 py-0.5 rounded w-fit">
+                                (Holiday/Peak Rates Applied)
+                            </span>
+                        }
+
+                        @if (totalDays >= 7)
+                        {
+                            <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded w-fit">
+                                ✓ 10% Long-Term Discount Applied
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (totalDays >= 7)
+            {
+                <div class="flex justify-between text-sm text-green-600 font-medium">
+                    <span>Long-term Savings (10%)</span>
+                    @{
+                        // Calculating the approximate savings for display
+                        // Note: PricingService already applied this to BaseCost
+                        var savingsAmount = (Model.BaseCost / 0.90m) * 0.10m;
+                    }
+                    <span>- @savingsAmount.ToString("C")</span>
+                </div>
+            }
+
+            <div class="flex justify-between text-sm text-gray-600">
+                <span>Extras</span>
+                <span>@Model.ExtrasCost.ToString("C")</span>
+            </div>
+
+            <div class="border-t mt-3 pt-3 flex justify-between items-center">
+                <span class="text-lg font-bold text-gray-900">Total:</span>
+                <div class="text-right">
+                    <span class="text-2xl font-bold text-blue-600">@Model.TotalCost.ToString("C")</span>
+                    <p class="text-[10px] text-gray-400">VAT included where applicable</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>

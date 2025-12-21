@@ -15,9 +15,12 @@ namespace ApexDrive.Data
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+
         public DbSet<Payment> Payments { get; set; }
         public DbSet<CarReminder> CarReminders { get; set; }
         public DbSet<CarMaintenanceHistory> CarMaintenanceHistories { get; set; }
+
+        public DbSet<PricingRule> PricingRules { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

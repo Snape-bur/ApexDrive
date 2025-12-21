@@ -1,0 +1,71 @@
+﻿@model IEnumerable<ApexDrive.Models.PricingRule>
+
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Dynamic Pricing Rules</h2>
+        <a asp-action="Create" class="bg-brand text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+            + Add New Rule
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b text-gray-400 text-sm uppercase">
+                    <th class="py-3 px-4">Rule Name</th>
+                    <th class="py-3 px-4">Dates</th>
+                    <th class="py-3 px-4">Multiplier</th>
+                    <th class="py-3 px-4">Type</th>
+                    <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600">
+                @foreach (var item in Model)
+                {
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="py-4 px-4 font-semibold text-gray-800">@item.Name</td>
+                        <td class="py-4 px-4">
+                            @if (item.IsRecurring)
+                            {
+                                <span class="flex items-center gap-1">🔄 @item.StartDate.ToString("dd MMM") - @item.EndDate.ToString("dd MMM")</span>
+                            }
+                            else
+                            {
+                                <span class="flex items-center gap-1">📅 @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")</span>
+                            }
+                        </td>
+                        <td class="py-4 px-4">
+                            <span class="bg-blue-100 text-brand px-2 py-1 rounded text-xs font-bold">
+                                @item.Multiplier x
+                            </span>
+                        </td>
+                        <td class="py-4 px-4 text-sm">
+                            @(item.IsRecurring ? "Yearly Recurring" : "One-time Event")
+                        </td>
+                        <td class="py-4 px-4 text-right">
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Delete this rule?');">
+                                <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-8 p-5 bg-blue-50 rounded-xl border border-blue-100">
+        <h3 class="text-sm font-bold text-blue-800 mb-3 uppercase tracking-wider flex items-center gap-2">
+            ✨ System Smart Features (Always Active)
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="bg-white p-3 rounded-lg shadow-sm border border-blue-50">
+                <p class="text-xs font-bold text-gray-700">Automatic Weekend Surge</p>
+                <p class="text-[11px] text-gray-500 mt-1">A 1.1x multiplier is automatically applied to Saturday and Sunday rentals to maximize weekend revenue.</p>
+            </div>
+            <div class="bg-white p-3 rounded-lg shadow-sm border border-blue-50">
+                <p class="text-xs font-bold text-gray-700">Smart Duration Discount</p>
+                <p class="text-[11px] text-gray-500 mt-1">Bookings of 7 days or longer automatically receive a 10% discount to encourage long-term rentals.</p>
+            </div>
+        </div>
+    </div>
+</div>

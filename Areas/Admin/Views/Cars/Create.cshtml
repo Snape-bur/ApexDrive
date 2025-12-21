@@ -6,43 +6,89 @@
 
 <h1 class="text-2xl font-bold text-brand mb-6">➕ Add New Car</h1>
 
-<form asp-action="Create" method="post" class="space-y-6 bg-white p-6 rounded-xl shadow-sm max-w-3xl">
-    <div asp-validation-summary="ModelOnly" class="bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-4"></div>
+<form asp-action="Create" method="post" enctype="multipart/form-data"
+      class="space-y-6 bg-white p-6 rounded-xl shadow-sm max-w-3xl">
 
+    <div asp-validation-summary="ModelOnly"
+         class="bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-4">
+    </div>
+
+    <!-- Plate -->
     <div>
         <label asp-for="PlateNumber" class="block font-medium text-gray-700">Plate Number</label>
-        <input asp-for="PlateNumber" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+        <input asp-for="PlateNumber"
+               class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
         <span asp-validation-for="PlateNumber" class="text-red-500 text-sm"></span>
     </div>
 
+    <!-- Brand + Model -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
             <label asp-for="Brand" class="block font-medium text-gray-700">Brand</label>
-            <input asp-for="Brand" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+            <input asp-for="Brand"
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
             <span asp-validation-for="Brand" class="text-red-500 text-sm"></span>
         </div>
 
         <div>
             <label asp-for="Model" class="block font-medium text-gray-700">Model</label>
-            <input asp-for="Model" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+            <input asp-for="Model"
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
             <span asp-validation-for="Model" class="text-red-500 text-sm"></span>
         </div>
     </div>
 
+    <!-- Daily Rate + Mileage -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
             <label asp-for="DailyRate" class="block font-medium text-gray-700">Daily Rate</label>
-            <input asp-for="DailyRate" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+            <input asp-for="DailyRate"
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
             <span asp-validation-for="DailyRate" class="text-red-500 text-sm"></span>
         </div>
 
         <div>
             <label asp-for="Mileage" class="block font-medium text-gray-700">Mileage (km)</label>
-            <input asp-for="Mileage" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+            <input asp-for="Mileage"
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
             <span asp-validation-for="Mileage" class="text-red-500 text-sm"></span>
         </div>
     </div>
 
+    <!-- Car Type + Transmission + Fuel -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+            <label asp-for="Type" class="block font-medium text-gray-700">Type</label>
+            <input asp-for="Type"
+                   placeholder="Sedan, SUV, etc."
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+        </div>
+
+        <div>
+            <label asp-for="Transmission" class="block font-medium text-gray-700">Transmission</label>
+            <input asp-for="Transmission"
+                   placeholder="Automatic / Manual"
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+        </div>
+
+        <div>
+            <label asp-for="FuelType" class="block font-medium text-gray-700">Fuel Type</label>
+            <input asp-for="FuelType"
+                   placeholder="Petrol / Diesel / Hybrid"
+                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
+        </div>
+    </div>
+
+    <!-- ✅ Image Upload -->
+    <div>
+        <label class="block font-medium text-gray-700">Car Image</label>
+        <input type="file" name="imageFile"
+               accept="image/*"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:ring-brand focus:border-brand" />
+        <p class="text-xs text-gray-500 mt-1">Recommended: 800×600px JPG or PNG</p>
+    </div>
+
+    <!-- Branch (only for SuperAdmin) -->
     @if (User.IsInRole("SuperAdmin"))
     {
         <div>
@@ -56,9 +102,14 @@
         </div>
     }
 
+    <!-- Buttons -->
     <div class="flex justify-end space-x-3">
-        <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">Cancel</a>
-        <button type="submit" class="px-4 py-2 bg-brand hover:bg-blue-700 text-white rounded-lg font-medium">Save</button>
+        <a asp-action="Index"
+           class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">Cancel</a>
+        <button type="submit"
+                class="px-4 py-2 bg-brand hover:bg-blue-700 text-white rounded-lg font-medium">
+            Save
+        </button>
     </div>
 </form>
 

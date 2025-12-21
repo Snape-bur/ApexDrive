@@ -1,0 +1,95 @@
+﻿@model ApexDrive.Models.PricingRule
+
+@{
+    ViewData["Title"] = "Add Pricing Rule";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-4xl mx-auto mt-10 px-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Create New Pricing Rule</h2>
+            <a asp-action="Index" class="text-brand hover:underline text-sm font-medium">← Back to List</a>
+        </div>
+
+        <form asp-action="Create" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+
+            <div class="grid md:grid-cols-1 gap-6">
+                <div>
+                    <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-2">Rule Name</label>
+                    <input asp-for="Name" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-brand focus:border-brand"
+                           placeholder="e.g. Summer Peak 2025" required />
+                    <span asp-validation-for="Name" class="text-red-500 text-xs"></span>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="StartDate" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <input asp-for="StartDate" type="date" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-brand focus:border-brand" required />
+                </div>
+
+                <div>
+                    <label asp-for="EndDate" class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                    <input asp-for="EndDate" type="date" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-brand focus:border-brand" required />
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 items-start">
+                <div>
+                    <label asp-for="Multiplier" class="block text-sm font-medium text-gray-700 mb-2">Price Multiplier</label>
+                    <input asp-for="Multiplier" id="multiplierInput" type="number" step="0.01"
+                           class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-brand focus:border-brand"
+                           placeholder="e.g. 1.5" required />
+                    <p class="mt-2 text-xs text-gray-500">1.5 = 50% increase | 0.8 = 20% discount</p>
+                </div>
+
+                <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                    <h4 class="text-blue-800 font-semibold text-sm mb-1">Live Impact Preview</h4>
+                    <p class="text-[10px] text-blue-600 mb-3">Based on a standard $100.00 daily rental:</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-500 text-sm">Adjusted Rate:</span>
+                        <span id="previewPrice" class="text-xl font-bold text-brand">$100.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <input asp-for="IsRecurring" type="checkbox" class="h-5 w-5 rounded text-brand border-gray-300 focus:ring-brand" />
+                <div>
+                    <label asp-for="IsRecurring" class="font-medium text-gray-800">Recurring Rule</label>
+                    <p class="text-xs text-gray-500">Enable this to apply the rule every year on these specific dates.</p>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full bg-brand text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700 transition duration-200">
+                    Save Pricing Rule
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const input = document.getElementById('multiplierInput');
+        const preview = document.getElementById('previewPrice');
+
+        input.addEventListener('input', function() {
+            const val = parseFloat(this.value) || 1.0;
+            const calculated = 100 * val;
+            preview.innerText = '$' + calculated.toFixed(2);
+
+            if (val > 1) {
+                preview.className = "text-xl font-bold text-red-600"; // Surge
+            } else if (val < 1) {
+                preview.className = "text-xl font-bold text-green-600"; // Discount
+            } else {
+                preview.className = "text-xl font-bold text-brand"; // Normal
+            }
+        });
+    </script>
+}

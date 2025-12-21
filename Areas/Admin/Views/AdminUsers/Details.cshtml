@@ -7,9 +7,44 @@
 <h1 class="text-2xl font-bold text-brand mb-6">👁️ Admin Details</h1>
 
 <div class="bg-white p-6 rounded-xl shadow-md max-w-lg space-y-3">
-    <p><strong>Email:</strong> @Model.Email</p>
-    <p><strong>User ID:</strong> @Model.Id</p>
-    <p><strong>Roles:</strong> @string.Join(", ", (IList<string>)ViewBag.Roles)</p>
+    <p>
+        <strong>Full Name:</strong>
+        @(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName : "—")
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        @Model.Email
+    </p>
+
+    <p>
+        <strong>User ID:</strong>
+        @Model.Id
+    </p>
+
+    <p>
+        <strong>Assigned Branch:</strong>
+        @{
+            if (Model.Branch != null)
+            {
+                @Model.Branch.BranchName
+            }
+            else if (Model.BranchId != null)
+            {
+                <span class="text-gray-500">Branch ID: @Model.BranchId</span>
+            }
+            else
+            {
+                <span class="text-gray-400 italic">No branch assigned</span>
+            }
+        }
+    </p>
+
+
+    <p>
+        <strong>Roles:</strong>
+        @string.Join(", ", (IList<string>)ViewBag.Roles)
+    </p>
 </div>
 
 <a asp-action="Index" class="mt-4 inline-block text-gray-600 hover:underline">⬅ Back to list</a>

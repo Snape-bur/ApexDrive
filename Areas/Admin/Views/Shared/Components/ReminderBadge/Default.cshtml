@@ -1,0 +1,12 @@
+﻿@if (ViewBag.OverdueCount > 0)
+{
+    <span class="bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+        @ViewBag.OverdueCount
+    </span>
+}
+else if (ViewBag.DueTodayCount > 0)
+{
+    <span class="bg-amber-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+        @ViewBag.DueTodayCount
+    </span>
+}

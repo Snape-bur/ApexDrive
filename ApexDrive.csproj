@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\images\cars\Alphard.png" />
+    <Content Remove="wwwroot\images\cars\ALTIS.png" />
+    <Content Remove="wwwroot\images\cars\Black_Fortuner.png" />
+    <Content Remove="wwwroot\images\cars\Cls300d.png" />
+    <Content Remove="wwwroot\images\cars\Fortuner.jpg" />
+    <Content Remove="wwwroot\images\cars\Toyota-Crown-Crossover-Type-1-removebg-preview.png" />
+    <Content Remove="wwwroot\images\cars\zeeker.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.7.7" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.10" />
@@ -24,15 +34,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Customer\Models\" />
-    <Folder Include="Areas\Customer\Views\" />
-    <Folder Include="wwwroot\images\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\images\117-removebg-preview.png" />
     <None Include="wwwroot\images\ALTIS.png" />
     <None Include="wwwroot\images\Black_Fortuner.png" />
+    <None Include="wwwroot\images\cars\zeeker.png" />
+    <None Include="wwwroot\images\cars\ALTIS.png" />
+    <None Include="wwwroot\images\cars\Black_Fortuner.png" />
+    <None Include="wwwroot\images\cars\Cls300d.png" />
+    <None Include="wwwroot\images\cars\Fortuner.jpg" />
+    <None Include="wwwroot\images\cars\Toyota-Crown-Crossover-Type-1-removebg-preview.png" />
+    <None Include="wwwroot\images\cars\Alphard.png" />
     <None Include="wwwroot\images\cls300d_exterior_001-removebg-preview.png" />
     <None Include="wwwroot\images\Fortuner.jpg" />
     <None Include="wwwroot\images\Toyota-Crown-Crossover-Type-1-removebg-preview.png" />

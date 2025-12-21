@@ -21,6 +21,7 @@ namespace ApexDrive.Areas.Admin.Controllers
             _context = context;
         }
 
+    
         // 🏠 Dashboard Index
         public async Task<IActionResult> Index()
         {
@@ -39,7 +40,10 @@ namespace ApexDrive.Areas.Admin.Controllers
             // 🧮 Query Setup
             var carsQuery = _context.Cars.AsQueryable();
             var bookingsQuery = _context.Bookings.AsQueryable();
-            var remindersQuery = _context.CarReminders.AsQueryable();
+            var remindersQuery = _context.CarReminders
+                .Include(r => r.Car).ThenInclude(c => c.Branch)
+                .Include(r => r.Branch)
+                .AsQueryable();
             var maintenanceQuery = _context.CarMaintenanceHistories.AsQueryable();
 
             if (branchId.HasValue)
@@ -62,18 +66,61 @@ namespace ApexDrive.Areas.Admin.Controllers
                     : "All Branches",
 
                 TotalCars = await carsQuery.CountAsync(),
-                ActiveBookings = await bookingsQuery.CountAsync(), // refine later if needed
+                ActiveBookings = await bookingsQuery.CountAsync(),
                 UpcomingReminders = await remindersQuery
-                    .Where(r => !r.IsCompleted && r.ReminderDate <= DateTime.Today.AddDays(7))
+                    .Where(r => !r.IsCompleted && r.ReminderDate <= DateTime.UtcNow.AddDays(7))
                     .CountAsync(),
                 CompletedMaintenances = await maintenanceQuery.CountAsync(),
-                TotalRevenue = await _context.Payments.SumAsync(p => (decimal?)p.Amount) ?? 0,
+                TotalRevenue = branchId.HasValue
+    ? await _context.Payments
+        .Where(p => p.Booking.Car.BranchId == branchId || p.Booking.PickupBranchId == branchId)
+        .SumAsync(p => (decimal?)p.Amount) ?? 0
+    : await _context.Payments.SumAsync(p => (decimal?)p.Amount) ?? 0,
                 RecentMaintenanceRecords = await maintenanceQuery
                     .OrderByDescending(m => m.ServiceDate)
                     .Take(5)
                     .Include(m => m.Car)
                     .ToListAsync()
             };
+
+            // ✅ 🔔 Reminder Summary (for dashboard banner)
+            var today = DateTime.UtcNow.Date;
+
+            var activeReminders = remindersQuery.Where(r => !r.IsCompleted);
+
+            var overdueCount = await activeReminders.CountAsync(r => r.ReminderDate < today);
+            var dueTodayCount = await activeReminders.CountAsync(r => r.ReminderDate == today);
+            var upcomingCount = await activeReminders.CountAsync(r => r.ReminderDate > today && r.ReminderDate <= today.AddDays(3));
+
+            var upcomingList = await activeReminders
+                .Where(r => r.ReminderDate >= today && r.ReminderDate <= today.AddDays(3))
+                .OrderBy(r => r.ReminderDate)
+                .Take(3)
+                .ToListAsync();
+
+            model.ReminderSummary = new ReminderSummary
+            {
+                OverdueCount = overdueCount,
+                DueTodayCount = dueTodayCount,
+                UpcomingCount = upcomingCount,
+                UpcomingReminders = upcomingList
+            };
+            // ✅ Sidebar Reminder Badge
+            var me = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var badgeReminders = _context.CarReminders.AsQueryable();
+
+            if (userRole == "Admin" && me?.BranchId != null)
+            {
+                badgeReminders = badgeReminders.Where(r => r.BranchId == me.BranchId);
+            }
+
+            var sidebarOverdueCount = await badgeReminders.CountAsync(r => !r.IsCompleted && r.ReminderDate < today);
+            var sidebarDueTodayCount = await badgeReminders.CountAsync(r => !r.IsCompleted && r.ReminderDate == today);
+
+            // Pass to Layout via ViewBag
+            ViewBag.OverdueCount = sidebarOverdueCount;
+            ViewBag.DueTodayCount = sidebarDueTodayCount;
+
 
             return View(model);
         }
