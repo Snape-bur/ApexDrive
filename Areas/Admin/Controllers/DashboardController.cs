@@ -206,12 +206,31 @@ namespace ApexDrive.Areas.Admin.Controllers
                     .ToListAsync()
                 : null;
 
+            // 💰 Revenue per Branch (SuperAdmin only)
+            var revenuePerBranch = userRole == "SuperAdmin"
+                ? await _context.Payments
+                    .Include(p => p.Booking)
+                        .ThenInclude(b => b.Car)
+                            .ThenInclude(c => c.Branch)
+                    .GroupBy(p => p.Booking.Car.Branch.BranchName)
+                    .Select(g => new
+                    {
+                        BranchName = g.Key,
+                        Revenue = g.Sum(p => p.Amount)
+                    })
+                    .OrderByDescending(x => x.Revenue)
+                    .ToListAsync()
+                : null;
+
+
             // ✅ Return JSON for Chart.js
             return Json(new
             {
                 monthlyBookings,
                 maintenanceStats,
-                carsPerBranch
+                carsPerBranch,
+                revenuePerBranch
+
             });
         }
     }

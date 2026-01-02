@@ -4,48 +4,109 @@
     ViewData["Title"] = "Branch Management";
 }
 
-<h1 class="text-2xl font-bold text-brand mb-6">🏢 Branch Management</h1>
+<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+        <div class="flex items-center gap-3 mb-1">
+            <div class="bg-brand/10 p-2 rounded-lg">
+                <i class="fa-solid fa-city text-brand text-xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Branch Management</h1>
+        </div>
+        <p class="text-gray-500 text-sm px-1">Manage physical locations, contact details, and branch assignments.</p>
+    </div>
 
-<a asp-action="Create" class="btn btn-brand mb-4">➕ Add Branch</a>
+    <a asp-action="Create" class="inline-flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+        <i class="fa-solid fa-plus text-xs"></i>
+        Add New Branch
+    </a>
+</div>
 
-<table class="min-w-full bg-white rounded-lg shadow-sm">
-    <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
-        <tr>
-            <th class="py-3 px-4 text-left">Branch</th>
-            <th class="py-3 px-4 text-left">Manager (Account Email)</th>
-            <th class="py-3 px-4 text-left">Branch Email</th>
-            <th class="py-3 px-4 text-left">Phone</th>
-            <th class="py-3 px-4 text-right">Actions</th>
-        </tr>
-    </thead>
-    <tbody class="text-sm text-gray-700">
-        @foreach (var b in Model)
-        {
-            <tr class="border-b hover:bg-gray-50">
-                <td class="py-3 px-4 font-medium">@b.BranchName</td>
-                <td class="py-3 px-4">
-                    @if (!string.IsNullOrEmpty(b.Manager?.Email))
-                    {
-                        @b.Manager.Email
-                    }
-                    else
-                    {
-                        <span class="text-gray-400">—</span>
-                    }
-                </td>
-                <td class="py-3 px-4">@b.Email</td>
-                <td class="py-3 px-4">@b.Phone</td>
-                <td class="py-3 px-4 text-right space-x-2">
-                    <a asp-action="Edit" asp-route-id="@b.BranchId"
-                       class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition">
-                        ✏️ Edit
-                    </a>
-                    <a asp-action="AssignManager" asp-route-id="@b.BranchId"
-                       class="px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-blue-600 font-medium transition">
-                        👤 Manager
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-100">
+            <thead class="bg-gray-50/50">
+                <tr>
+                    <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Branch Details</th>
+                    <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Manager Assignment</th>
+                    <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Contact Info</th>
+                    <th class="py-4 px-6 text-right text-[11px] uppercase tracking-widest font-black text-gray-400">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                @foreach (var b in Model)
+                {
+                    <tr class="group hover:bg-blue-50/30 transition-colors">
+                        <td class="py-4 px-6">
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 group-hover:bg-brand group-hover:text-white transition-all">
+                                    <i class="fa-solid fa-building-user"></i>
+                                </div>
+                                <div>
+                                    <span class="block font-bold text-gray-900">@b.BranchName</span>
+                                    <span class="text-[10px] text-gray-400 uppercase font-bold">ID: #@b.BranchId.ToString("D3")</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6">
+                            @if (!string.IsNullOrEmpty(b.Manager?.Email))
+                            {
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-700">@b.Manager.FullName</span>
+                                    <span class="text-xs text-brand flex items-center gap-1">
+                                        <i class="fa-solid fa-envelope text-[10px]"></i>
+                                        @b.Manager.Email
+                                    </span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-amber-50 text-amber-600 border border-amber-100 text-[10px] font-black uppercase tracking-tighter">
+                                    <i class="fa-solid fa-user-slash"></i>
+                                    Unassigned
+                                </div>
+                            }
+                        </td>
+                        <td class="py-4 px-6">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2 text-sm text-gray-600">
+                                    <i class="fa-solid fa-at text-gray-300 w-4 text-center"></i>
+                                    @b.Email
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-gray-600">
+                                    <i class="fa-solid fa-phone text-gray-300 w-4 text-center"></i>
+                                    @b.Phone
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a asp-action="Edit" asp-route-id="@b.BranchId"
+                                   class="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-all"
+                                   title="Edit Details">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    Edit
+                                </a>
+                                <a asp-action="AssignManager" asp-route-id="@b.BranchId"
+                                   class="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-brand/10 hover:bg-brand text-brand hover:text-white text-xs font-bold transition-all"
+                                   title="Assign Manager">
+                                    <i class="fa-solid fa-user-gear"></i>
+                                    Manager
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (!Model.Any())
+    {
+        <div class="p-12 text-center">
+            <div class="bg-gray-50 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                <i class="fa-solid fa-map-location-dot text-2xl"></i>
+            </div>
+            <h3 class="text-gray-900 font-bold">No branches found</h3>
+            <p class="text-gray-500 text-sm">Get started by creating your first business location.</p>
+        </div>
+    }
+</div>

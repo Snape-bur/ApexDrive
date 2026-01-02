@@ -1,79 +1,88 @@
 ﻿@model ApexDrive.Models.CarReminder
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "New Reminder";
 }
 
-<div class="max-w-3xl mx-auto p-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-brand flex items-center gap-2">
-            <span class="text-3xl">➕</span> New Reminder
-        </h1>
-        <a asp-action="Index"
-           class="text-sm text-gray-500 hover:text-blue-600 transition">
-            ← Back to list
-        </a>
+<div class="max-w-3xl mx-auto pb-10">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to Reminders
+    </a>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-50/50 px-8 py-6 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <div class="bg-brand p-3 rounded-2xl shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-bell-plus text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Set New Reminder</h1>
+                    <p class="text-sm text-gray-500 font-medium">Schedule vehicle maintenance or document renewals.</p>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post" class="p-8 space-y-6">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label asp-for="Type" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Reminder Category</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-layer-group absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <select asp-for="Type" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer">
+                            <option value="">-- Select Category --</option>
+                            <option value="Service">Service / Maintenance</option>
+                            <option value="Insurance">Insurance Renewal</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                    </div>
+                    <span asp-validation-for="Type" class="text-xs text-red-500 font-medium"></span>
+                </div>
+
+                <div class="space-y-2">
+                    <label asp-for="CarId" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Vehicle</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-car absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <select asp-for="CarId" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer"
+                                asp-items="@(new SelectList(ViewBag.Cars, nameof(ApexDrive.Models.Car.CarId), nameof(ApexDrive.Models.Car.PlateNumber)))">
+                            <option value="">-- Select License Plate --</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                    </div>
+                    <span asp-validation-for="CarId" class="text-xs text-red-500 font-medium"></span>
+                </div>
+
+                <div class="space-y-2">
+                    <label asp-for="ReminderDate" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Target Date</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-calendar-day absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <input asp-for="ReminderDate" type="date" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                    </div>
+                    <span asp-validation-for="ReminderDate" class="text-xs text-red-500 font-medium"></span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label asp-for="Notes" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Task Instructions / Notes</label>
+                <div class="relative group">
+                    <i class="fa-solid fa-quote-left absolute left-4 top-4 text-gray-300 group-focus-within:text-brand transition-colors"></i>
+                    <textarea asp-for="Notes" rows="4" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none resize-none" placeholder="Enter service details or policy numbers..."></textarea>
+                </div>
+                <span asp-validation-for="Notes" class="text-xs text-red-500 font-medium"></span>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
+                <a asp-action="Index" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">Cancel</a>
+                <button type="submit" class="inline-flex items-center gap-2 bg-brand text-white px-10 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-check"></i>
+                    Save Reminder
+                </button>
+            </div>
+        </form>
     </div>
-
-    <!-- Form Card -->
-    <form asp-action="Create" method="post"
-          class="bg-white rounded-xl shadow-sm ring-1 ring-black/5 p-6 space-y-6">
-        @Html.AntiForgeryToken()
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Type -->
-            <div>
-                <label asp-for="Type" class="block text-sm font-semibold text-gray-700 mb-1">Type</label>
-                <select asp-for="Type"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
-                    <option value="">-- Select Type --</option>
-                    <option>Service</option>
-                    <option>Insurance</option>
-                </select>
-                <span asp-validation-for="Type" class="text-red-500 text-sm"></span>
-            </div>
-
-            <!-- Car -->
-            <div>
-                <label asp-for="CarId" class="block text-sm font-semibold text-gray-700 mb-1">Car</label>
-                <select asp-for="CarId"
-                        asp-items="@(new SelectList(ViewBag.Cars, nameof(ApexDrive.Models.Car.CarId), nameof(ApexDrive.Models.Car.PlateNumber)))"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
-                    <option value="">-- Select Car --</option>
-                </select>
-                <small class="text-gray-500 text-xs">Brand / Model shown on the list page</small>
-                <span asp-validation-for="CarId" class="text-red-500 text-sm"></span>
-            </div>
-
-            <!-- Reminder Date -->
-            <div>
-                <label asp-for="ReminderDate" class="block text-sm font-semibold text-gray-700 mb-1">Reminder Date</label>
-                <input asp-for="ReminderDate" type="date"
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand" />
-                <span asp-validation-for="ReminderDate" class="text-red-500 text-sm"></span>
-            </div>
-
-            <!-- Notes -->
-            <div class="md:col-span-2">
-                <label asp-for="Notes" class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
-                <textarea asp-for="Notes"
-                          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand h-28 resize-none"></textarea>
-                <span asp-validation-for="Notes" class="text-red-500 text-sm"></span>
-            </div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-            <a asp-action="Index"
-               class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition">
-                Cancel
-            </a>
-            <button type="submit"
-                    class="px-5 py-2 rounded-lg bg-brand text-white font-semibold shadow-sm hover:bg-blue-700 transition">
-                Save Reminder
-            </button>
-        </div>
-    </form>
 </div>
 
 @section Scripts {

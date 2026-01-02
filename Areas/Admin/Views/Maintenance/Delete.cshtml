@@ -3,26 +3,55 @@
     ViewData["Title"] = "Delete Maintenance";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-<h1 class="text-2xl font-bold text-red-600 mb-6">🗑️ Delete Maintenance</h1>
 
-<div class="bg-white p-6 rounded-xl shadow-sm max-w-2xl">
-    <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-4">
-        <strong>Warning:</strong> This action cannot be undone.
-    </div>
+<div class="max-w-2xl mx-auto pb-10">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to History
+    </a>
 
-    <div class="border rounded-lg p-4 bg-gray-50 mb-6 text-sm">
-        <p><strong>Date:</strong> @Model.ServiceDate.ToString("dd MMM yyyy")</p>
-        <p><strong>Car:</strong> @Model.Car?.PlateNumber (@Model.Car?.Brand @Model.Car?.Model)</p>
-        <p><strong>Branch:</strong> @Model.Branch?.BranchName</p>
-        <p><strong>Type:</strong> @Model.ServiceType</p>
-        <p><strong>Notes:</strong> @Model.Notes</p>
-    </div>
-
-    <form asp-action="Delete" method="post">
-        <input type="hidden" asp-for="HistoryId" />
-        <div class="flex justify-end gap-2">
-            <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">Cancel</a>
-            <button class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">Delete</button>
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-red-50/50 px-8 py-6 border-b border-red-100">
+            <div class="flex items-center gap-4">
+                <div class="bg-red-600 p-3 rounded-2xl shadow-lg shadow-red-100">
+                    <i class="fa-solid fa-trash-can text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Delete Record</h1>
+                    <p class="text-sm text-red-600 font-medium">This maintenance log will be permanently removed.</p>
+                </div>
+            </div>
         </div>
-    </form>
+
+        <div class="p-8">
+            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 mb-8 grid grid-cols-2 gap-4">
+                <div class="col-span-2 pb-2 border-b border-gray-200">
+                    <p class="text-[10px] font-black uppercase text-gray-400">Vehicle</p>
+                    <p class="text-sm font-bold text-gray-900">@Model.Car?.PlateNumber (@Model.Car?.Brand @Model.Car?.Model)</p>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black uppercase text-gray-400">Date</p>
+                    <p class="text-sm font-bold text-gray-700">@Model.ServiceDate.ToString("dd MMM yyyy")</p>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black uppercase text-gray-400">Type</p>
+                    <p class="text-sm font-bold text-gray-700">@Model.ServiceType</p>
+                </div>
+                <div class="col-span-2">
+                    <p class="text-[10px] font-black uppercase text-gray-400">Notes</p>
+                    <p class="text-xs text-gray-600">@Model.Notes</p>
+                </div>
+            </div>
+
+            <form asp-action="Delete" method="post" class="flex items-center justify-end gap-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="HistoryId" />
+                <a asp-action="Index" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">Cancel</a>
+                <button type="submit" class="inline-flex items-center gap-2 bg-red-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100">
+                    <i class="fa-solid fa-trash-can"></i>
+                    Confirm Delete
+                </button>
+            </form>
+        </div>
+    </div>
 </div>

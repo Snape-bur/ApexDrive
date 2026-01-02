@@ -4,82 +4,105 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-2xl font-bold text-brand mb-6">✏️ Edit Booking — #@Model.BookingId</h1>
+<div class="max-w-4xl mx-auto pb-20">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to Bookings
+    </a>
 
-<form asp-action="Edit" method="post" class="space-y-6 bg-white p-6 rounded-xl shadow-sm max-w-3xl">
-    <input type="hidden" asp-for="BookingId" />
-    <div asp-validation-summary="ModelOnly" class="bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-4"></div>
-
-    <!-- Booking Dates -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-            <label asp-for="StartDate" class="block font-medium text-gray-700">Start Date</label>
-            <input asp-for="StartDate" type="date"
-                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
-            <span asp-validation-for="StartDate" class="text-red-500 text-sm"></span>
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-50/50 px-8 py-6 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <div class="bg-brand p-3 rounded-2xl shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-calendar-check text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Edit Booking #@Model.BookingId</h1>
+                    <p class="text-sm text-gray-500 font-medium">Modify reservation dates, locations, or status.</p>
+                </div>
+            </div>
         </div>
 
-        <div>
-            <label asp-for="EndDate" class="block font-medium text-gray-700">End Date</label>
-            <input asp-for="EndDate" type="date"
-                   class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
-            <span asp-validation-for="EndDate" class="text-red-500 text-sm"></span>
-        </div>
+        <form asp-action="Edit" method="post" class="p-8 space-y-8">
+            <input type="hidden" asp-for="BookingId" />
+            <div asp-validation-summary="ModelOnly" class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label asp-for="StartDate" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Start Date</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-calendar-day absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <input asp-for="StartDate" type="date" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label asp-for="EndDate" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">End Date</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-calendar-check absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <input asp-for="EndDate" type="date" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label asp-for="PickupBranchId" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Pickup Station</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <select asp-for="PickupBranchId" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer" asp-items="@(new SelectList(ViewBag.Branches, "BranchId", "BranchName"))">
+                            <option value="">-- Select Pickup Branch --</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label asp-for="DropoffBranchId" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Drop-off Station</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-flag-checkered absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <select asp-for="DropoffBranchId" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer" asp-items="@(new SelectList(ViewBag.Branches, "BranchId", "BranchName"))">
+                            <option value="">-- Select Drop-off Branch --</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label asp-for="BaseCost" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Base Cost ($)</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-tag absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <input asp-for="BaseCost" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label asp-for="TotalCost" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Final Total ($)</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-sack-dollar absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <input asp-for="TotalCost" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label asp-for="Status" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Booking Lifecycle Status</label>
+                <div class="relative group">
+                    <i class="fa-solid fa-clock-rotate-left absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                    <select asp-for="Status" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer" asp-items="Html.GetEnumSelectList<ApexDrive.Models.BookingStatus>()"></select>
+                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+                <a asp-action="Index" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">Cancel</a>
+                <button type="submit" class="inline-flex items-center gap-2 bg-brand text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Update Reservation
+                </button>
+            </div>
+        </form>
     </div>
-
-    <!-- Branch Selection -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-            <label asp-for="PickupBranchId" class="block font-medium text-gray-700">Pickup Branch</label>
-            <select asp-for="PickupBranchId"
-                    class="form-select w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2"
-                    asp-items="@(new SelectList(ViewBag.Branches, "BranchId", "BranchName", Model.PickupBranchId))">
-                <option value="">-- Select Pickup Branch --</option>
-            </select>
-            <span asp-validation-for="PickupBranchId" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div>
-            <label asp-for="DropoffBranchId" class="block font-medium text-gray-700">Drop-off Branch</label>
-            <select asp-for="DropoffBranchId"
-                    class="form-select w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2"
-                    asp-items="@(new SelectList(ViewBag.Branches, "BranchId", "BranchName", Model.DropoffBranchId))">
-                <option value="">-- Select Drop-off Branch --</option>
-            </select>
-            <span asp-validation-for="DropoffBranchId" class="text-red-500 text-sm"></span>
-        </div>
-    </div>
-
-    <!-- Cost and Status -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-            <label asp-for="BaseCost" class="block font-medium text-gray-700">Base Cost</label>
-            <input asp-for="BaseCost" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
-            <span asp-validation-for="BaseCost" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div>
-            <label asp-for="TotalCost" class="block font-medium text-gray-700">Total Cost</label>
-            <input asp-for="TotalCost" class="form-input w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2" />
-            <span asp-validation-for="TotalCost" class="text-red-500 text-sm"></span>
-        </div>
-    </div>
-
-    <div>
-        <label asp-for="Status" class="block font-medium text-gray-700">Status</label>
-        <select asp-for="Status"
-                class="form-select w-full border-gray-300 focus:ring-brand focus:border-brand rounded-lg px-3 py-2"
-                asp-items="Html.GetEnumSelectList<ApexDrive.Models.BookingStatus>()">
-        </select>
-        <span asp-validation-for="Status" class="text-red-500 text-sm"></span>
-    </div>
-
-    <div class="flex justify-end space-x-3">
-        <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">Cancel</a>
-        <button type="submit" class="px-4 py-2 bg-brand hover:bg-blue-700 text-white rounded-lg font-medium">💾 Save Changes</button>
-    </div>
-</form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+</div>

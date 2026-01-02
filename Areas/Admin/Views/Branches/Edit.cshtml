@@ -1,5 +1,93 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model ApexDrive.Models.Branch
 @{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Edit Branch Details";
+}
+
+<div class="max-w-4xl mx-auto pb-20">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to Branch Management
+    </a>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-50/50 px-8 py-6 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <div class="bg-brand p-3 rounded-2xl shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-pen-to-square text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Edit Branch</h1>
+                    <p class="text-sm text-gray-500 font-medium">Update the location and contact information for <span class="text-brand font-bold">@Model.BranchName</span>.</p>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Edit" method="post" class="p-8 space-y-6">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl"></div>
+
+            <input type="hidden" asp-for="BranchId" />
+
+            <div class="space-y-2">
+                <label asp-for="BranchName" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Branch Name</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand transition-colors">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <input asp-for="BranchName" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" placeholder="e.g. Downtown Central" />
+                </div>
+                <span asp-validation-for="BranchName" class="text-xs text-red-500 font-medium"></span>
+            </div>
+
+            <div class="space-y-2">
+                <label asp-for="Address" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Physical Address</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand transition-colors">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <input asp-for="Address" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" placeholder="123 Business Way, Suite 100" />
+                </div>
+                <span asp-validation-for="Address" class="text-xs text-red-500 font-medium"></span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label asp-for="Phone" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Phone Number</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand transition-colors">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <input asp-for="Phone" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" placeholder="+1 (555) 000-0000" />
+                    </div>
+                    <span asp-validation-for="Phone" class="text-xs text-red-500 font-medium"></span>
+                </div>
+
+                <div class="space-y-2">
+                    <label asp-for="Email" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Branch Email</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand transition-colors">
+                            <i class="fa-solid fa-at"></i>
+                        </div>
+                        <input asp-for="Email" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" placeholder="branch@apexdrive.com" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-xs text-red-500 font-medium"></span>
+                </div>
+            </div>
+
+            <div class="mt-10 pt-8 border-t border-gray-100 flex items-center justify-end gap-3">
+                <a asp-action="Index" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">
+                    Discard Changes
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 bg-brand text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Update Branch
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

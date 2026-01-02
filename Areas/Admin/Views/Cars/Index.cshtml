@@ -4,111 +4,232 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-2xl font-bold text-brand mb-6">🚘 Car Management</h1>
+<div class="max-w-7xl mx-auto pb-20">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3 mb-1">
+                <div class="bg-brand/10 p-2 rounded-lg">
+                    <i class="fa-solid fa-car text-brand text-xl"></i>
+                </div>
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Car Management</h1>
+            </div>
+            <p class="text-gray-500 text-sm px-1">Manage your fleet, monitor availability, and update vehicle rates.</p>
+        </div>
 
-<!-- ✅ Search and Filter Section -->
-<form method="get" class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-4 rounded-xl shadow-sm">
-    <div class="flex items-center space-x-2 flex-1">
-        <input type="text" name="search" value="@Context.Request.Query["search"]"
-               class="w-full md:w-80 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand"
-               placeholder="🔍 Search by Plate, Brand, or Model..." />
-        <button type="submit"
-                class="px-4 py-2 bg-brand text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
-            Search
-        </button>
+        <a asp-action="Create" class="inline-flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+            <i class="fa-solid fa-plus text-xs"></i>
+            Add New Vehicle
+        </a>
     </div>
 
-    @if (User.IsInRole("SuperAdmin"))
-    {
-        <div class="flex items-center space-x-2">
-            <label class="text-sm font-medium text-gray-600">Branch:</label>
-            <select name="branchId"
-                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
-                <option value="">All</option>
-                @foreach (var branch in ViewBag.Branches as List<ApexDrive.Models.Branch>)
-                {
-                    <option value="@branch.BranchId" selected="@(Context.Request.Query["branchId"] == branch.BranchId.ToString())">
-                        @branch.BranchName
-                    </option>
-                }
-            </select>
-            <button type="submit"
-                    class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
-                Filter
-            </button>
-        </div>
-    }
-</form>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <form method="get" class="flex flex-col lg:flex-row lg:items-center gap-4">
+            <div class="relative flex-1 group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input type="text" name="search" value="@Context.Request.Query["search"]"
+                       class="block w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none"
+                       placeholder="Search by Plate, Brand, or Model..." />
+            </div>
 
-<!-- ✅ Add Button -->
-<div class="flex justify-end mb-4">
-    <a asp-action="Create" class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700 font-medium">➕ Add Car</a>
+            <div class="flex flex-wrap items-center gap-3">
+                @if (User.IsInRole("SuperAdmin"))
+                {
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-black uppercase tracking-widest text-gray-400">Branch:</label>
+                        <select name="branchId"
+                                class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none">
+                            <option value="">All Locations</option>
+                            @foreach (var branch in ViewBag.Branches as List<ApexDrive.Models.Branch>)
+                            {
+                                <option value="@branch.BranchId" selected="@(Context.Request.Query["branchId"] == branch.BranchId.ToString())">
+                                    @branch.BranchName
+                                </option>
+                            }
+                        </select>
+                    </div>
+                }
+
+                <div class="flex gap-2">
+                    <button type="submit" class="px-6 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-all shadow-sm">
+                        Apply Filters
+                    </button>
+                    <a asp-action="Index" class="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl text-sm font-bold hover:bg-gray-200 transition-all">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50/50">
+                    <tr>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Vehicle Info</th>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Daily Rate</th>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Location</th>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Availability</th>
+                        <th class="py-4 px-6 text-right text-[11px] uppercase tracking-widest font-black text-gray-400">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50 text-sm">
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-20">
+                                <div class="bg-gray-50 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                    <i class="fa-solid fa-car-rear text-2xl"></i>
+                                </div>
+                                <h3 class="text-gray-900 font-bold">No vehicles found</h3>
+                                <p class="text-gray-500 text-sm">Try adjusting your search filters or add a new car.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var car in Model)
+                        {
+                            <tr class="group hover:bg-blue-50/30 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-4">
+                                        <div class="h-12 w-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-100 group-hover:border-brand transition-colors">
+                                            <img src="@car.ImageUrl" alt="@car.Model" class="w-full h-full object-cover" onerror="this.src='/images/no-car.png'" />
+                                        </div>
+                                        <div>
+                                            <span class="block font-bold text-gray-900 text-base">@car.Brand @car.Model</span>
+                                            <span class="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                                                <i class="fa-solid fa-id-card text-[10px] text-gray-400"></i>
+                                                @car.PlateNumber
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <span class="font-black text-gray-900">@car.DailyRate.ToString("C")</span>
+                                    <span class="text-[10px] text-gray-400 block font-bold uppercase tracking-tighter">Per Day</span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2 text-gray-700">
+                                        <i class="fa-solid fa-location-dot text-brand text-xs"></i>
+                                        <span class="font-medium">@car.Branch?.BranchName</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        @if (car.IsAvailable)
+                                        {
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
+                                                <i class="fa-solid fa-circle-check text-[10px]"></i> Available
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-100">
+                                                <i class="fa-solid fa-circle-xmark text-[10px]"></i> Unavailable
+                                            </span>
+                                        }
+
+                                        <form asp-action="ToggleAvailability" method="post" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@car.CarId" />
+                                            <button type="submit"
+                                                    class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-all shadow-sm"
+                                                    title="@(car.IsAvailable ? "Disable Vehicle" : "Enable Vehicle")">
+                                                <i class="fa-solid @(car.IsAvailable ? "fa-toggle-on text-emerald-600" : "fa-toggle-off") text-lg"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a asp-action="Edit" asp-route-id="@car.CarId"
+                                           class="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-all"
+                                           title="Edit Details">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            Edit
+                                        </a>
+                                        <button type="button"
+                                                onclick="confirmDeleteCar('@car.CarId', '@car.Brand @car.Model')"
+                                                class="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-red-50 hover:bg-red-500 text-red-600 hover:text-white text-xs font-bold transition-all">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<!-- ✅ Car Table -->
-<table class="min-w-full bg-white rounded-lg shadow-sm">
-    <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
-        <tr>
-            <th class="py-3 px-4 text-left">Plate</th>
-            <th class="py-3 px-4 text-left">Brand</th>
-            <th class="py-3 px-4 text-left">Model</th>
-            <th class="py-3 px-4 text-left">Daily Rate</th>
-            <th class="py-3 px-4 text-left">Branch</th>
-            <th class="py-3 px-4 text-left">Status</th>
-            <th class="py-3 px-4 text-right">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (!Model.Any())
-        {
-            <tr>
-                <td colspan="7" class="text-center py-6 text-gray-400">No cars found.</td>
-            </tr>
-        }
-        else
-        {
-            @foreach (var car in Model)
-            {
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="py-3 px-4 font-medium">@car.PlateNumber</td>
-                    <td class="py-3 px-4">@car.Brand</td>
-                    <td class="py-3 px-4">@car.Model</td>
-                    <td class="py-3 px-4">@car.DailyRate.ToString("C")</td>
-                    <td class="py-3 px-4">@car.Branch?.BranchName</td>
-                    <td class="py-3 px-4 flex items-center gap-2">
-                        @if (car.IsAvailable)
-                        {
-                            <span class="px-2 py-1 rounded-lg bg-green-100 text-green-700 text-xs font-semibold">Available</span>
-                        }
-                        else
-                        {
-                            <span class="px-2 py-1 rounded-lg bg-red-100 text-red-700 text-xs font-semibold">Unavailable</span>
-                        }
+<div id="deleteCarModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden animate-fade-in border border-gray-100">
+        <div class="p-8 text-center">
+            <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+                <i class="fa-solid fa-car-burst text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-black text-gray-900 mb-2">Decommission Car?</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">
+                Are you sure you want to remove <span id="deleteCarName" class="font-bold text-gray-900"></span> from the fleet? This will permanently delete its history.
+            </p>
+        </div>
+        <form id="deleteCarForm" method="post" asp-action="Delete" class="flex border-t border-gray-100">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="deleteCarId" />
+            <button type="button" onclick="hideDeleteCarModal()" class="flex-1 py-4 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
+                Cancel
+            </button>
+            <button type="submit" class="flex-1 py-4 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors border-l border-gray-100">
+                Yes, Delete
+            </button>
+        </form>
+    </div>
+</div>
 
-                        <form asp-action="ToggleAvailability" method="post" class="inline">
-                            <input type="hidden" name="id" value="@car.CarId" />
-                            <button type="submit"
-                                    class="px-2 py-1 text-xs rounded-lg border border-gray-200 hover:bg-gray-100 transition">
-                                @if (car.IsAvailable)
-                                {
-                                    <span>❌ Disable</span>
-                                }
-                                else
-                                {
-                                    <span>✅ Enable</span>
-                                }
-                            </button>
-                        </form>
-                    </td>
+<script>
+    const deleteCarModal = document.getElementById('deleteCarModal');
+    const deleteCarName = document.getElementById('deleteCarName');
+    const deleteCarId = document.getElementById('deleteCarId');
 
-                    <td class="py-3 px-4 text-right space-x-2">
-                        <a asp-action="Edit" asp-route-id="@car.CarId"
-                           class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm">✏️ Edit</a>
-                        <a asp-action="Delete" asp-route-id="@car.CarId"
-                           class="px-3 py-1 rounded bg-red-100 hover:bg-red-200 text-red-700 text-sm">🗑️ Delete</a>
-                    </td>
-                </tr>
-            }
+    function confirmDeleteCar(id, name) {
+        deleteCarId.value = id;
+        deleteCarName.innerText = name;
+        deleteCarModal.classList.remove('hidden');
+        deleteCarModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideDeleteCarModal() {
+        deleteCarModal.classList.add('hidden');
+        deleteCarModal.classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') hideDeleteCarModal();
+    });
+</script>
+
+<style>
+    @@keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
         }
-    </tbody>
-</table>
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.2s ease-out forwards;
+    }
+</style>

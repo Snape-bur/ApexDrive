@@ -73,8 +73,8 @@
         <div class="mb-6">
             <h6 class="text-gray-700 font-medium mb-2">Price Range (per day)</h6>
             <div class="flex flex-col gap-2">
-                <input type="number" placeholder="$0" class="rounded-lg border-gray-300 focus:ring-blue-500" />
-                <input type="number" placeholder="$500" class="rounded-lg border-gray-300 focus:ring-blue-500" />
+                <input type="number" placeholder="฿0" class="rounded-lg border-gray-300 focus:ring-blue-500" />
+                <input type="number" placeholder="฿500" " class="rounded-lg border-gray-300 focus:ring-blue-500" />
             </div>
         </div>
 
@@ -99,7 +99,8 @@
                         <h5 class="font-semibold text-gray-900">@car.Brand @car.Model</h5>
                         <p class="text-sm text-gray-600">Mileage: @car.Mileage km</p>
                         <p class="text-blue-600 font-semibold mt-2">
-                            @(((decimal)ViewBag.CarPrices[car.CarId]).ToString("C")) total
+                            @(((decimal)ViewBag.CarPrices[car.CarId])
+                                                .ToString("C", new System.Globalization.CultureInfo("th-TH"))) total
                         </p>
 
                         <small class="text-xs text-gray-500">

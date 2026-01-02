@@ -4,138 +4,157 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-2xl font-bold text-brand mb-6">📄 Booking Details — #@Model.BookingId</h1>
-
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Booking Overview -->
-    <div class="bg-white p-6 rounded-xl shadow-sm">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">🧾 Booking Information</h2>
-        <div class="space-y-2 text-sm text-gray-700">
-            <p>
-                <strong>Status:</strong>
-                @{
-                    string badgeClass = Model.Status switch
-                    {
-                        ApexDrive.Models.BookingStatus.Pending => "bg-yellow-100 text-yellow-700",
-                        ApexDrive.Models.BookingStatus.Confirmed => "bg-blue-100 text-blue-700",
-                        ApexDrive.Models.BookingStatus.Active => "bg-emerald-100 text-emerald-700",
-                        ApexDrive.Models.BookingStatus.Completed => "bg-green-100 text-green-700",
-                        ApexDrive.Models.BookingStatus.Cancelled => "bg-red-100 text-red-700",
-                        _ => "bg-gray-100 text-gray-700"
-                    };
-                }
-                <span class="px-2 py-1 rounded-lg text-xs font-semibold @badgeClass">@Model.Status</span>
-            </p>
-            <p><strong>Start Date:</strong> @Model.StartDate.ToString("dd MMM yyyy")</p>
-            <p><strong>End Date:</strong> @Model.EndDate.ToString("dd MMM yyyy")</p>
-            <p><strong>Pickup Branch:</strong> @Model.PickupBranch?.BranchName</p>
-            <p><strong>Drop-off Branch:</strong> @Model.DropoffBranch?.BranchName</p>
-            <p><strong>Created At:</strong> @Model.CreatedAt.ToString("dd MMM yyyy hh:mm tt")</p>
-        </div>
-
-        <div class="mt-6 border-t pt-4">
-            <p class="font-semibold text-gray-800 mb-2">💰 Cost Summary</p>
-            <p class="text-sm"><strong>Base Cost:</strong> @Model.BaseCost.ToString("C")</p>
-            <p class="text-sm"><strong>Total Cost:</strong> @Model.TotalCost.ToString("C")</p>
-        </div>
-    </div>
-
-    <!-- Car Information -->
-    <div class="bg-white p-6 rounded-xl shadow-sm">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">🚘 Car Information</h2>
-        <div class="space-y-2 text-sm text-gray-700">
-            <p><strong>Plate Number:</strong> @Model.Car?.PlateNumber</p>
-            <p><strong>Brand:</strong> @Model.Car?.Brand</p>
-            <p><strong>Model:</strong> @Model.Car?.Model</p>
-            <p><strong>Branch:</strong> @Model.Car?.Branch?.BranchName</p>
-            <p><strong>Daily Rate:</strong> @Model.Car?.DailyRate.ToString("C")</p>
-            <p><strong>Mileage:</strong> @Model.Car?.Mileage km</p>
-        </div>
-    </div>
-</div>
-
-<!-- Customer + Payment Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-    <!-- Customer Info -->
-    <div class="bg-white p-6 rounded-xl shadow-sm">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">👤 Customer Details</h2>
-        <div class="space-y-2 text-sm text-gray-700">
-            <p><strong>Full Name:</strong> @Model.Customer?.FullName</p>
-            <p><strong>Email:</strong> @Model.Customer?.Email</p>
-            <p><strong>Phone:</strong> @Model.Customer?.PhoneNumber</p>
-            <p><strong>Address:</strong> @Model.Customer?.Address</p>
-        </div>
-    </div>
-
-    <!-- Payment Info -->
-    <div class="bg-white p-6 rounded-xl shadow-sm">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">💳 Payment Information</h2>
-        <a asp-area="Admin" asp-controller="Payments" asp-action="Edit" asp-route-id="@Model.Payment.PaymentId"
-           class="inline-block mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            🛠 Manage Payment
-        </a>
-
-        @if (Model.Payment != null)
-        {
-            <div class="space-y-2 text-sm text-gray-700">
-                <p>
-                    <strong>Status:</strong>
-                    <span class="font-medium @(Model.Payment.Status == "Paid" ? "text-green-600" : "text-red-600")">
-                        @Model.Payment.Status
-                    </span>
-                </p>
-                <p><strong>Method:</strong> @Model.Payment.Method</p>
-                <p><strong>Amount:</strong> @Model.Payment.Amount.ToString("C")</p>
-                @if (!string.IsNullOrEmpty(Model.Payment.TransactionRef))
-                {
-                    <p><strong>Transaction Ref:</strong> @Model.Payment.TransactionRef</p>
-                }
-                <p><strong>Payment Date:</strong> @Model.Payment.CreatedAt.ToString("dd MMM yyyy hh:mm tt")</p>
-
-
+<div class="max-w-7xl mx-auto pb-20">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div class="flex items-center gap-3">
+            <div class="bg-brand/10 p-2 rounded-lg">
+                <i class="fa-solid fa-file-invoice text-brand text-xl"></i>
             </div>
-        }
-        else
-        {
-            <p class="text-gray-500 italic">No payment record available.</p>
-        }
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Booking Ref: #@Model.BookingId</h1>
+        </div>
+        <div class="flex gap-2">
+            @{
+                string badgeClass = Model.Status switch
+                {
+                    ApexDrive.Models.BookingStatus.Pending => "bg-amber-50 text-amber-700 border-amber-200",
+                    ApexDrive.Models.BookingStatus.Confirmed => "bg-blue-50 text-blue-700 border-blue-200",
+                    ApexDrive.Models.BookingStatus.Active => "bg-indigo-50 text-indigo-700 border-indigo-200",
+                    ApexDrive.Models.BookingStatus.Completed => "bg-emerald-50 text-emerald-700 border-emerald-200",
+                    ApexDrive.Models.BookingStatus.Cancelled => "bg-red-50 text-red-700 border-red-200",
+                    _ => "bg-gray-50 text-gray-700 border-gray-200"
+                };
+            }
+            <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border @badgeClass shadow-sm">
+                @Model.Status
+            </span>
+        </div>
     </div>
-</div>
 
-<!-- Action Buttons -->
-<div class="flex justify-end mt-8 space-x-3">
-    <a asp-action="Index"
-       class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">⬅ Back to List</a>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
+            <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm relative overflow-hidden">
+                <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-timeline text-brand"></i> Rental Timeline
+                </h3>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative">
+                    <div class="flex-1 text-center md:text-left">
+                        <p class="text-[10px] font-black uppercase text-gray-400 mb-1">Pickup</p>
+                        <p class="text-lg font-bold text-gray-900">@Model.PickupBranch?.BranchName</p>
+                        <p class="text-sm text-gray-500">@Model.StartDate.ToString("ddd, dd MMM yyyy")</p>
+                    </div>
+                    <div class="hidden md:flex flex-col items-center flex-shrink-0">
+                        <div class="h-10 w-10 rounded-full bg-brand/10 flex items-center justify-center text-brand border border-brand/20">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 text-center md:text-right">
+                        <p class="text-[10px] font-black uppercase text-gray-400 mb-1">Drop-off</p>
+                        <p class="text-lg font-bold text-gray-900">@Model.DropoffBranch?.BranchName</p>
+                        <p class="text-sm text-gray-500">@Model.EndDate.ToString("ddd, dd MMM yyyy")</p>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-gray-50 flex justify-between items-center text-[11px] font-bold text-gray-400 uppercase tracking-tighter">
+                    <span>Logged System: @Model.CreatedAt.ToString("g")</span>
+                </div>
+            </div>
 
-    @if (Model.Status == ApexDrive.Models.BookingStatus.Pending)
-    {
-        <form asp-action="Confirm" method="post" class="inline">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="id" value="@Model.BookingId" />
-            <button type="submit"
-                    class="px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg font-medium">
-                ✅ Confirm
-            </button>
-        </form>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-car text-brand"></i> Vehicle Details
+                    </h3>
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center text-brand text-2xl border border-gray-100">
+                            <i class="fa-solid fa-car-rear"></i>
+                        </div>
+                        <div>
+                            <p class="text-lg font-bold text-gray-900">@Model.Car?.Brand @Model.Car?.Model</p>
+                            <p class="text-xs font-black text-brand bg-brand/10 px-2 py-0.5 rounded w-fit uppercase tracking-widest">@Model.Car?.PlateNumber</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 border-t border-gray-50 pt-4">
+                        <div class="flex justify-between text-sm"><span class="text-gray-400">Station</span> <span class="font-semibold text-gray-700">@Model.Car?.Branch?.BranchName</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-gray-400">Rate</span> <span class="font-semibold text-gray-700">@Model.Car?.DailyRate.ToString("C")/day</span></div>
+                    </div>
+                </div>
 
-        <form asp-action="Cancel" method="post" class="inline">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="id" value="@Model.BookingId" />
-            <button type="submit"
-                    class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-medium">
-                ❌ Cancel
-            </button>
-        </form>
-    }
-    else if (Model.Status == ApexDrive.Models.BookingStatus.Confirmed)
-    {
-        <form asp-action="Complete" method="post" class="inline">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="id" value="@Model.BookingId" />
-            <button type="submit"
-                    class="px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium">
-                ✅ Complete
-            </button>
-        </form>
-    }
+                <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-user-tag text-brand"></i> Customer Profile
+                    </h3>
+                    <p class="text-lg font-bold text-gray-900 mb-1">@Model.Customer?.FullName</p>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-envelope text-xs opacity-40"></i> @Model.Customer?.Email</p>
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-phone text-xs opacity-40"></i> @Model.Customer?.PhoneNumber</p>
+                        <p class="text-xs opacity-60 leading-tight">@Model.Customer?.Address</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-8">
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-credit-card text-brand"></i> Financial Summary
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Payment Status</span>
+                            <span class="text-sm font-black @(Model.Payment?.Status == "Paid" ? "text-emerald-600" : "text-amber-600")">
+                                <i class="fa-solid @(Model.Payment?.Status == "Paid" ? "fa-circle-check" : "fa-circle-exclamation") mr-1"></i>
+                                @Model.Payment?.Status
+                            </span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm"><span class="text-gray-400">Base Rental</span> <span class="font-bold text-gray-700">@Model.BaseCost.ToString("C")</span></div>
+                            <div class="flex justify-between text-xl font-black pt-4 border-t border-gray-50 text-gray-900">
+                                <span>Total</span> <span>@Model.TotalCost.ToString("C")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 border-t border-gray-100">
+                    <a asp-area="Admin" asp-controller="Payments" asp-action="Edit" asp-route-id="@Model.Payment?.PaymentId"
+                       class="flex items-center justify-center gap-2 w-full py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-100 transition-all">
+                        <i class="fa-solid fa-gears"></i> Manage Transaction
+                    </a>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                @if (Model.Status == ApexDrive.Models.BookingStatus.Pending)
+                {
+                    <form asp-action="Confirm" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.BookingId" />
+                        <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-check"></i> Approve Booking
+                        </button>
+                    </form>
+                    <form asp-action="Cancel" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.BookingId" />
+                        <button type="submit" class="w-full py-4 bg-red-50 text-red-600 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-red-100 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-xmark"></i> Decline Order
+                        </button>
+                    </form>
+                }
+                else if (Model.Status == ApexDrive.Models.BookingStatus.Confirmed)
+                {
+                    <form asp-action="Complete" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.BookingId" />
+                        <button type="submit" class="w-full py-4 bg-brand text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-flag-checkered"></i> Mark as Returned
+                        </button>
+                    </form>
+                }
+
+                <a asp-action="Index" class="flex items-center justify-center gap-2 w-full py-4 text-gray-400 font-bold text-xs uppercase hover:text-gray-900 transition-all">
+                    <i class="fa-solid fa-arrow-left-long"></i> Return to Registry
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

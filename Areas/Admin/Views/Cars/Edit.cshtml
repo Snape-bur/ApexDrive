@@ -4,177 +4,175 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<section class="max-w-4xl mx-auto mt-12">
-    <!-- ✅ Title -->
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">
-            <span class="text-blue-600">✏️</span> Edit Car
-        </h1>
-        <a asp-action="Index"
-           class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to List
+<div class="max-w-5xl mx-auto pb-20">
+    <div class="flex items-center justify-between mb-8 px-2">
+        <div class="flex items-center gap-3">
+            <div class="bg-brand/10 p-2 rounded-lg">
+                <i class="fa-solid fa-car-rear text-brand text-xl"></i>
+            </div>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Edit Vehicle</h1>
+        </div>
+        <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-brand transition-all">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Fleet
         </a>
     </div>
 
-    <!-- ✅ Alert messages -->
     @if (TempData["Success"] != null)
     {
-        <div id="alert-success"
-             class="mb-6 flex items-center justify-between rounded-xl bg-green-50 border border-green-200 p-4 text-green-700 shadow-sm transition">
-            <span>@TempData["Success"]</span>
-            <button onclick="this.parentElement.remove()" class="text-green-500 hover:text-green-700">✕</button>
-        </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div id="alert-error"
-             class="mb-6 flex items-center justify-between rounded-xl bg-red-50 border border-red-200 p-4 text-red-700 shadow-sm transition">
-            <span>@TempData["Error"]</span>
-            <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">✕</button>
+        <div class="alert-fade mb-6 flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100 px-6 py-4 text-emerald-700 shadow-sm transition">
+            <i class="fa-solid fa-circle-check"></i>
+            <span class="font-semibold">@TempData["Success"]</span>
         </div>
     }
 
-    <!-- ✅ Form -->
-    <form asp-area="Admin" asp-controller="Cars" asp-action="Edit" method="post"
-          enctype="multipart/form-data"
-          class="bg-white rounded-2xl shadow-md p-8 border border-gray-100 space-y-8">
+    <form asp-area="Admin" asp-controller="Cars" asp-action="Edit" method="post" enctype="multipart/form-data" class="space-y-8">
         @Html.AntiForgeryToken()
-
         <input type="hidden" asp-for="CarId" />
         <input type="hidden" asp-for="ImageUrl" />
 
-        <div asp-validation-summary="ModelOnly"
-             class="text-red-500 text-sm bg-red-50 border border-red-200 rounded-lg p-3"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        <!-- 🚘 Basic Info -->
-        <div class="grid md:grid-cols-2 gap-6">
-            <div>
-                <label asp-for="PlateNumber" class="block text-sm font-semibold text-gray-700">Plate Number</label>
-                <input asp-for="PlateNumber"
-                       class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                <span asp-validation-for="PlateNumber" class="text-red-500 text-sm"></span>
-            </div>
-            <div>
-                <label asp-for="Brand" class="block text-sm font-semibold text-gray-700">Brand</label>
-                <input asp-for="Brand"
-                       class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                <span asp-validation-for="Brand" class="text-red-500 text-sm"></span>
-            </div>
-        </div>
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+                    <div asp-validation-summary="ModelOnly" class="text-red-600 text-xs font-bold bg-red-50 p-4 rounded-xl border border-red-100"></div>
 
-        <div class="grid md:grid-cols-2 gap-6">
-            <div>
-                <label asp-for="Model" class="block text-sm font-semibold text-gray-700">Model</label>
-                <input asp-for="Model"
-                       class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                <span asp-validation-for="Model" class="text-red-500 text-sm"></span>
-            </div>
-            <div>
-                <label asp-for="DailyRate" class="block text-sm font-semibold text-gray-700">Daily Rate (฿)</label>
-                <input asp-for="DailyRate" type="number" step="0.01"
-                       class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                <span asp-validation-for="DailyRate" class="text-red-500 text-sm"></span>
-            </div>
-        </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="PlateNumber" class="text-xs font-black uppercase tracking-widest text-gray-400">Plate Number</label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                                <input asp-for="PlateNumber" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                            </div>
+                            <span asp-validation-for="PlateNumber" class="text-red-500 text-[10px] font-bold"></span>
+                        </div>
 
-        <!-- ⚙️ Technical Info -->
-        <div class="grid md:grid-cols-3 gap-6">
-            <div>
-                <label asp-for="Type" class="block text-sm font-semibold text-gray-700">Type</label>
-                <input asp-for="Type"
-                       class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                       placeholder="SUV, Sedan..." />
-            </div>
-            <div>
-                <label asp-for="Transmission" class="block text-sm font-semibold text-gray-700">Transmission</label>
-                <input asp-for="Transmission"
-                       class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                       placeholder="Automatic / Manual" />
-            </div>
-            <div>
-                <label asp-for="FuelType" class="block text-sm font-semibold text-gray-700">Fuel Type</label>
-                <input asp-for="FuelType"
-                       class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                       placeholder="Petrol / Diesel / Hybrid" />
-            </div>
-        </div>
+                        <div class="space-y-2">
+                            <label asp-for="DailyRate" class="text-xs font-black uppercase tracking-widest text-gray-400">Daily Rate ($)</label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-sack-dollar absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                                <input asp-for="DailyRate" step="0.01" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- 🔧 Mileage & Branch -->
-        <div class="grid md:grid-cols-2 gap-6">
-            <div>
-                <label asp-for="Mileage" class="block text-sm font-semibold text-gray-700">Mileage (km)</label>
-                <input asp-for="Mileage" class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                <span asp-validation-for="Mileage" class="text-red-500 text-sm"></span>
-            </div>
-            <div>
-                <label asp-for="BranchId" class="block text-sm font-semibold text-gray-700">Branch</label>
-                @if (User.IsInRole("SuperAdmin"))
-                {
-                    <select asp-for="BranchId"
-                            asp-items="@(new SelectList(ViewBag.Branches, "BranchId", "BranchName", Model.BranchId))"
-                            class="mt-1 w-full border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">-- Select Branch --</option>
-                    </select>
-                }
-                else
-                {
-                    <input type="hidden" asp-for="BranchId" />
-                }
-                <span asp-validation-for="BranchId" class="text-red-500 text-sm"></span>
-            </div>
-        </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="Brand" class="text-xs font-black uppercase tracking-widest text-gray-400">Brand</label>
+                            <input asp-for="Brand" class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                        </div>
+                        <div class="space-y-2">
+                            <label asp-for="Model" class="text-xs font-black uppercase tracking-widest text-gray-400">Model</label>
+                            <input asp-for="Model" class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                        </div>
+                    </div>
 
-        <!-- 🖼️ Image Section -->
-        <div class="border-t border-gray-200 pt-6">
-            <h3 class="font-semibold text-gray-700 mb-2">Car Image</h3>
-
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <div class="flex items-center gap-6">
-                    <img src="@Model.ImageUrl" alt="Car Image"
-                         class="w-44 h-28 object-cover rounded-xl border shadow-sm hover:scale-[1.02] transition-transform" />
-                    <div>
-                        <p class="text-sm text-gray-500 mb-2">You can upload a new image to replace the existing one.</p>
-                        <input type="file" name="newImageFile" accept="image/*"
-                               class="w-full text-sm border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <label asp-for="Type" class="text-[10px] font-black uppercase text-gray-400">Type</label>
+                            <input asp-for="Type" class="block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-brand/20 outline-none" />
+                        </div>
+                        <div class="space-y-2">
+                            <label asp-for="Transmission" class="text-[10px] font-black uppercase text-gray-400">Transmission</label>
+                            <input asp-for="Transmission" class="block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-brand/20 outline-none" />
+                        </div>
+                        <div class="space-y-2">
+                            <label asp-for="FuelType" class="text-[10px] font-black uppercase text-gray-400">Fuel</label>
+                            <input asp-for="FuelType" class="block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-brand/20 outline-none" />
+                        </div>
                     </div>
                 </div>
-            }
-            else
-            {
-                <div class="mt-2">
-                    <p class="text-sm text-red-500 mb-2">⚠️ No image currently uploaded.</p>
-                    <input type="file" name="newImageFile" accept="image/*"
-                           class="w-full text-sm border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="Mileage" class="text-xs font-black uppercase tracking-widest text-gray-400">Mileage (km)</label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-gauge-high absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                                <input asp-for="Mileage" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label asp-for="BranchId" class="text-xs font-black uppercase tracking-widest text-gray-400">Station / Branch</label>
+                            @if (User.IsInRole("SuperAdmin"))
+                            {
+                                <div class="relative group">
+                                    <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                                    <select asp-for="BranchId" asp-items="@(new SelectList(ViewBag.Branches, "BranchId", "BranchName"))" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer">
+                                        <option value="">-- Select --</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                                </div>
+                            }
+                            else
+                            {
+                                <input type="hidden" asp-for="BranchId" />
+                                <div class="px-4 py-3 bg-gray-100 text-gray-500 rounded-xl text-sm font-bold border border-gray-100">
+                                    <i class="fa-solid fa-lock mr-2 text-xs opacity-50"></i> Restricted
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
-            }
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Media Management</h3>
+
+                    <div class="space-y-4">
+                        <div class="relative aspect-video rounded-2xl bg-gray-50 border border-gray-100 overflow-hidden group">
+                            <img id="editImgPreview" src="@Model.ImageUrl" alt="Current Car" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="text-white text-[10px] font-black uppercase tracking-widest">Update Photo</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-400">Upload New Image</label>
+                            <div class="relative">
+                                <input type="file" name="newImageFile" id="editImageInput" accept="image/*" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brand/10 file:text-brand hover:file:bg-brand/20 transition-all cursor-pointer" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-indigo-100 relative overflow-hidden">
+                    <i class="fa-solid fa-lightbulb absolute -bottom-4 -right-4 text-7xl text-white/10"></i>
+                    <h4 class="text-xs font-black uppercase tracking-widest mb-2 opacity-80">Quick Tip</h4>
+                    <p class="text-xs leading-relaxed font-medium">Updating the Daily Rate will immediately reflect on the customer booking portal for new reservations.</p>
+                </div>
+            </div>
         </div>
 
-        <!-- ✅ Buttons -->
-        <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
-            <a asp-action="Index"
-               class="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition">Cancel</a>
-            <button type="submit"
-                    class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md transition">
-                💾 Save Changes
+        <div class="mt-8 flex items-center justify-end gap-3 px-2">
+            <a asp-action="Index" class="px-8 py-3 rounded-2xl text-sm font-bold text-gray-400 hover:text-gray-900 transition-all">Discard</a>
+            <button type="submit" class="inline-flex items-center gap-2 bg-brand text-white px-10 py-3 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Save Changes
             </button>
         </div>
     </form>
-</section>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // ✅ Fade alerts automatically
+        // Preview update
+        document.getElementById('editImageInput').onchange = evt => {
+            const [file] = document.getElementById('editImageInput').files;
+            if (file) {
+                const preview = document.getElementById('editImgPreview');
+                preview.src = URL.createObjectURL(file);
+            }
+        }
+
+        // Alert fade logic
         setTimeout(() => {
-            document.querySelectorAll('#alert-success, #alert-error').forEach(el => {
-                el.classList.add('opacity-0', 'transition-opacity', 'duration-700');
-                setTimeout(() => el.remove(), 700);
+            document.querySelectorAll('.alert-fade').forEach(el => {
+                el.classList.add('opacity-0', 'transition-opacity', 'duration-1000');
+                setTimeout(() => el.remove(), 1000);
             });
         }, 3000);
     </script>

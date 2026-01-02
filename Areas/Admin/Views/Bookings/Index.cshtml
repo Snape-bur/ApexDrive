@@ -4,217 +4,234 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-2xl font-bold text-brand mb-6">📅 Booking Management</h1>
-
-<!-- ✅ Status Notifications -->
-@if (TempData["Success"] != null)
-{
-    <div class="mb-4 p-3 rounded-lg bg-green-100 text-green-800 shadow-sm">
-        @TempData["Success"]
-    </div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-800 shadow-sm">
-        @TempData["Error"]
-    </div>
-}
-
-<!-- ✅ Search and Filter Section -->
-<form method="get" class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-4 rounded-xl shadow-sm">
-    <div class="flex items-center space-x-2 flex-1">
-        <input type="text" name="search" value="@Context.Request.Query["search"]"
-               class="w-full md:w-80 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand"
-               placeholder="🔍 Search by customer, car, or plate..." />
-        <button type="submit"
-                class="px-4 py-2 bg-brand text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
-            Search
-        </button>
-    </div>
-
-    <div class="flex items-center space-x-3">
-        <select name="status"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
-            <option value="">All Status</option>
-            @foreach (var value in Enum.GetValues(typeof(ApexDrive.Models.BookingStatus)))
-            {
-                <option value="@value" selected="@(Context.Request.Query["status"] == value.ToString())">@value</option>
-            }
-        </select>
-
-        @if (User.IsInRole("SuperAdmin"))
-        {
-            <select name="branchId"
-                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand focus:border-brand">
-                <option value="">All Branches</option>
-                @foreach (var branch in ViewBag.Branches as List<ApexDrive.Models.Branch>)
-                {
-                    <option value="@branch.BranchId" selected="@(Context.Request.Query["branchId"] == branch.BranchId.ToString())">
-                        @branch.BranchName
-                    </option>
-                }
-            </select>
-        }
-
-        <button type="submit"
-                class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
-            Filter
-        </button>
-    </div>
-</form>
-
-<!-- ✅ Booking Table -->
-<table class="min-w-full bg-white rounded-lg shadow-sm">
-    <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
-        <tr>
-            <th class="py-3 px-4 text-left">Booking #</th>
-            <th class="py-3 px-4 text-left">Customer</th>
-            <th class="py-3 px-4 text-left">Car</th>
-            <th class="py-3 px-4 text-left">Pickup / Drop-off</th>
-            <th class="py-3 px-4 text-left">Dates</th>
-            <th class="py-3 px-4 text-left">Status</th>
-            <th class="py-3 px-4 text-left">Payment</th>
-            <th class="py-3 px-4 text-right">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (!Model.Any())
-        {
-            <tr>
-                <td colspan="8" class="text-center py-6 text-gray-400">No bookings found.</td>
-            </tr>
-        }
-        else
-        {
-            @foreach (var b in Model)
-            {
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="py-3 px-4 font-semibold text-gray-700">#@b.BookingId</td>
-                    <td class="py-3 px-4">
-                        @if (b.Customer != null)
-                        {
-                            <div class="text-sm font-medium text-gray-800">
-                                @(string.IsNullOrWhiteSpace(b.Customer.FullName)
-                                                    ? b.Customer.Email
-                                                    : b.Customer.FullName)
+<div class="max-w-7xl mx-auto pb-20">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3 mb-1">
+                <div class="bg-brand/10 p-2 rounded-lg">
+                    <i class="fa-solid fa-calendar-check text-brand text-xl"></i>
                 </div>
-                @if (!string.IsNullOrWhiteSpace(b.Customer.Email) && b.Customer.FullName != b.Customer.Email)
-                            {
-                                <div class="text-xs text-gray-500">@b.Customer.Email</div>
-                            }
-                        }
-                        else
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Booking Management</h1>
+            </div>
+            <p class="text-gray-500 text-sm px-1">Monitor reservations, manage active rentals, and process payments.</p>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <form method="get" class="flex flex-col lg:flex-row lg:items-center gap-4">
+            <div class="relative flex-1 group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input type="text" name="search" value="@Context.Request.Query["search"]"
+                       class="block w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none"
+                       placeholder="Search by Customer, Car, or Plate..." />
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-black uppercase tracking-widest text-gray-400">Status:</label>
+                    <select name="status" class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none">
+                        <option value="">All Status</option>
+                        @foreach (var value in Enum.GetValues(typeof(ApexDrive.Models.BookingStatus)))
                         {
-                            <div class="text-sm text-gray-400 italic">No customer linked</div>
+                            <option value="@value" selected="@(Context.Request.Query["status"] == value.ToString())">@value</option>
                         }
-                    </td>
+                    </select>
+                </div>
 
-                    <td class="py-3 px-4">
-                        <div class="text-sm">@b.Car?.PlateNumber</div>
-                        <div class="text-xs text-gray-500">@b.Car?.Brand @b.Car?.Model</div>
-                    </td>
-                    <td class="py-3 px-4 text-sm">
-                        <span class="font-semibold">@b.PickupBranch?.BranchName</span>
-                        <span class="text-gray-400"> → </span>
-                        <span>@b.DropoffBranch?.BranchName</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm">
-                        @b.StartDate.ToString("dd MMM") - @b.EndDate.ToString("dd MMM yyyy")
-                    </td>
-
-                    <!-- ✅ Booking Status -->
-                    <td class="py-3 px-4">
-                        @{
-                            string badgeClass = b.Status switch
+                @if (User.IsInRole("SuperAdmin"))
+                {
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-black uppercase tracking-widest text-gray-400">Branch:</label>
+                        <select name="branchId" class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none">
+                            <option value="">All Branches</option>
+                            @foreach (var branch in ViewBag.Branches as List<ApexDrive.Models.Branch>)
                             {
-                                ApexDrive.Models.BookingStatus.Pending => "bg-yellow-100 text-yellow-700",
-                                ApexDrive.Models.BookingStatus.Confirmed => "bg-blue-100 text-blue-700",
-                                ApexDrive.Models.BookingStatus.Active => "bg-emerald-100 text-emerald-700",
-                                ApexDrive.Models.BookingStatus.Completed => "bg-green-100 text-green-700",
-                                ApexDrive.Models.BookingStatus.Cancelled => "bg-red-100 text-red-700",
-                                _ => "bg-gray-100 text-gray-700"
-                            };
-                        }
-                        <span class="px-2 py-1 rounded-lg text-xs font-semibold @badgeClass">@b.Status</span>
-                    </td>
-
-                    <!-- ✅ Payment Status -->
-                    <td class="py-3 px-4 text-sm">
-                        @if (b.Payment != null)
-                        {
-                            string color = b.Payment.Status switch
-                            {
-                                "Paid" => "text-green-600",
-                                "Awaiting Cash" => "text-amber-600",
-                                "Awaiting Verification" => "text-blue-600",
-                                "Refund Pending" => "text-pink-600",
-                                _ => "text-gray-500"
-                            };
-                            <span class="font-medium @color">@b.Payment.Status</span>
-                        }
-                        else
-                        {
-                            <span class="text-gray-400 italic">N/A</span>
-                        }
-                    </td>
-
-                    <!-- ✅ Actions -->
-                    <td class="py-3 px-4 text-right space-x-2">
-                        <a asp-action="Details" asp-route-id="@b.BookingId"
-                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">
-                            🔍 View
-                        </a>
-
-                        @{
-                            if (b.Status == ApexDrive.Models.BookingStatus.Pending)
-                            {
-                                <form asp-action="Confirm" method="post" class="inline">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@b.BookingId" />
-                                    <button type="submit"
-                                            class="px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg text-sm font-medium">
-                                        ✅ Confirm
-                                    </button>
-                                </form>
-
-                                <form asp-action="Cancel" method="post" class="inline">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@b.BookingId" />
-                                    <button type="submit"
-                                            class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium">
-                                        ❌ Cancel
-                                    </button>
-                                </form>
+                                <option value="@branch.BranchId" selected="@(Context.Request.Query["branchId"] == branch.BranchId.ToString())">
+                                    @branch.BranchName
+                                </option>
                             }
-                            else if (b.Status == ApexDrive.Models.BookingStatus.Confirmed)
-                            {
-                                <form asp-action="Complete" method="post" class="inline">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@b.BookingId" />
-                                    <button type="submit"
-                                            class="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm font-medium">
-                                        ✅ Complete
-                                    </button>
-                                </form>
+                        </select>
+                    </div>
+                }
 
-                                if (b.Payment != null && b.Payment.Status == "Awaiting Cash")
-                                {
-                                    <form asp-action="MarkAsPaid" method="post" class="inline">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@b.BookingId" />
-                                        <button type="submit"
-                                                class="px-3 py-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg text-sm font-medium">
-                                            💵 Mark as Paid
-                                        </button>
-                                    </form>
-                                }
-                            }
+                <button type="submit" class="px-6 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-all shadow-sm">
+                    Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50/50">
+                    <tr>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Booking Ref</th>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Customer</th>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Vehicle</th>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Route & Timeline</th>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Status</th>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Payment</th>
+                        <th class="py-4 px-6 text-right text-[11px] uppercase tracking-widest font-black text-gray-400">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50 text-sm">
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-20">
+                                <div class="bg-gray-50 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                    <i class="fa-solid fa-calendar-xmark text-2xl"></i>
+                                </div>
+                                <h3 class="text-gray-900 font-bold">No bookings found</h3>
+                                <p class="text-gray-500 text-sm">Try adjusting your filters or check back later.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var b in Model)
+                        {
+                            <tr class="group hover:bg-blue-50/30 transition-colors">
+                                <td class="py-4 px-6">
+                                    <span class="font-black text-brand text-base">#@b.BookingId</span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-brand group-hover:text-white transition-all">
+                                            <i class="fa-solid fa-user text-xs"></i>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-gray-900">
+                                                @(string.IsNullOrWhiteSpace(b.Customer?.FullName) ? b.Customer?.Email : b.Customer?.FullName)
+                                            </span>
+                                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tight">@b.Customer?.Email</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-gray-900">@b.Car?.PlateNumber</span>
+                                        <span class="text-xs text-gray-500">@b.Car?.Brand @b.Car?.Model</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-1.5 text-xs text-gray-700">
+                                            <i class="fa-solid fa-location-dot text-brand text-[10px]"></i>
+                                            <span class="font-semibold">@b.PickupBranch?.BranchName</span>
+                                            <i class="fa-solid fa-arrow-right text-gray-300 text-[10px]"></i>
+                                            <span class="font-semibold">@b.DropoffBranch?.BranchName</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                                            <i class="fa-solid fa-calendar-days"></i>
+                                            @b.StartDate.ToString("dd MMM") — @b.EndDate.ToString("dd MMM yyyy")
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    @{
+                                        string badgeClass = b.Status switch
+                                        {
+                                            ApexDrive.Models.BookingStatus.Pending => "bg-amber-50 text-amber-700 border-amber-200",
+                                            ApexDrive.Models.BookingStatus.Confirmed => "bg-blue-50 text-blue-700 border-blue-200",
+                                            ApexDrive.Models.BookingStatus.Active => "bg-indigo-50 text-indigo-700 border-indigo-200",
+                                            ApexDrive.Models.BookingStatus.Completed => "bg-emerald-50 text-emerald-700 border-emerald-200",
+                                            ApexDrive.Models.BookingStatus.Cancelled => "bg-red-50 text-red-700 border-red-200",
+                                            _ => "bg-gray-50 text-gray-700 border-gray-200"
+                                        };
+                                    }
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase border @badgeClass">
+                                        @b.Status
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    @if (b.Payment != null)
+                                    {
+                                        string paymentColor = b.Payment.Status switch
+                                        {
+                                            "Paid" => "text-emerald-600",
+                                            "Awaiting Cash" => "text-amber-600",
+                                            "Awaiting Verification" => "text-blue-600",
+                                            "Refund Pending" => "text-pink-600",
+                                            _ => "text-gray-500"
+                                        };
+                                        <div class="flex items-center gap-1.5 @paymentColor font-bold tracking-tight">
+                                            <i class="fa-solid fa-circle-dollar-to-slot text-xs"></i>
+                                            @b.Payment.Status
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-300 italic">No Payment</span>
+                                    }
+                                </td>
+                                <td class="py-4 px-6 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a asp-action="Details" asp-route-id="@b.BookingId"
+                                           class="h-8 w-8 flex items-center justify-center bg-gray-100 text-gray-500 rounded-lg hover:bg-brand hover:text-white transition-all shadow-sm"
+                                           title="View Details">
+                                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                        </a>
+
+                                        @if (b.Status == ApexDrive.Models.BookingStatus.Pending)
+                                        {
+                                            <form asp-action="Confirm" method="post" class="inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@b.BookingId" />
+                                                <button type="submit" class="h-8 w-8 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all shadow-sm" title="Confirm Booking">
+                                                    <i class="fa-solid fa-check text-xs"></i>
+                                                </button>
+                                            </form>
+
+                                            <form asp-action="Cancel" method="post" class="inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@b.BookingId" />
+                                                <button type="submit" class="h-8 w-8 flex items-center justify-center bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Cancel Booking">
+                                                    <i class="fa-solid fa-xmark text-xs"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (b.Status == ApexDrive.Models.BookingStatus.Confirmed)
+                                        {
+                                            <form asp-action="Complete" method="post" class="inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@b.BookingId" />
+                                                <button type="submit" class="h-8 w-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="Complete Booking">
+                                                    <i class="fa-solid fa-flag-checkered text-xs"></i>
+                                                </button>
+                                            </form>
+
+                                            @if (b.Payment?.Status == "Awaiting Cash")
+                                            {
+                                                <form asp-action="MarkAsPaid" method="post" class="inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@b.BookingId" />
+                                                    <button type="submit" class="h-8 w-8 flex items-center justify-center bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm" title="Mark as Paid">
+                                                        <i class="fa-solid fa-money-bill-1-wave text-xs"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
                         }
-                    </td>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-
-                </tr>
-            }
-        }
-    </tbody>
-</table>
+<script>
+    // Success/Error Alert Fade logic
+    setTimeout(() => {
+        document.querySelectorAll('.alert-fade').forEach(el => {
+            el.classList.add('opacity-0', 'transition-opacity', 'duration-1000');
+            setTimeout(() => el.remove(), 1000);
+        });
+    }, 4000);
+</script>

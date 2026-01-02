@@ -9,6 +9,18 @@
     var isSuperAdmin = role == "SuperAdmin";
     var branchName = user?.Branch?.BranchName ?? "";
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+
+    // ✅ SAFE user initial (NO index access)
+    string userInitial = "A";
+
+    if (!string.IsNullOrWhiteSpace(user?.FullName))
+    {
+        userInitial = user.FullName.Trim().Substring(0, 1).ToUpper();
+    }
+    else if (!string.IsNullOrWhiteSpace(user?.UserName))
+    {
+        userInitial = user.UserName.Trim().Substring(0, 1).ToUpper();
+    }
 }
 
 <!DOCTYPE html>
@@ -18,11 +30,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - ApexDrive Admin</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         brand: '#0F62FE',
                         accent: '#FACC15',
@@ -31,170 +47,158 @@
             }
         }
     </script>
+
+    <style>
+        @@keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.4s ease-out;
+        }
+
+        .sidebar-item-active {
+            background-color: #eff6ff;
+            color: #0f62fe;
+            border-right: 4px solid #0f62fe;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
-    @if (TempData["Success"] != null)
-    {
-        <div id="toast-success"
-             class="fixed top-5 right-5 bg-green-500 text-white text-sm font-semibold px-4 py-3 rounded-lg shadow-lg animate-fade-in">
-            @TempData["Success"]
-        </div>
 
-        <script>
-            setTimeout(() => {
-                document.getElementById("toast-success")?.remove();
-            }, 4000);
-        </script>
-
-        <style>
-            @@keyframes fade-in { {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            .animate-fade-in {
-                animation: fade-in 0.4s ease-out;
-            }
-        </style>
-    }
-
-    <!-- ✅ Navbar -->
-    <nav class="bg-white border-b shadow-sm px-4 sm:px-6 py-3 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <!-- Mobile Hamburger -->
-            <button id="menuToggle" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-            <div class="text-lg font-bold text-brand">🚗 ApexDrive Admin</div>
-        </div>
-
+    <!-- TOP NAVBAR -->
+    <nav class="bg-white border-b sticky top-0 z-40 px-4 sm:px-6 py-2.5 flex justify-between items-center shadow-sm">
         <div class="flex items-center space-x-4">
-            <div class="text-gray-600 text-sm text-right hidden sm:block">
-                <div class="font-semibold">@user?.FullName</div>
-                <div class="text-xs text-gray-500">
-                    @role
-                    @if (!string.IsNullOrEmpty(branchName) && !isSuperAdmin)
-                    {
-                        <span>– @branchName</span>
-                    }
+            <button id="menuToggle" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                <i class="fa-solid fa-bars text-gray-600 text-lg"></i>
+            </button>
+
+            <div class="flex items-center gap-2">
+                <div class="bg-brand p-1.5 rounded-lg">
+                    <i class="fa-solid fa-car-side text-white text-sm"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight text-gray-900">
+                    ApexDrive <span class="text-brand">Admin</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-6">
+            <div class="flex items-center gap-3 text-right hidden sm:flex border-r pr-6 border-gray-100">
+                <div class="flex flex-col">
+                    <span class="text-sm font-bold text-gray-900 leading-none mb-1">
+                        @user?.FullName
+                    </span>
+                    <span class="text-[10px] uppercase tracking-widest font-black text-gray-400">
+                        @role @(!string.IsNullOrEmpty(branchName) && !isSuperAdmin ? $"• {branchName}" : "")
+                    </span>
+                </div>
+
+                <!-- SAFE avatar -->
+                <div class="h-10 w-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-brand font-bold">
+                    @userInitial
                 </div>
             </div>
-            <form method="post">
+
+            <form asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Action("Index", "Dashboard", new { area = "Admin" })"
+                  method="post">
                 <button type="submit"
-                        formaction="/Identity/Account/Logout"
-                        class="px-3 py-1 rounded-lg bg-brand text-white hover:bg-blue-700 transition">
-                    Logout
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg
+                   text-sm font-semibold text-gray-500
+                   hover:bg-red-50 hover:text-red-600 transition-all group">
+                    <span class="hidden md:inline">Logout</span>
+                    <i class="fa-solid fa-arrow-right-from-bracket group-hover:translate-x-1 transition-transform"></i>
                 </button>
             </form>
 
         </div>
     </nav>
 
-    <!-- ✅ Layout Wrapper -->
+    <!-- MAIN LAYOUT -->
     <div class="flex flex-1 relative">
-        <!-- Sidebar -->
         <aside id="sidebar"
-               class="fixed md:static top-0 left-0 h-full md:h-auto md:w-64 w-64 bg-white border-r shadow-md md:shadow-none transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40 flex flex-col">
+               class="fixed md:static top-0 left-0 h-full md:h-auto md:w-64 w-64 bg-white border-r
+                      transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out
+                      z-40 flex flex-col">
 
-            <!-- Desktop Collapse Button -->
-            <div class="hidden md:flex justify-end p-2 border-b">
-                <button id="collapseSidebar" class="p-2 rounded-lg hover:bg-gray-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" id="collapseIcon" class="h-5 w-5 text-gray-700 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7-7l-7 7 7 7" />
-                    </svg>
+            <div class="hidden md:flex justify-end p-4 border-b">
+                <button id="collapseSidebar"
+                        class="h-8 w-8 flex items-center justify-center rounded-full border border-gray-100
+                               hover:bg-gray-50 text-gray-400 transition-all">
+                    <i id="collapseIcon" class="fa-solid fa-chevron-left text-xs transition-transform"></i>
                 </button>
             </div>
 
-            <ul id="sidebarMenu" class="p-4 space-y-2 text-sm font-medium text-gray-700 flex-1">
-                <li>
-                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
-                       class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "Dashboard" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
-                        📊 <span class="sidebar-text">Dashboard</span>
-                    </a>
-                </li>
-
-                @if (isSuperAdmin)
-                {
-                    <li>
-                        <a asp-area="Admin" asp-controller="Branches" asp-action="Index"
-                           class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "Branches" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
-                            🏢 <span class="sidebar-text">Branch Management</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-area="Admin" asp-controller="PricingRules" asp-action="Index"
-                           class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "PricingRules" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
-                            🏷️ <span class="sidebar-text">Pricing Rules</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Index"
-                           class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "AdminUsers" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
-                            👤 <span class="sidebar-text">Manage Admins</span>
-                        </a>
-                    </li>
+            <nav class="p-4 space-y-1 flex-1">
+                @{
+                    var navItems = new List<(string Controller, string Action, string Icon, string Text, bool SuperOnly)>
+                                {
+                                ("Dashboard", "Index", "fa-chart-pie", "Dashboard", false),
+                                ("Branches", "Index", "fa-building", "Branches", true),
+                                ("PricingRules", "Index", "fa-tag", "Pricing Rules", true),
+                                ("AdminUsers", "Index", "fa-user-shield", "Manage Admins", true),
+                                ("Cars", "Index", "fa-car", "Cars", false),
+                                ("Bookings", "Index", "fa-calendar-check", "Bookings", false),
+                                ("Payments", "Index", "fa-credit-card", "Payments", false),
+                                ("Reminders", "Index", "fa-bell", "Reminders", false),
+                                ("Maintenance", "Index", "fa-screwdriver-wrench", "Maintenance", false)
+                                };
                 }
 
-                <li>
-                    <a asp-area="Admin" asp-controller="Cars" asp-action="Index"
-                       class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "Cars" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
-                        🚘 <span class="sidebar-text">Cars</span>
+                @foreach (var item in navItems)
+                {
+                    if (item.SuperOnly && !isSuperAdmin) continue;
+
+                    <a asp-area="Admin"
+                       asp-controller="@item.Controller"
+                       asp-action="@item.Action"
+                       class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                                  @(currentController == item.Controller
+                                                         ? "sidebar-item-active"
+                                                         : "text-gray-500 hover:bg-gray-50 hover:text-gray-900")">
+
+                    <div class="w-5 flex justify-center">
+                        <i class="fa-solid @item.Icon text-lg"></i>
+                    </div>
+
+                        <span class="sidebar-text font-medium text-sm whitespace-nowrap">
+                            @item.Text
+                        </span>
+
+                    @if (item.Controller == "Reminders")
+                        {
+                            <div class="sidebar-text ml-auto">
+                                @await Component.InvokeAsync("ReminderBadge")
+                            </div>
+                        }
                     </a>
-                </li>
-
-                <li>
-                    <a asp-area="Admin" asp-controller="Bookings" asp-action="Index"
-                       class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "Bookings" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
-                        📅 <span class="sidebar-text">Bookings</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a asp-area="Admin" asp-controller="Reminders" asp-action="Index"
-                       class="flex items-center justify-between px-4 py-2 rounded-lg @(currentController == "Reminders" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50") transition">
-
-                        <div class="flex items-center gap-2">
-                            <span class="text-lg">🔔</span>
-                            <span class="sidebar-text">Reminders</span>
-                        </div>
-
-                        @await Component.InvokeAsync("ReminderBadge")
-                    </a>
-                </li>
-
-
-                <li>
-                    <a asp-area="Admin" asp-controller="Maintenance" asp-action="Index"
-                       class="flex items-center gap-2 px-4 py-2 rounded-lg @(currentController == "Maintenance" ? "bg-blue-100 text-brand font-semibold" : "hover:bg-blue-50")">
-                        🧰 <span class="sidebar-text">Maintenance</span>
-                    </a>
-                </li>
-            </ul>
+                }
+            </nav>
         </aside>
 
-        <!-- Overlay for mobile -->
-        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-30 hidden z-30 md:hidden"></div>
+        <div id="overlay" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden z-30 md:hidden"></div>
 
-        <!-- Main Content -->
-        <main class="flex-1 p-6 overflow-x-auto">
-            @if (TempData["Success"] != null)
-            {
-                <div class="mb-4 p-4 bg-green-100 text-green-800 rounded-lg shadow">
-                    @TempData["Success"]
-                </div>
-            }
+        <main class="flex-1 p-6 lg:p-10 max-w-full overflow-hidden">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="bg-white border-t text-center py-3 text-sm text-gray-500">
-        © 2025 ApexDrive Admin Panel
+    <footer class="bg-white border-t text-center py-4 text-[11px] uppercase tracking-widest font-bold text-gray-400">
+        © 2025 ApexDrive • Internal Operations Portal
     </footer>
 
-    <!-- ✅ Toggle Script -->
+    <!-- SCRIPTS -->
     <script>
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
@@ -217,26 +221,18 @@
 
         collapseSidebar.addEventListener('click', () => {
             isCollapsed = !isCollapsed;
-            if (isCollapsed) {
-                sidebar.classList.add('md:w-20');
-                sidebar.classList.remove('md:w-64');
-                sidebarTexts.forEach(t => t.classList.add('hidden'));
-                collapseIcon.style.transform = "rotate(180deg)";
-            } else {
-                sidebar.classList.remove('md:w-20');
-                sidebar.classList.add('md:w-64');
-                sidebarTexts.forEach(t => t.classList.remove('hidden'));
-                collapseIcon.style.transform = "rotate(0deg)";
-            }
+
+            sidebar.classList.toggle('md:w-20', isCollapsed);
+            sidebar.classList.toggle('md:w-64', !isCollapsed);
+            sidebarTexts.forEach(t => t.classList.toggle('hidden', isCollapsed));
+            collapseIcon.classList.toggle('rotate-180', isCollapsed);
         });
     </script>
-    <!-- ✅ Load jQuery before validation scripts -->
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
 
     @RenderSection("Scripts", required: false)
-
-
 </body>
 </html>

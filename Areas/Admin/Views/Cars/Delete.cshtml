@@ -4,46 +4,75 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-2xl font-bold text-red-600 mb-6">🗑️ Delete Car</h1>
+<div class="max-w-3xl mx-auto pb-20">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to Fleet List
+    </a>
 
-<div class="bg-white p-6 rounded-xl shadow-sm max-w-2xl">
-    <!-- Warning banner -->
-    <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-4">
-        <p class="font-medium">
-            ⚠️ Are you sure you want to permanently delete this car? This action cannot be undone.
-        </p>
-    </div>
-
-    <!-- Car details -->
-    <div class="border rounded-lg p-4 bg-gray-50 mb-6">
-        <p><strong>Plate:</strong> @Model.PlateNumber</p>
-        <p><strong>Brand:</strong> @Model.Brand</p>
-        <p><strong>Model:</strong> @Model.Model</p>
-        <p><strong>Daily Rate:</strong> ฿@Model.DailyRate</p>
-        <p><strong>Branch:</strong> @Model.Branch?.BranchName</p>
-
-        @if (!string.IsNullOrEmpty(Model.ImageUrl))
-        {
-            <div class="mt-4">
-                <p class="font-medium text-gray-700">Car Image:</p>
-                <img src="@Model.ImageUrl" alt="Car Image"
-                     class="w-56 h-36 object-cover rounded-lg border mt-2 shadow-sm" />
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-red-50/50 px-8 py-6 border-b border-red-100">
+            <div class="flex items-center gap-4">
+                <div class="bg-red-600 p-3 rounded-2xl shadow-lg shadow-red-100">
+                    <i class="fa-solid fa-car-burst text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Decommission Vehicle</h1>
+                    <p class="text-sm text-red-600 font-medium">Warning: This action will permanently remove this car from the system.</p>
+                </div>
             </div>
-        }
-    </div>
-
-    <!-- Buttons -->
-    <form asp-action="DeleteConfirmed" method="post">
-        <input type="hidden" asp-for="CarId" />
-        <div class="flex justify-end space-x-3">
-            <a asp-action="Index"
-               class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium">
-                Cancel
-            </a>
-            <button type="submit"
-                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium">
-                Delete
-            </button>
         </div>
-    </form>
+
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="space-y-4">
+                    <div class="h-48 w-full rounded-2xl bg-gray-50 border border-gray-100 overflow-hidden shadow-inner">
+                        <img src="@Model.ImageUrl" alt="@Model.Model" class="w-full h-full object-cover" onerror="this.src='/images/no-car.png'" />
+                    </div>
+                    <div class="flex items-center gap-3 px-2">
+                        <div class="bg-brand/10 text-brand px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+                            @Model.PlateNumber
+                        </div>
+                        <span class="text-gray-400 text-xs">•</span>
+                        <span class="text-gray-500 text-xs font-bold uppercase tracking-widest">@Model.Branch?.BranchName</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50/50 rounded-2xl p-6 border border-gray-100 space-y-4">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Vehicle Specifications</h3>
+                    <div class="grid grid-cols-2 gap-y-4">
+                        <div>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Brand</p>
+                            <p class="text-sm font-bold text-gray-900">@Model.Brand</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Model</p>
+                            <p class="text-sm font-bold text-gray-900">@Model.Model</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Daily Rate</p>
+                            <p class="text-sm font-black text-gray-900">@Model.DailyRate.ToString("C")</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Mileage</p>
+                            <p class="text-sm font-bold text-gray-900">@Model.Mileage km</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="DeleteConfirmed" method="post" class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CarId" />
+
+                <a asp-action="Index" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">
+                    Keep Vehicle
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 bg-red-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100">
+                    <i class="fa-solid fa-trash-can"></i>
+                    Confirm Delete
+                </button>
+            </form>
+        </div>
+    </div>
 </div>

@@ -3,47 +3,83 @@
     ViewData["Title"] = "Add Maintenance";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-<h1 class="text-2xl font-bold text-brand mb-6">➕ Add Maintenance Record</h1>
 
-<form asp-action="Create" method="post" class="space-y-6 bg-white p-6 rounded-xl shadow-sm max-w-3xl">
-    <div asp-validation-summary="ModelOnly" class="bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-2"></div>
+<div class="max-w-4xl mx-auto pb-10">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to History
+    </a>
 
-    <div>
-        <label class="block font-medium text-gray-700">Car</label>
-        <select asp-for="CarId" class="form-select ..." asp-items="ViewBag.Cars">
-            <option value="">-- Select Car --</option>
-        </select>
-        <span asp-validation-for="CarId" class="text-red-500 text-sm"></span>
-
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-            <label asp-for="ServiceDate" class="block font-medium text-gray-700">Service Date</label>
-            <input asp-for="ServiceDate" type="date" class="form-input w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand" />
-            <span asp-validation-for="ServiceDate" class="text-red-500 text-sm"></span>
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-50/50 px-8 py-6 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <div class="bg-brand p-3 rounded-2xl shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-file-medical text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Log Maintenance</h1>
+                    <p class="text-sm text-gray-500 font-medium">Record a new service entry for a fleet vehicle.</p>
+                </div>
+            </div>
         </div>
-        <div>
-            <label asp-for="Mileage" class="block font-medium text-gray-700">Mileage (km)</label>
-            <input asp-for="Mileage" class="form-input w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand" />
-        </div>
-    </div>
 
-    <div>
-        <label asp-for="ServiceType" class="block font-medium text-gray-700">Service Type</label>
-        <input asp-for="ServiceType" class="form-input w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand" placeholder="Oil change, tires, brake, etc." />
-    </div>
+        <form asp-action="Create" method="post" class="p-8 space-y-6">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl"></div>
 
-    <div>
-        <label asp-for="Notes" class="block font-medium text-gray-700">Notes</label>
-        <textarea asp-for="Notes" class="form-input w-full h-24 border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand"></textarea>
-    </div>
+            <div class="space-y-2">
+                <label asp-for="CarId" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Select Vehicle</label>
+                <div class="relative group">
+                    <i class="fa-solid fa-car absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                    <select asp-for="CarId" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer" asp-items="ViewBag.Cars">
+                        <option value="">-- Choose Car Plate --</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                </div>
+                <span asp-validation-for="CarId" class="text-xs text-red-500 font-medium"></span>
+            </div>
 
-    <div class="flex justify-end gap-2">
-        <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">Cancel</a>
-        <button class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700">Save</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label asp-for="ServiceDate" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Service Date</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-calendar-day absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <input asp-for="ServiceDate" type="date" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                    </div>
+                    <span asp-validation-for="ServiceDate" class="text-xs text-red-500 font-medium"></span>
+                </div>
+                <div class="space-y-2">
+                    <label asp-for="Mileage" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Odometer (km)</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-gauge-high absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <input asp-for="Mileage" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" placeholder="e.g. 12500" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label asp-for="ServiceType" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Service Type</label>
+                <div class="relative group">
+                    <i class="fa-solid fa-wrench absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                    <input asp-for="ServiceType" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" placeholder="Oil Change, Tire Rotation, etc." />
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label asp-for="Notes" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Service Notes</label>
+                <textarea asp-for="Notes" rows="4" class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none resize-none" placeholder="Details about parts replaced or inspection findings..."></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
+                <a asp-action="Index" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">Cancel</a>
+                <button type="submit" class="inline-flex items-center gap-2 bg-brand text-white px-10 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-check"></i>
+                    Save Record
+                </button>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

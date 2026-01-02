@@ -1,5 +1,6 @@
 ﻿using ApexDrive.Data;
 using ApexDrive.Models;
+using ApexDrive.ViewModels.BranchViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,102 +15,172 @@ namespace ApexDrive.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
 
-        public BranchesController(ApplicationDbContext context, UserManager<AppUser> userManager)
+        public BranchesController(
+            ApplicationDbContext context,
+            UserManager<AppUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
-        // ✅ List all branches
+     
+        // INDEX
+     
         public async Task<IActionResult> Index()
         {
             var branches = await _context.Branches
                 .Include(b => b.Manager)
-                .OrderBy(b => b.BranchName)
+                .AsNoTracking()
                 .ToListAsync();
 
             return View(branches);
         }
 
-        // ✅ Create branch (GET)
-        public IActionResult Create() => View();
 
-        // ✅ Create branch (POST)
+
+     
+        // CREATE
+       
+        public IActionResult Create()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Branch branch)
         {
-            if (ModelState.IsValid)
-            {
-                branch.CreatedAt = DateTime.UtcNow;
-                _context.Branches.Add(branch);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(branch);
+            if (!ModelState.IsValid)
+                return View(branch);
+
+            branch.CreatedAt = DateTime.UtcNow;
+
+            _context.Branches.Add(branch);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // ✅ Edit branch (GET)
+        // =========================
+        // EDIT
+        // =========================
         public async Task<IActionResult> Edit(int id)
         {
             var branch = await _context.Branches.FindAsync(id);
-            if (branch == null) return NotFound();
+            if (branch == null)
+                return NotFound();
+
             return View(branch);
         }
 
-        // ✅ Edit branch (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Branch branch)
         {
-            if (id != branch.BranchId) return NotFound();
+            if (id != branch.BranchId)
+                return NotFound();
 
-            if (ModelState.IsValid)
-            {
-                _context.Update(branch);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(branch);
+            if (!ModelState.IsValid)
+                return View(branch);
+
+            var existingBranch = await _context.Branches
+                .AsNoTracking()
+                .FirstOrDefaultAsync(b => b.BranchId == id);
+
+            if (existingBranch == null)
+                return NotFound();
+
+            // Preserve immutable fields
+            branch.CreatedAt = existingBranch.CreatedAt;
+            branch.ManagerId = existingBranch.ManagerId;
+
+            _context.Update(branch);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // ✅ Assign Manager (GET)
+        // =========================
+        // DELETE
+        // =========================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var branch = await _context.Branches.FindAsync(id);
+            if (branch == null)
+                return NotFound();
+
+            try
+            {
+                _context.Branches.Remove(branch);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                TempData["Error"] = "Cannot delete branch. It may be linked to other records.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // =========================
+        // ASSIGN MANAGER (GET)
+        // =========================
         public async Task<IActionResult> AssignManager(int id)
         {
             var branch = await _context.Branches
                 .Include(b => b.Manager)
                 .FirstOrDefaultAsync(b => b.BranchId == id);
 
-            if (branch == null) return NotFound();
+            if (branch == null)
+                return NotFound();
 
-            // ✅ Fetch all admins (without branch or same branch)
-            var allUsers = await _userManager.Users.ToListAsync();
-            var admins = new List<AppUser>();
+            // ✅ Correct Identity role usage
+            var managers = await _userManager.GetUsersInRoleAsync("Manager");
 
-            foreach (var user in allUsers)
+            var viewModel = new AssignManagerViewModel
             {
-                if (await _userManager.IsInRoleAsync(user, "Admin") &&
-                    (user.BranchId == null || user.BranchId == id))
-                {
-                    admins.Add(user);
-                }
-            }
+                Branch = branch,
+                Managers = managers.ToList(),
+                SelectedManagerId = branch.ManagerId
+            };
 
-            ViewBag.Admins = admins;
-            return View(branch);
+            return View(viewModel);
         }
 
-        // ✅ Assign Manager (POST)
+        // =========================
+        // ASSIGN MANAGER (POST)
+        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignManager(int id, string managerId)
+        public async Task<IActionResult> AssignManager(AssignManagerViewModel model)
         {
-            var branch = await _context.Branches.FindAsync(id);
-            if (branch == null) return NotFound();
+            if (!ModelState.IsValid)
+            {
+                var managers = await _userManager.GetUsersInRoleAsync("Manager");
+                model.Managers = managers.ToList();
+                return View(model);
+            }
 
-            branch.ManagerId = managerId;
+            var branch = await _context.Branches
+                .FirstOrDefaultAsync(b => b.BranchId == model.Branch.BranchId);
+
+            if (branch == null)
+                return NotFound();
+
+            branch.ManagerId = model.SelectedManagerId;
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
+        }
+
+        // =========================
+        // HELPERS
+        // =========================
+        private bool BranchExists(int id)
+        {
+            return _context.Branches.Any(b => b.BranchId == id);
         }
     }
 }

@@ -68,9 +68,7 @@
                 <nav class="hidden md:flex items-center gap-10 text-sm font-medium text-gray-700">
                     <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="hover:text-gray-900">Home</a>
                     <a asp-area="Customer" asp-controller="Booking" asp-action="Step1_Form" class="hover:text-gray-900">Booking</a>
-                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step2_SelectCar" class="hover:text-gray-900">Fleet</a>
-                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step3_Extras" class="hover:text-gray-900">Extras</a>
-                    <a asp-area="Customer" asp-controller="Booking" asp-action="Step4_Payment" class="hover:text-gray-900">Payment</a>
+              
 
                     @* ✅ My Bookings for logged-in customers *@
                     @if (User?.Identity?.IsAuthenticated ?? false && User.IsInRole("Customer"))

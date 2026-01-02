@@ -4,47 +4,67 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-2xl font-bold text-brand mb-6">👁️ Admin Details</h1>
+<div class="max-w-3xl mx-auto pb-10">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to Admin List
+    </a>
 
-<div class="bg-white p-6 rounded-xl shadow-md max-w-lg space-y-3">
-    <p>
-        <strong>Full Name:</strong>
-        @(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName : "—")
-    </p>
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-brand px-8 py-10 text-white relative overflow-hidden">
+            <div class="relative z-10 flex items-center gap-6">
+                <div class="h-20 w-20 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-3xl font-black border border-white/30">
+                    @(Model.FullName?[0].ToString() ?? "A")
+                </div>
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight">@(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName : "System Admin")</h1>
+                    <p class="text-blue-100 flex items-center gap-2 mt-1">
+                        <i class="fa-solid fa-envelope text-xs"></i> @Model.Email
+                    </p>
+                </div>
+            </div>
+            <i class="fa-solid fa-user-shield absolute -bottom-4 -right-4 text-9xl text-white/10"></i>
+        </div>
 
-    <p>
-        <strong>Email:</strong>
-        @Model.Email
-    </p>
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-1">
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">User Security ID</span>
+                <p class="text-sm font-mono text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-100">@Model.Id</p>
+            </div>
 
-    <p>
-        <strong>User ID:</strong>
-        @Model.Id
-    </p>
+            <div class="space-y-1">
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Assigned Branch</span>
+                <div class="flex items-center gap-2 text-gray-900 font-bold">
+                    <i class="fa-solid fa-building text-brand"></i>
+                    @if (Model.Branch != null)
+                    {
+                        <span>@Model.Branch.BranchName</span>
+                    }
+                    else
+                    {
 
-    <p>
-        <strong>Assigned Branch:</strong>
-        @{
-            if (Model.Branch != null)
-            {
-                @Model.Branch.BranchName
-            }
-            else if (Model.BranchId != null)
-            {
-                <span class="text-gray-500">Branch ID: @Model.BranchId</span>
-            }
-            else
-            {
-                <span class="text-gray-400 italic">No branch assigned</span>
-            }
-        }
-    </p>
+                        <span class="text-gray-400 font-medium italic">Unassigned</span>
+                    }
+                </div>
+            </div>
 
+            <div class="space-y-1 md:col-span-2">
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Security Roles</span>
+                <div class="flex flex-wrap gap-2 pt-1">
+                    @foreach (var role in (IList<string>)ViewBag.Roles)
+                    {
+                        <span class="px-3 py-1 bg-blue-50 text-brand text-xs font-bold rounded-full border border-blue-100">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> @role
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
 
-    <p>
-        <strong>Roles:</strong>
-        @string.Join(", ", (IList<string>)ViewBag.Roles)
-    </p>
+        <div class="bg-gray-50 px-8 py-4 border-t border-gray-100 flex justify-end gap-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="inline-flex items-center gap-2 px-6 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-50 transition-all">
+                <i class="fa-solid fa-user-pen"></i> Edit Profile
+            </a>
+        </div>
+    </div>
 </div>
-
-<a asp-action="Index" class="mt-4 inline-block text-gray-600 hover:underline">⬅ Back to list</a>

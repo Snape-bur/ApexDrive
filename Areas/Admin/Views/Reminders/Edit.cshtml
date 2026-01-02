@@ -3,56 +3,86 @@
     ViewData["Title"] = "Edit Reminder";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-<h1 class="text-2xl font-bold text-brand mb-6">✏️ Edit Reminder</h1>
 
-<form asp-action="Edit" method="post" class="space-y-6 bg-white p-6 rounded-xl shadow-sm max-w-3xl">
-    <input type="hidden" asp-for="ReminderId" />
+<div class="max-w-3xl mx-auto pb-10">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to Reminders
+    </a>
 
-    <div asp-validation-summary="ModelOnly" class="bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-2"></div>
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-50/50 px-8 py-6 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <div class="bg-brand p-3 rounded-2xl shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-pen-to-square text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Edit Reminder</h1>
+                    <p class="text-sm text-gray-500 font-medium">Update the schedule or mark this task as resolved.</p>
+                </div>
+            </div>
+        </div>
 
-    <div>
-        <label asp-for="Type" class="block font-medium text-gray-700">Type</label>
-        <select asp-for="Type" class="form-select w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand">
-            <option value="Insurance">Insurance</option>
-            <option value="Service">Service</option>
-        </select>
-        <span asp-validation-for="Type" class="text-red-500 text-sm"></span>
+        <form asp-action="Edit" method="post" class="p-8 space-y-6">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReminderId" />
+            <div asp-validation-summary="ModelOnly" class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label asp-for="Type" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Category</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-layer-group absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <select asp-for="Type" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none">
+                            <option value="Insurance">🛡️ Insurance Renewal</option>
+                            <option value="Service">⚙️ Service / Maintenance</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label asp-for="CarId" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Vehicle</label>
+                    <div class="relative group">
+                        <i class="fa-solid fa-car absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                        <select asp-for="CarId" class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none"
+                                asp-items="@(new SelectList(ViewBag.Cars, "CarId", "PlateNumber", Model.CarId))"></select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label asp-for="ReminderDate" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Target Date</label>
+                <div class="relative group">
+                    <i class="fa-solid fa-calendar-day absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors"></i>
+                    <input asp-for="ReminderDate" type="date" class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none" />
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label asp-for="Notes" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Notes</label>
+                <textarea asp-for="Notes" rows="3" class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none resize-none"></textarea>
+            </div>
+
+            <div class="bg-brand/5 p-4 rounded-2xl border border-brand/10">
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" asp-for="IsCompleted" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+                    <span class="ml-3 text-sm font-bold text-gray-700">Mark task as completed</span>
+                </label>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
+                <a asp-action="Index" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">Discard</a>
+                <button type="submit" class="inline-flex items-center gap-2 bg-brand text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Update Reminder
+                </button>
+            </div>
+        </form>
     </div>
-
-    <div>
-        <label asp-for="CarId" class="block font-medium text-gray-700">Car</label>
-        <select asp-for="CarId"
-                class="form-select w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand"
-                asp-items="@(new SelectList(ViewBag.Cars, "CarId", "PlateNumber", Model.CarId))">
-            <option value="">-- Select Car --</option>
-        </select>
-        <span class="text-xs text-gray-500">Brand/Model shown on list page.</span>
-        <span asp-validation-for="CarId" class="text-red-500 text-sm"></span>
-    </div>
-
-    <div>
-        <label asp-for="ReminderDate" class="block font-medium text-gray-700">Reminder Date</label>
-        <input asp-for="ReminderDate" type="date" class="form-input w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand" />
-        <span asp-validation-for="ReminderDate" class="text-red-500 text-sm"></span>
-    </div>
-
-    <div>
-        <label asp-for="Notes" class="block font-medium text-gray-700">Notes</label>
-        <textarea asp-for="Notes" class="form-input w-full h-24 border-gray-300 rounded-lg px-3 py-2 focus:ring-brand focus:border-brand"></textarea>
-    </div>
-
-    <div class="flex items-center gap-2">
-        <label class="flex items-center gap-2 text-sm text-gray-700">
-            <input type="checkbox" asp-for="IsCompleted" class="rounded border-gray-300 focus:ring-brand" />
-            Mark as completed
-        </label>
-    </div>
-
-    <div class="flex justify-end gap-2">
-        <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">Cancel</a>
-        <button class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-blue-700">💾 Save Changes</button>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

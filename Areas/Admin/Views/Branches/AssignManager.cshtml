@@ -1,21 +1,67 @@
-﻿@model ApexDrive.Models.Branch
+﻿@model ApexDrive.ViewModels.BranchViewModels.AssignManagerViewModel
+
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Assign Branch Manager";
 }
 
-<h2 class="text-xl font-semibold mb-4">Assign Manager – @Model.BranchName</h2>
+<div class="max-w-2xl mx-auto pb-10">
+    <a asp-action="Index" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-brand transition-colors mb-6 group">
+        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+        Back to Branch Management
+    </a>
 
-<form asp-action="AssignManager" method="post">
-    <input type="hidden" name="id" value="@Model.BranchId" />
-    <select name="managerId" class="form-input w-full mb-4">
-        <option value="">-- Select Admin --</option>
-        @foreach (var admin in ViewBag.Admins)
-        {
-            <option value="@admin.Id" selected="@(admin.Id == Model.ManagerId)">
-                @admin.FullName (@admin.Email)
-            </option>
-        }
-    </select>
-    <button type="submit" class="btn btn-accent">✅ Assign</button>
-</form>
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-50/50 px-8 py-6 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <div class="bg-accent p-3 rounded-2xl shadow-lg shadow-yellow-100">
+                    <i class="fa-solid fa-user-tie text-gray-900 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Assign Manager</h1>
+                    <p class="text-sm text-gray-500 font-medium">Branch: <span class="text-brand font-bold">@Model.Branch.BranchName</span></p>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="AssignManager" method="post" class="p-8">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Branch.BranchId" />
+
+            <div class="space-y-4">
+                <label asp-for="SelectedManagerId" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Select Administrator</label>
+
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand transition-colors">
+                        <i class="fa-solid fa-users-gear"></i>
+                    </div>
+
+                    <select asp-for="SelectedManagerId"
+                            asp-items="@(new SelectList(Model.Managers, "Id", "Email"))"
+                            class="block w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm appearance-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all outline-none cursor-pointer">
+                        <option value="">-- Search and Select Admin --</option>
+                    </select>
+
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-gray-400 italic px-1">
+                    <i class="fa-solid fa-circle-info mr-1"></i>
+                    Only accounts with Administrator roles are eligible for branch management.
+                </p>
+            </div>
+
+            <div class="mt-10 pt-8 border-t border-gray-100 flex items-center justify-end gap-3">
+                <a asp-action="Index" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-all">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 bg-accent text-gray-900 px-8 py-2.5 rounded-xl font-bold hover:bg-yellow-500 transition-all shadow-lg shadow-yellow-100">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Confirm Assignment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
