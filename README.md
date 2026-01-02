@@ -55,7 +55,7 @@ This project was developed as part of my academic and portfolio work to demonstr
 ![Customer Dashboard](screenshots/customer-dashboard.PNG)
 
 ### 🔹 Super Admin Dashboard
-![Super Admin Dashboard](screenshots/super-admin-dashboard.PNG)
+![Super Admin Dashboard](screenshots/superadmin-dashboard.PNG)
 
 ### 🔹 Branch Admin Dashboard
 ![Branch Admin Dashboard](screenshots/branch-admin-dashboard.PNG)
