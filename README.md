@@ -49,25 +49,25 @@ This project was developed as part of my academic and portfolio work to demonstr
 ## 📸 Screenshots
 
 ### 🔹 Homepage
-![Homepage](screenshots/homepage.png)
+![Homepage](screenshots/homepage.PNG)
 
 ### 🔹 Customer Dashboard
-![Customer Dashboard](screenshots/customer-dashboard.png)
+![Customer Dashboard](screenshots/customer-dashboard.PNG)
 
 ### 🔹 Super Admin Dashboard
-![Super Admin Dashboard](screenshots/super-admin-dashboard.png)
+![Super Admin Dashboard](screenshots/super-admin-dashboard.PNG)
 
 ### 🔹 Branch Admin Dashboard
-![Branch Admin Dashboard](screenshots/branch-admin-dashboard.png)
+![Branch Admin Dashboard](screenshots/branch-admin-dashboard.PNG)
 
 ### 🔹 Booking Management
-![Booking Management](screenshots/booking-management.png)
+![Booking Management](screenshots/booking-management.PNG)
 
 ### 🔹 Dynamic Pricing
-![Dynamic Pricing](screenshots/Dynamic-Pricing.png)
+![Dynamic Pricing](screenshots/Dynamic-Pricing.PNG)
 
 ### 🔹 Vehicle Management
-![Vehicle Management](screenshots/vehicle-management.png)
+![Vehicle Management](screenshots/vehicle-management.PNG)
 
 > 📌 Screenshots are stored in the `/screenshots` folder.
 
