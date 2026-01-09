@@ -1,0 +1,86 @@
+﻿@model ApexDrive.Areas.Admin.ViewModels.Reports.RevenueByBranchReportVM
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Revenue by Branch";
+}
+
+<div class="max-w-7xl mx-auto pb-20">
+    <div class="mb-8">
+        <div class="flex items-center gap-3 mb-1">
+            <div class="bg-brand/10 p-2 rounded-lg text-brand">
+                <i class="fa-solid fa-city text-xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Revenue by Branch</h1>
+        </div>
+        <p class="text-gray-500 text-sm px-1">Compare financial intake and booking volume across all physical locations.</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+        <form method="get" class="flex flex-wrap items-end gap-4">
+            <div class="flex-1 min-w-[200px]">
+                <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block ml-1">From Date</label>
+                <div class="relative">
+                    <i class="fa-solid fa-calendar-days absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")"
+                           class="block w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 outline-none" />
+                </div>
+            </div>
+            <div class="flex-1 min-w-[200px]">
+                <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block ml-1">To Date</label>
+                <div class="relative">
+                    <i class="fa-solid fa-calendar-check absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")"
+                           class="block w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 outline-none" />
+                </div>
+            </div>
+            <button type="submit" class="px-10 py-2.5 bg-brand text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                Generate View
+            </button>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50/50">
+                    <tr>
+                        <th class="py-4 px-6 text-left text-[11px] uppercase tracking-widest font-black text-gray-400">Branch Name</th>
+                        <th class="py-4 px-6 text-right text-[11px] uppercase tracking-widest font-black text-gray-400">Total Bookings</th>
+                        <th class="py-4 px-6 text-right text-[11px] uppercase tracking-widest font-black text-gray-400">Gross Revenue</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @foreach (var b in Model.Branches.OrderByDescending(x => x.TotalRevenue))
+                    {
+                        <tr class="group hover:bg-emerald-50/30 transition-colors">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-brand group-hover:text-white transition-all">
+                                        <i class="fa-solid fa-location-dot text-[10px]"></i>
+                                    </div>
+                                    <span class="font-bold text-gray-900">@b.BranchName</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <span class="text-sm font-bold text-gray-600">@b.TotalBookings.ToString("N0")</span>
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <span class="text-base font-black text-gray-900">@b.TotalRevenue.ToString("C")</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot class="bg-gray-900 text-white">
+                    <tr>
+                        <td class="py-6 px-6 font-black uppercase tracking-widest text-xs">Consolidated Total</td>
+                        <td class="py-6 px-6 text-right font-bold opacity-60">@Model.Branches.Sum(x => x.TotalBookings).ToString("N0")</td>
+                        <td class="py-6 px-6 text-right">
+                            <span class="text-xl font-black text-emerald-400">@Model.GrandTotalRevenue.ToString("C")</span>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

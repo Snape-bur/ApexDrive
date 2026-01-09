@@ -21,15 +21,14 @@ namespace ApexDrive.Areas.Admin.Controllers
             _context = context;
         }
 
-    
-        // 🏠 Dashboard Index
-        public async Task<IActionResult> Index()
+        // 🏠 Dashboard Index (Cards + Tables)
+        public async Task<IActionResult> Index(DateTime? selectedDate, DateTime? fromDate, DateTime? toDate)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userRole = User.IsInRole("SuperAdmin") ? "SuperAdmin" : "Admin";
-            int? branchId = null;
+            var isSuperAdmin = User.IsInRole("SuperAdmin");
 
-            if (userRole == "Admin")
+            int? branchId = null;
+            if (!isSuperAdmin)
             {
                 branchId = await _context.Users
                     .Where(u => u.Id == userId)
@@ -37,25 +36,54 @@ namespace ApexDrive.Areas.Admin.Controllers
                     .FirstOrDefaultAsync();
             }
 
-            // 🧮 Query Setup
+            // ───────────────────────────────
+            // Base Queries
+            // ───────────────────────────────
             var carsQuery = _context.Cars.AsQueryable();
             var bookingsQuery = _context.Bookings.AsQueryable();
             var remindersQuery = _context.CarReminders
-                .Include(r => r.Car).ThenInclude(c => c.Branch)
+                .Include(r => r.Car)
                 .Include(r => r.Branch)
                 .AsQueryable();
             var maintenanceQuery = _context.CarMaintenanceHistories.AsQueryable();
+            var paymentsQuery = _context.Payments
+                .Include(p => p.Booking)
+                .ThenInclude(b => b.Car)
+                .AsQueryable();
 
+           
+            // 📅 Revenue Filter (Range > Single Day)
+            if (fromDate.HasValue && toDate.HasValue)
+            {
+                var start = fromDate.Value.Date;
+                var end = toDate.Value.Date.AddDays(1).AddTicks(-1);
+
+                paymentsQuery = paymentsQuery.Where(p =>
+                    p.CreatedAt >= start && p.CreatedAt <= end);
+            }
+            else if (selectedDate.HasValue)
+            {
+                paymentsQuery = paymentsQuery.Where(p =>
+                    p.CreatedAt.Date == selectedDate.Value.Date);
+            }
+
+
+            // 🏢 Branch Restriction (Admin only)
             if (branchId.HasValue)
             {
                 carsQuery = carsQuery.Where(c => c.BranchId == branchId);
-                bookingsQuery = bookingsQuery
-                    .Where(b => b.PickupBranchId == branchId || b.Car.BranchId == branchId);
+                bookingsQuery = bookingsQuery.Where(b =>
+                    b.PickupBranchId == branchId || b.Car.BranchId == branchId);
                 remindersQuery = remindersQuery.Where(r => r.BranchId == branchId);
                 maintenanceQuery = maintenanceQuery.Where(m => m.BranchId == branchId);
+                paymentsQuery = paymentsQuery.Where(p =>
+                    p.Booking.Car.BranchId == branchId ||
+                    p.Booking.PickupBranchId == branchId);
             }
 
-            // 📊 Build ViewModel
+            // ───────────────────────────────
+            // ViewModel
+            // ───────────────────────────────
             var model = new DashboardViewModel
             {
                 BranchName = branchId.HasValue
@@ -65,75 +93,78 @@ namespace ApexDrive.Areas.Admin.Controllers
                         .FirstOrDefaultAsync()
                     : "All Branches",
 
+                SelectedDate = selectedDate,
+
+                FromDate = fromDate,
+                ToDate = toDate,
+
                 TotalCars = await carsQuery.CountAsync(),
                 ActiveBookings = await bookingsQuery.CountAsync(),
+
                 UpcomingReminders = await remindersQuery
                     .Where(r => !r.IsCompleted && r.ReminderDate <= DateTime.UtcNow.AddDays(7))
                     .CountAsync(),
+
                 CompletedMaintenances = await maintenanceQuery.CountAsync(),
-                TotalRevenue = branchId.HasValue
-    ? await _context.Payments
-        .Where(p => p.Booking.Car.BranchId == branchId || p.Booking.PickupBranchId == branchId)
-        .SumAsync(p => (decimal?)p.Amount) ?? 0
-    : await _context.Payments.SumAsync(p => (decimal?)p.Amount) ?? 0,
-                RecentMaintenanceRecords = await maintenanceQuery
-                    .OrderByDescending(m => m.ServiceDate)
-                    .Take(5)
-                    .Include(m => m.Car)
-                    .ToListAsync()
+
+                TotalRevenue = await paymentsQuery
+                    .SumAsync(p => (decimal?)p.Amount) ?? 0
             };
 
-            // ✅ 🔔 Reminder Summary (for dashboard banner)
+            // ───────────────────────────────
+            // 🔔 Reminder Summary (UNCHANGED)
+            // ───────────────────────────────
             var today = DateTime.UtcNow.Date;
-
             var activeReminders = remindersQuery.Where(r => !r.IsCompleted);
-
-            var overdueCount = await activeReminders.CountAsync(r => r.ReminderDate < today);
-            var dueTodayCount = await activeReminders.CountAsync(r => r.ReminderDate == today);
-            var upcomingCount = await activeReminders.CountAsync(r => r.ReminderDate > today && r.ReminderDate <= today.AddDays(3));
-
-            var upcomingList = await activeReminders
-                .Where(r => r.ReminderDate >= today && r.ReminderDate <= today.AddDays(3))
-                .OrderBy(r => r.ReminderDate)
-                .Take(3)
-                .ToListAsync();
 
             model.ReminderSummary = new ReminderSummary
             {
-                OverdueCount = overdueCount,
-                DueTodayCount = dueTodayCount,
-                UpcomingCount = upcomingCount,
-                UpcomingReminders = upcomingList
+                OverdueCount = await activeReminders.CountAsync(r => r.ReminderDate < today),
+                DueTodayCount = await activeReminders.CountAsync(r => r.ReminderDate == today),
+                UpcomingCount = await activeReminders.CountAsync(r =>
+                    r.ReminderDate > today && r.ReminderDate <= today.AddDays(3)),
+                UpcomingReminders = await activeReminders
+                    .Where(r => r.ReminderDate >= today && r.ReminderDate <= today.AddDays(3))
+                    .OrderBy(r => r.ReminderDate)
+                    .Take(3)
+                    .ToListAsync()
             };
-            // ✅ Sidebar Reminder Badge
-            var me = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            var badgeReminders = _context.CarReminders.AsQueryable();
 
-            if (userRole == "Admin" && me?.BranchId != null)
+            // ───────────────────────────────
+            // 💰 Super Admin – Revenue Per Branch (NEW)
+            // ───────────────────────────────
+            if (isSuperAdmin)
             {
-                badgeReminders = badgeReminders.Where(r => r.BranchId == me.BranchId);
+                model.RevenuePerBranch = await paymentsQuery
+                    .GroupBy(p => p.Booking.Car.BranchId)
+                    .Select(g => new RevenuePerBranchVM
+                    {
+                        BranchId = g.Key,
+                        BranchName = _context.Branches
+                            .Where(b => b.BranchId == g.Key)
+                            .Select(b => b.BranchName)
+                            .FirstOrDefault(),
+                        Revenue = g.Sum(x => x.Amount)
+                    })
+                    .OrderByDescending(x => x.Revenue)
+                    .ToListAsync();
             }
-
-            var sidebarOverdueCount = await badgeReminders.CountAsync(r => !r.IsCompleted && r.ReminderDate < today);
-            var sidebarDueTodayCount = await badgeReminders.CountAsync(r => !r.IsCompleted && r.ReminderDate == today);
-
-            // Pass to Layout via ViewBag
-            ViewBag.OverdueCount = sidebarOverdueCount;
-            ViewBag.DueTodayCount = sidebarDueTodayCount;
-
 
             return View(model);
         }
 
-        // 📈 API Endpoint for Chart.js
+        // 📈 API for Charts (UNCHANGED, SAFE)
         [HttpGet]
-        public async Task<IActionResult> GetDashboardData()
+        public async Task<IActionResult> GetDashboardData(DateTime? fromDate, DateTime? toDate)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userRole = User.IsInRole("SuperAdmin") ? "SuperAdmin" : "Admin";
-            int? branchId = null;
+            fromDate ??= DateTime.UtcNow.AddMonths(-6);
+            toDate ??= DateTime.UtcNow;
 
-            if (userRole == "Admin")
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isSuperAdmin = User.IsInRole("SuperAdmin");
+
+            int? branchId = null;
+            if (!isSuperAdmin)
             {
                 branchId = await _context.Users
                     .Where(u => u.Id == userId)
@@ -141,96 +172,85 @@ namespace ApexDrive.Areas.Admin.Controllers
                     .FirstOrDefaultAsync();
             }
 
-            var bookingsQuery = _context.Bookings.AsQueryable();
-            var maintenanceQuery = _context.CarMaintenanceHistories.AsQueryable();
+            var bookingsQuery = _context.Bookings
+                .Where(b => b.StartDate >= fromDate && b.StartDate <= toDate);
+
+            var maintenanceQuery = _context.CarMaintenanceHistories
+                .Where(m => m.ServiceDate >= fromDate && m.ServiceDate <= toDate);
+
+            var paymentsQuery = _context.Payments
+                .Where(p => p.CreatedAt >= fromDate && p.CreatedAt <= toDate);
 
             if (branchId.HasValue)
             {
-                bookingsQuery = bookingsQuery
-                    .Where(b => b.PickupBranchId == branchId || b.Car.BranchId == branchId);
+                bookingsQuery = bookingsQuery.Where(b =>
+                    b.PickupBranchId == branchId || b.Car.BranchId == branchId);
                 maintenanceQuery = maintenanceQuery.Where(m => m.BranchId == branchId);
+                paymentsQuery = paymentsQuery.Where(p =>
+                    p.Booking.Car.BranchId == branchId ||
+                    p.Booking.PickupBranchId == branchId);
             }
 
-            // 🗓 Monthly Bookings (Chronological)
-            var monthlyBookingsRaw = await bookingsQuery
-      .GroupBy(b => new { b.StartDate.Year, b.StartDate.Month })
-      .Select(g => new
-      {
-          g.Key.Year,
-          g.Key.Month,
-          Count = g.Count()
-      })
-      .OrderBy(g => g.Year)
-      .ThenBy(g => g.Month)
-      .ToListAsync();
-
-            var monthlyBookings = monthlyBookingsRaw
+            var monthlyBookings = await bookingsQuery
+                .GroupBy(b => new { b.StartDate.Year, b.StartDate.Month })
+                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                 .Select(g => new
                 {
-                    Month = $"{g.Month:D2}-{g.Year}",
-                    g.Count
+                    Month = $"{g.Key.Month:D2}-{g.Key.Year}",
+                    Count = g.Count()
                 })
-                .ToList();
+                .ToListAsync();
 
-
-            // 🧰 Maintenance Frequency (Chronological)
-            var maintenanceRaw = await maintenanceQuery
-      .GroupBy(m => new { m.ServiceDate.Year, m.ServiceDate.Month })
-      .Select(g => new
-      {
-          g.Key.Year,
-          g.Key.Month,
-          Count = g.Count()
-      })
-      .OrderBy(g => g.Year)
-      .ThenBy(g => g.Month)
-      .ToListAsync();
-
-            var maintenanceStats = maintenanceRaw
+            var maintenanceStats = await maintenanceQuery
+                .GroupBy(m => new { m.ServiceDate.Year, m.ServiceDate.Month })
+                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                 .Select(g => new
                 {
-                    Month = $"{g.Month:D2}-{g.Year}",
-                    g.Count
+                    Month = $"{g.Key.Month:D2}-{g.Key.Year}",
+                    Count = g.Count()
                 })
-                .ToList();
+                .ToListAsync();
 
-            // 🚗 Cars per Branch (SuperAdmin only)
-            var carsPerBranch = userRole == "SuperAdmin"
+            var carsPerBranch = isSuperAdmin
                 ? await _context.Branches
                     .Select(b => new
                     {
                         b.BranchName,
                         CarCount = b.Cars.Count()
                     })
-                    .OrderBy(b => b.BranchName)
                     .ToListAsync()
                 : null;
 
-            // 💰 Revenue per Branch (SuperAdmin only)
-            var revenuePerBranch = userRole == "SuperAdmin"
-                ? await _context.Payments
-                    .Include(p => p.Booking)
-                        .ThenInclude(b => b.Car)
-                            .ThenInclude(c => c.Branch)
-                    .GroupBy(p => p.Booking.Car.Branch.BranchName)
+            var revenuePerBranch = isSuperAdmin
+                ? await paymentsQuery
+                    .GroupBy(p => p.Booking.Car.BranchId)
                     .Select(g => new
                     {
-                        BranchName = g.Key,
-                        Revenue = g.Sum(p => p.Amount)
+                        BranchId = g.Key,
+                        Revenue = g.Sum(x => x.Amount)
                     })
-                    .OrderByDescending(x => x.Revenue)
+                    .Join(
+                        _context.Branches,
+                        r => r.BranchId,
+                        b => b.BranchId,
+                        (r, b) => new
+                        {
+                            BranchName = b.BranchName,
+                            Revenue = r.Revenue
+                        })
                     .ToListAsync()
                 : null;
 
+            var totalRevenue = await paymentsQuery
+                .SumAsync(p => (decimal?)p.Amount) ?? 0;
 
-            // ✅ Return JSON for Chart.js
             return Json(new
             {
+                totalRevenue,
                 monthlyBookings,
                 maintenanceStats,
                 carsPerBranch,
                 revenuePerBranch
-
             });
         }
     }

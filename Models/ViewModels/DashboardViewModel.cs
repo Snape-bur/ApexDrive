@@ -17,6 +17,12 @@ namespace ApexDrive.Models.ViewModels
         // 🏢 Branch Info
         public string BranchName { get; set; } = "All Branches";
 
+        // 📅 Date Filter (NEW)
+        public DateTime? SelectedDate { get; set; }
+
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+
         // 📊 Summary Stats
         public int TotalCars { get; set; }
         public int ActiveBookings { get; set; }
@@ -26,10 +32,22 @@ namespace ApexDrive.Models.ViewModels
         // 💰 Financial Summary
         public decimal TotalRevenue { get; set; }
 
-        // 🧰 Maintenance Records (for recent 5 items)
+        // 🏢 Super Admin Only
+        public List<RevenuePerBranchVM> RevenuePerBranch { get; set; } = new();
+
+        // 🧰 Maintenance Records
         public List<CarMaintenanceHistory> RecentMaintenanceRecords { get; set; } = new();
 
         // 🔔 Reminder Banner Summary
         public ReminderSummary ReminderSummary { get; set; } = new();
     }
+
+
+    public class RevenuePerBranchVM
+    {
+        public int BranchId { get; set; }
+        public string BranchName { get; set; } = "";
+        public decimal Revenue { get; set; }
+    }
+
 }

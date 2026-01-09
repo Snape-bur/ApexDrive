@@ -189,11 +189,12 @@ namespace ApexDrive.Areas.Customer.Controllers
 
             decimal insuranceRatePerDay = model.InsuranceType switch
             {
-                "Standard" => 10m,
-                "Premium" => 20m,
+
+                "Standard" => 350m,   
+                "Premium" => 700m,    
                 _ => 0m
             };
-            const decimal childSeatRatePerDay = 7m;
+            const decimal childSeatRatePerDay = 250m;
 
             var rawDays = (booking.EndDate.Date - booking.StartDate.Date).TotalDays;
             var days = Math.Max(1, (int)Math.Ceiling(rawDays));
@@ -289,8 +290,7 @@ namespace ApexDrive.Areas.Customer.Controllers
 
 
         // ✅ STEP 4: Confirmation Page
-        // ✅ STEP 5: Booking Confirmation
-        [HttpGet]
+      
         [HttpGet]
         public async Task<IActionResult> BookingConfirmed(int id)
         {

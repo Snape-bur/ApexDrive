@@ -21,6 +21,28 @@
         </p>
     </div>
 
+    <form method="get" class="flex gap-3 mb-6">
+        <input type="date"
+               name="fromDate"
+               value="@Model.FromDate?.ToString("yyyy-MM-dd")"
+               class="border rounded-lg px-3 py-2 text-sm" />
+
+        <input type="date"
+               name="toDate"
+               value="@Model.ToDate?.ToString("yyyy-MM-dd")"
+               class="border rounded-lg px-3 py-2 text-sm" />
+
+        <button class="bg-brand text-white px-4 rounded-lg font-bold text-sm">
+            Filter Revenue
+        </button>
+
+        <a asp-action="Index"
+           class="px-4 py-2 border rounded-lg text-sm text-gray-600">
+            Clear
+        </a>
+    </form>
+
+
     <div class="flex gap-3">
         <button onclick="window.location.reload()" class="p-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-all shadow-sm">
             <i class="fa-solid fa-rotate"></i>
@@ -166,13 +188,38 @@
             <i class="fa-solid fa-sack-dollar text-8xl"></i>
         </div>
         <div class="relative z-10">
-            <p class="text-gray-500 font-bold uppercase tracking-widest text-xs mb-2">Revenue Overview</p>
+            <p class="text-gray-500 font-bold uppercase tracking-widest text-xs mb-2">
+                @if (Model.FromDate.HasValue && Model.ToDate.HasValue)
+                {
+                    <span>
+                        Revenue from
+                        @Model.FromDate.Value.ToString("dd MMM yyyy")
+                        to
+                        @Model.ToDate.Value.ToString("dd MMM yyyy")
+                    </span>
+                }
+                else
+                {
+                    <span>Total Revenue</span>
+                }
+
+            </p>
+
             <h2 class="text-5xl font-black text-gray-900 mb-4">
                 @Model.TotalRevenue.ToString("C")
             </h2>
             <div class="flex items-center gap-2 text-emerald-600 font-bold text-sm bg-emerald-50 w-fit px-3 py-1 rounded-full">
                 <i class="fa-solid fa-chart-line"></i>
-                Total Lifetime Earnings
+                @if (Model.FromDate.HasValue || Model.ToDate.HasValue)
+                {
+                    <span>Filtered Result</span>
+                }
+                else
+                {
+                    <span>Lifetime Earnings</span>
+                }
+
+
             </div>
         </div>
     </div>
@@ -262,78 +309,87 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", () => {
 
-            fetch('@Url.Action("GetDashboardData", "Dashboard", new { area = "Admin" })')
-                .then(res => res.json())
+            const url = '@Url.Action("GetDashboardData", "Dashboard", new { area = "Admin" })';
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to load dashboard data");
+                    return response.json();
+                })
                 .then(data => {
 
                     /* ===============================
                        📊 Monthly Bookings Chart
                        =============================== */
-                    const bookingLabels = data.monthlyBookings.map(x => x.month);
-                    const bookingCounts = data.monthlyBookings.map(x => x.count);
+                    if (data.monthlyBookings?.length) {
 
-                    new Chart(document.getElementById('bookingsChart'), {
-                        type: 'line',
-                        data: {
-                            labels: bookingLabels,
-                            datasets: [{
-                                label: 'Bookings',
-                                data: bookingCounts,
-                                tension: 0.4,
-                                fill: true,
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: { display: false }
+                        const labels = data.monthlyBookings.map(x => x.month);
+                        const values = data.monthlyBookings.map(x => x.count);
+
+                        new Chart(document.getElementById('bookingsChart'), {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Bookings',
+                                    data: values,
+                                    tension: 0.4,
+                                    fill: true,
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { display: false }
+                                }
                             }
-                        }
-                    });
-
+                        });
+                    }
 
                     /* ===============================
                        🧰 Maintenance Frequency Chart
                        =============================== */
-                    const maintenanceLabels = data.maintenanceStats.map(x => x.month);
-                    const maintenanceCounts = data.maintenanceStats.map(x => x.count);
+                    if (data.maintenanceStats?.length) {
 
-                    new Chart(document.getElementById('maintenanceChart'), {
-                        type: 'bar',
-                        data: {
-                            labels: maintenanceLabels,
-                            datasets: [{
-                                label: 'Maintenance',
-                                data: maintenanceCounts,
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: { display: false }
+                        const labels = data.maintenanceStats.map(x => x.month);
+                        const values = data.maintenanceStats.map(x => x.count);
+
+                        new Chart(document.getElementById('maintenanceChart'), {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Maintenance',
+                                    data: values,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { display: false }
+                                }
                             }
-                        }
-                    });
-
+                        });
+                    }
 
                     /* ===============================
-                       🚗 Cars per Branch (SuperAdmin)
+                       🚗 Cars Per Branch (SuperAdmin)
                        =============================== */
-                    if (data.carsPerBranch && document.getElementById('carsChart')) {
+                    if (data.carsPerBranch?.length && document.getElementById('carsChart')) {
 
-                        const branchLabels = data.carsPerBranch.map(x => x.branchName);
-                        const branchCounts = data.carsPerBranch.map(x => x.carCount);
+                        const labels = data.carsPerBranch.map(x => x.branchName);
+                        const values = data.carsPerBranch.map(x => x.carCount);
 
                         new Chart(document.getElementById('carsChart'), {
                             type: 'doughnut',
                             data: {
-                                labels: branchLabels,
+                                labels: labels,
                                 datasets: [{
-                                    data: branchCounts,
+                                    data: values,
                                     borderWidth: 1
                                 }]
                             },
@@ -343,22 +399,21 @@
                         });
                     }
 
-
                     /* ===============================
-                       💰 Revenue by Branch (SuperAdmin)
+                       💰 Revenue Per Branch (THB)
                        =============================== */
-                    if (data.revenuePerBranch && document.getElementById('revenueChart')) {
+                    if (data.revenuePerBranch?.length && document.getElementById('revenueChart')) {
 
-                        const revenueLabels = data.revenuePerBranch.map(x => x.branchName);
-                        const revenueValues = data.revenuePerBranch.map(x => x.revenue);
+                        const labels = data.revenuePerBranch.map(x => x.branchName);
+                        const values = data.revenuePerBranch.map(x => x.revenue);
 
                         new Chart(document.getElementById('revenueChart'), {
                             type: 'bar',
                             data: {
-                                labels: revenueLabels,
+                                labels: labels,
                                 datasets: [{
                                     label: 'Revenue (THB)',
-                                    data: revenueValues,
+                                    data: values,
                                     borderWidth: 1
                                 }]
                             },
@@ -368,25 +423,25 @@
                                     legend: { display: false },
                                     tooltip: {
                                         callbacks: {
-                                            label: function (ctx) {
-                                                return '฿ ' + ctx.raw.toLocaleString();
-                                            }
+                                            label: ctx => `฿ ${ctx.raw.toLocaleString()}`
                                         }
                                     }
                                 },
                                 scales: {
                                     y: {
                                         ticks: {
-                                            callback: value => '฿ ' + value.toLocaleString()
+                                            callback: value => `฿ ${value.toLocaleString()}`
                                         }
                                     }
                                 }
                             }
                         });
                     }
-
                 })
-                .catch(err => console.error("Dashboard chart error:", err));
+                .catch(error => {
+                    console.error("Dashboard error:", error);
+                });
         });
     </script>
 }
+

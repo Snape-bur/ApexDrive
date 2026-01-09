@@ -62,7 +62,8 @@
                             </div>
                             <div class="text-left lg:text-right">
                                 <p class="text-xs text-gray-400 uppercase font-bold tracking-widest mb-1">Total Amount</p>
-                                <p class="text-2xl font-black text-gray-900">@b.TotalCost.ToString("C")</p>
+                                @* Change currency to Thai Baht *@
+                                <p class="text-2xl font-black text-gray-900">฿@b.TotalCost.ToString("N2")</p>
                             </div>
                         </div>
 
@@ -89,9 +90,21 @@
                             <div class="bg-gray-50 rounded-xl p-4 self-center">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-xs font-bold text-gray-400 uppercase tracking-tighter">Payment Status</span>
-                                    <span class="flex items-center gap-1.5 text-xs font-bold @(b.Payment?.Status == "Paid" ? "text-emerald-600" : "text-amber-600")">
-                                        <i class="fa-solid @(b.Payment?.Status == "Paid" ? "fa-circle-check" : "fa-circle-exclamation")"></i>
-                                        @(b.Payment?.Status ?? "Pending")
+
+                                    @* Logic: Avoid "Refund Pending" for Cash methods *@
+                                    @{
+                                        var isCash = b.Payment?.Method?.Contains("Cash", StringComparison.OrdinalIgnoreCase) ?? false;
+                                        var pStatus = b.Payment?.Status ?? "Pending";
+
+                                        // Override display if it somehow says refund pending for cash
+                                        if (isCash && pStatus == "Refund Pending") { pStatus = "Cancelled"; }
+
+                                        var pColor = pStatus == "Paid" ? "text-emerald-600" : "text-amber-600";
+                                    }
+
+                                    <span class="flex items-center gap-1.5 text-xs font-bold @pColor">
+                                        <i class="fa-solid @(pStatus == "Paid" ? "fa-circle-check" : "fa-circle-exclamation")"></i>
+                                        @pStatus
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2 text-sm text-gray-600 font-medium">

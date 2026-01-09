@@ -1,0 +1,87 @@
+﻿@model ApexDrive.Areas.Admin.ViewModels.Reports.RevenueReportVM
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Revenue Report";
+}
+
+<div class="max-w-7xl mx-auto pb-20">
+    <div class="mb-10">
+        <div class="flex items-center gap-3 mb-1">
+            <div class="bg-emerald-600 p-2 rounded-lg text-white shadow-lg shadow-emerald-100">
+                <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Revenue Analysis</h1>
+        </div>
+        <p class="text-gray-500 text-sm px-1">Detailed financial performance and transaction history.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="space-y-6">
+            <div class="bg-gray-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
+                <p class="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-2">Total Gross Revenue</p>
+                <h2 class="text-4xl font-black tracking-tight">@Model.TotalRevenue.ToString("C")</h2>
+                <i class="fa-solid fa-chart-line absolute -bottom-4 -right-4 text-8xl text-white/5"></i>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-range text-brand"></i> Date Range
+                </h3>
+                <form method="get" class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 mb-1 block">Start Date</label>
+                        <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 outline-none" />
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 mb-1 block">End Date</label>
+                        <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" class="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand/20 outline-none" />
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-brand text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 mt-2 text-sm">
+                        Refresh Report
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-50">
+                    <h3 class="font-black text-gray-900 uppercase tracking-widest text-[11px]">Transaction Ledger</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-100">
+                        <thead class="bg-gray-50/50 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                            <tr>
+                                <th class="py-4 px-6 text-left">Ref ID</th>
+                                <th class="py-4 px-6 text-left">Customer / Car</th>
+                                <th class="py-4 px-6 text-left">Process Date</th>
+                                <th class="py-4 px-6 text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr class="hover:bg-emerald-50/30 transition-colors">
+                                    <td class="py-4 px-6 font-bold text-brand text-xs">#@item.BookingId</td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-gray-800 text-sm">@item.CustomerName</span>
+                                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">@item.CarPlate</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-xs text-gray-500 font-medium">
+                                        @item.PaymentDate.ToString("dd MMM yyyy")
+                                    </td>
+                                    <td class="py-4 px-6 text-right">
+                                        <span class="text-sm font-black text-gray-900">@item.Amount.ToString("C")</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
