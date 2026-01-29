@@ -7,67 +7,73 @@ namespace ApexDrive.Services
     {
         private readonly ApplicationDbContext _context;
 
-        public PricingService(ApplicationDbContext context) => _context = context;
+        public PricingService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public async Task<decimal> CalculateBaseCost(int carId, DateTime start, DateTime end)
         {
             var car = await _context.Cars.FindAsync(carId);
             if (car == null) return 0;
 
-            var rules = await _context.PricingRules.ToListAsync();
+            var rules = await _context.PricingRules.AsNoTracking().ToListAsync();
             decimal total = 0;
 
-            // Calculate total rental duration
             int totalDays = (end.Date - start.Date).Days;
 
             for (var date = start.Date; date < end.Date; date = date.AddDays(1))
             {
-                // 1. Find Admin-configured rules (Seasonal Surcharges)
+                // 1️⃣ Find applicable pricing rules (holiday / seasonal)
                 var applicableRules = rules.Where(r =>
-                    (date >= r.StartDate && date <= r.EndDate) ||
+                    (date >= r.StartDate.Date && date <= r.EndDate.Date) ||
                     (r.IsRecurring && IsDateInRecurringRange(date, r.StartDate, r.EndDate))
                 ).ToList();
 
-                decimal dailyMultiplier;
+                decimal multiplier;
 
                 if (applicableRules.Any())
                 {
-                    // Use highest multiplier for intelligent profit management
-                    dailyMultiplier = applicableRules.Max(r => r.Multiplier);
+                    // ✅ Holiday / Seasonal takes priority
+                    multiplier = applicableRules.Max(r => r.Multiplier);
                 }
-                else if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                else if (date.DayOfWeek == DayOfWeek.Saturday ||
+                         date.DayOfWeek == DayOfWeek.Sunday)
                 {
-                    // 2. Automatic Weekend Surge (Smart Feature)
-                    dailyMultiplier = 1.1m;
+                    // ✅ Weekend surge
+                    multiplier = 1.1m;
                 }
                 else
                 {
-                    dailyMultiplier = 1.0m;
+                    multiplier = 1.0m;
                 }
 
-                total += (car.DailyRate * dailyMultiplier);
+                Console.WriteLine(
+                    $"[PRICING DEBUG] Date: {date:yyyy-MM-dd}, Multiplier: {multiplier}"
+                );
+
+                total += car.DailyRate * multiplier;
             }
 
-            // 3. SMART FEATURE: Duration Discounts
-            // If rental is 7 days or longer, apply a 10% discount to the final cost
+
+            // 4️⃣ LONG RENTAL DISCOUNT
             if (totalDays >= 7)
             {
                 total *= 0.90m;
             }
 
-            return total;
+            return decimal.Round(total, 2);
         }
 
         private bool IsDateInRecurringRange(DateTime current, DateTime start, DateTime end)
         {
-            var checkDate = new DateTime(2000, current.Month, current.Day);
-            var startDate = new DateTime(2000, start.Month, start.Day);
-            var endDate = new DateTime(2000, end.Month, end.Day);
+            var check = new DateTime(2000, current.Month, current.Day);
+            var s = new DateTime(2000, start.Month, start.Day);
+            var e = new DateTime(2000, end.Month, end.Day);
 
-            if (startDate <= endDate)
-                return checkDate >= startDate && checkDate <= endDate;
-
-            return checkDate >= startDate || checkDate <= endDate;
+            return s <= e
+                ? check >= s && check <= e
+                : check >= s || check <= e;
         }
     }
 }

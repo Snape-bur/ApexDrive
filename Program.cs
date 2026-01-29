@@ -37,6 +37,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<BranchScopeService>();
 builder.Services.AddScoped<PricingService>();
 
+builder.Services.AddHttpClient();
+
 //  Configure Supported Cultures (English, Thai, Burmese)
 var supportedCultures = new[]
 {
